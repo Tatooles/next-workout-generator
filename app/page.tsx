@@ -1,8 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function Home() {
+  const bodyParts = [
+    "quads",
+    "hamstrings",
+    "glutes",
+    "triceps",
+    "biceps",
+    "chest",
+    "lats",
+    "upper back",
+    "front delts",
+    "rear delts",
+    "side delts",
+  ];
+
   return (
     <main className="flex min-h-screen flex-col items-center p-5">
       <h1 className="text-4xl">Workout Generator</h1>
@@ -32,34 +47,23 @@ export default function Home() {
             <RadioGroupItem value="lower-workout" id="lower-workout" />
             <Label htmlFor="lower-workout">Lower Workout</Label>
           </div>
-
-          <Label className="text-lg">Add a Body Part</Label>
-          {/* TODO: Change to checkbox */}
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="option-two" id="option-two" />
-            <Label htmlFor="option-two">Glutes/Hamstrings</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="option-two" id="option-two" />
-            <Label htmlFor="option-two">Arms</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="option-two" id="option-two" />
-            <Label htmlFor="option-two">Shoulders</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="option-two" id="option-two" />
-            <Label htmlFor="option-two">Chest</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="option-two" id="option-two" />
-            <Label htmlFor="option-two">Back</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="option-two" id="option-two" />
-            <Label htmlFor="option-two">Quads</Label>
-          </div>
         </RadioGroup>
+
+        <Label className="text-lg">Add a Body Part</Label>
+        {/* TODO: Change to checkbox that's rendered via list */}
+        <div className="grid grid-cols-3">
+          {bodyParts.map((bodyPart) => (
+            <div className="flex items-center space-x-2">
+              <Checkbox id={bodyPart} />
+              <label
+                htmlFor={bodyPart}
+                className="text-sm font-medium capitalize leading-none"
+              >
+                {bodyPart}
+              </label>
+            </div>
+          ))}
+        </div>
 
         <RadioGroup className="mt-4" defaultValue="full-workout">
           <div className="flex items-center space-x-2">
