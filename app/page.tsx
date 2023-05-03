@@ -8,9 +8,6 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function Home() {
-  const [split, setSplit] = useState<CheckedState>(false);
-  const [bodyPart, setBodyPart] = useState<CheckedState>(false);
-
   const bodyParts = [
     "quads",
     "hamstrings",
@@ -26,10 +23,27 @@ export default function Home() {
     "abs",
   ];
 
+  const [split, setSplit] = useState<CheckedState>(false);
+  const [bodyPart, setBodyPart] = useState<CheckedState>(false);
+
+  const [formData, setFormData] = useState();
+
+  const handleChange = (e: any) => {
+    console.log("tets");
+    console.log(e.target);
+  };
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+  };
+
   return (
     <main className="mx-auto flex min-h-screen w-screen flex-col items-center p-5 sm:max-w-xs">
       <h1 className="text-3xl">Workout Generator</h1>
-      <div className="mt-4 rounded-md border-2 p-5 shadow-md">
+      <form
+        onSubmit={handleSubmit}
+        className="mt-4 rounded-md border-2 p-5 shadow-md"
+      >
         <div className="mb-4 flex justify-between">
           <Label className="text-xl">Select Workout Split</Label>
           <Checkbox className="my-auto" onCheckedChange={setSplit} />
@@ -80,8 +94,8 @@ export default function Home() {
         {bodyPart && (
           <div className="grid grid-cols-2 pb-4 pl-4">
             {bodyParts.map((bodyPart) => (
-              <div className="flex items-center space-x-2">
-                <Checkbox id={bodyPart} />
+              <div key={bodyPart} className="flex items-center space-x-2">
+                <Checkbox name={bodyPart} onCheckedChange={handleChange} />
                 <label
                   htmlFor={bodyPart}
                   className="text-sm font-medium capitalize leading-none"
@@ -95,8 +109,10 @@ export default function Home() {
 
         <div>Additional details:</div>
         <Textarea placeholder="ex. '6 sets total' 'high volume' 'I have a shoulder injury'" />
-        <Button className="mt-4">Submit</Button>
-      </div>
+        <Button type="submit" className="mt-4">
+          Submit
+        </Button>
+      </form>
       <div>Here is where the output will go</div>
     </main>
   );
