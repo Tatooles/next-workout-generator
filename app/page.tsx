@@ -7,26 +7,55 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function Home() {
-  const bodyParts = [
-    "quads",
-    "hamstrings",
-    "glutes",
-    "triceps",
-    "biceps",
-    "chest",
-    "lats",
-    "upper back",
-    "front delts",
-    "rear delts",
-    "side delts",
-    "abs",
-  ];
+type CheckboxValue =
+  | "quads"
+  | "hamstrings"
+  | "glutes"
+  | "triceps"
+  | "biceps"
+  | "chest"
+  | "lats"
+  | "upper back"
+  | "front delts"
+  | "rear delts"
+  | "side delts"
+  | "abs";
+const bodyParts: CheckboxValue[] = [
+  "quads",
+  "hamstrings",
+  "glutes",
+  "triceps",
+  "biceps",
+  "chest",
+  "lats",
+  "upper back",
+  "front delts",
+  "rear delts",
+  "side delts",
+  "abs",
+];
 
+export default function Home() {
   const [split, setSplit] = useState<CheckedState>(false);
   const [bodyPart, setBodyPart] = useState<CheckedState>(false);
 
   const [formData, setFormData] = useState();
+
+  const [checkboxes, setCheckboxes] = useState<CheckboxValue[]>([]);
+  const [radio, setRadio] = useState("");
+
+  const handleCheckboxChange = (value: CheckedState, part: CheckboxValue) => {
+    console.log(part, value);
+    if (value) {
+      if (checkboxes.includes(part)) {
+        setCheckboxes(checkboxes.filter((val) => val !== part));
+      } else {
+        setCheckboxes([...checkboxes, part]);
+      }
+    } else {
+      // Remove the body part from state
+    }
+  };
 
   const handleChange = (e: any) => {
     console.log("tets");
@@ -34,7 +63,9 @@ export default function Home() {
   };
 
   const handleSubmit = (e: any) => {
+    // TODO: Just ask chatGPT about this shit
     e.preventDefault();
+    console.log(checkboxes);
   };
 
   return (
@@ -93,9 +124,15 @@ export default function Home() {
         </div>
         {bodyPart && (
           <div className="grid grid-cols-2 pb-4 pl-4">
-            {bodyParts.map((bodyPart) => (
+            {bodyParts.map((bodyPart, index) => (
               <div key={bodyPart} className="flex items-center space-x-2">
-                <Checkbox name={bodyPart} onCheckedChange={handleChange} />
+                <Checkbox
+                  checked={checkboxes.includes(bodyPart)}
+                  name={bodyPart}
+                  onCheckedChange={(event) =>
+                    handleCheckboxChange(event, bodyPart)
+                  }
+                />
                 <label
                   htmlFor={bodyPart}
                   className="text-sm font-medium capitalize leading-none"
