@@ -42,30 +42,25 @@ export default function Home() {
   const [formData, setFormData] = useState();
 
   const [checkboxes, setCheckboxes] = useState<CheckboxValue[]>([]);
-  const [radio, setRadio] = useState("");
+  const [radioValue, setRadioValue] = useState("");
 
   const handleCheckboxChange = (value: CheckedState, part: CheckboxValue) => {
     console.log(part, value);
     if (value) {
-      if (checkboxes.includes(part)) {
-        setCheckboxes(checkboxes.filter((val) => val !== part));
-      } else {
-        setCheckboxes([...checkboxes, part]);
-      }
+      setCheckboxes([...checkboxes, part]);
     } else {
       // Remove the body part from state
+      setCheckboxes(checkboxes.filter((val) => val !== part));
     }
   };
 
-  const handleChange = (e: any) => {
-    console.log("tets");
-    console.log(e.target);
+  const handleRadioChange = (workout: string) => {
+    setRadioValue(workout);
   };
 
   const handleSubmit = (e: any) => {
-    // TODO: Just ask chatGPT about this shit
     e.preventDefault();
-    console.log(checkboxes);
+    console.log(checkboxes, radioValue);
   };
 
   return (
@@ -81,39 +76,52 @@ export default function Home() {
         </div>
 
         {split && (
-          <RadioGroup className="pb-4 pl-4" defaultValue="option-one">
+          <RadioGroup
+            className="pb-4 pl-4"
+            defaultValue="option-one"
+            onValueChange={handleRadioChange}
+          >
             <div className="flex flex-col gap-1">
               <Label className="text-md">Push Pull Legs Split</Label>
               <div className="flex gap-2">
-                <RadioGroupItem value="leg-workout" id="leg-workout" />
-                <Label htmlFor="leg-workout">Leg Workout</Label>
+                <RadioGroupItem value="leg workout" id="leg workout" />
+                <Label htmlFor="leg workout">Leg Workout</Label>
               </div>
               <div className="flex gap-2">
-                <RadioGroupItem value="push-workout" id="push-workout" />
-                <Label htmlFor="push-workout">Push Workout</Label>
+                <RadioGroupItem value="push workout" id="push workout" />
+                <Label htmlFor="push workout">Push Workout</Label>
               </div>
               <div className="flex gap-2">
-                <RadioGroupItem value="pull-workout" id="pull-workout" />
-                <Label htmlFor="pull-workout">Pull Workout</Label>
+                <RadioGroupItem value="pull workout" id="pull workout" />
+                <Label htmlFor="pull workout">Pull Workout</Label>
               </div>
             </div>
 
             <Label className="text-lg">Upper/Lower Split</Label>
             <div className="flex flex-col gap-1">
               <div className="flex gap-2">
-                <RadioGroupItem value="upper-workout" id="upper-workout" />
-                <Label htmlFor="upper-workout">Upper Workout</Label>
+                <RadioGroupItem
+                  value="upper body workout"
+                  id="upper body workout"
+                />
+                <Label htmlFor="upper body workout">Upper Workout</Label>
               </div>
               <div className="flex gap-2">
-                <RadioGroupItem value="lower-workout" id="lower-workout" />
-                <Label htmlFor="lower-workout">Lower Workout</Label>
+                <RadioGroupItem
+                  value="lower body workout"
+                  id="lower body workout"
+                />
+                <Label htmlFor="lower body workout">Lower Workout</Label>
               </div>
             </div>
 
             <Label className="text-lg">Other</Label>
             <div className="flex gap-2">
-              <RadioGroupItem value="option-one" id="option-one" />
-              <Label htmlFor="option-one">Full Body Workout</Label>
+              <RadioGroupItem
+                value="full body workout"
+                id="full body workout"
+              />
+              <Label htmlFor="full body workout">Full Body Workout</Label>
             </div>
           </RadioGroup>
         )}
