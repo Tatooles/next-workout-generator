@@ -42,7 +42,10 @@ export default function Home() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    console.log("formdata:", formData);
+    console.log("formData", formData);
+    // for (const p of formData) {
+    //   console.log(p);
+    // }
   };
 
   return (
