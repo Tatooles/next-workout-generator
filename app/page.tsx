@@ -39,28 +39,10 @@ export default function Home() {
   const [split, setSplit] = useState<CheckedState>(false);
   const [bodyPart, setBodyPart] = useState<CheckedState>(false);
 
-  const [formData, setFormData] = useState();
-
-  const [checkboxes, setCheckboxes] = useState<CheckboxValue[]>([]);
-  const [radioValue, setRadioValue] = useState("");
-
-  const handleCheckboxChange = (value: CheckedState, part: CheckboxValue) => {
-    console.log(part, value);
-    if (value) {
-      setCheckboxes([...checkboxes, part]);
-    } else {
-      // Remove the body part from state
-      setCheckboxes(checkboxes.filter((val) => val !== part));
-    }
-  };
-
-  const handleRadioChange = (workout: string) => {
-    setRadioValue(workout);
-  };
-
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(checkboxes, radioValue);
+    const formData = new FormData(e.target);
+    console.log("formdata:", formData);
   };
 
   return (
@@ -77,9 +59,9 @@ export default function Home() {
 
         {split && (
           <RadioGroup
+            name="workoutType"
             className="pb-4 pl-4"
             defaultValue="option-one"
-            onValueChange={handleRadioChange}
           >
             <div className="flex flex-col gap-1">
               <Label className="text-md">Push Pull Legs Split</Label>
@@ -134,13 +116,7 @@ export default function Home() {
           <div className="grid grid-cols-2 pb-4 pl-4">
             {bodyParts.map((bodyPart, index) => (
               <div key={bodyPart} className="flex items-center space-x-2">
-                <Checkbox
-                  checked={checkboxes.includes(bodyPart)}
-                  name={bodyPart}
-                  onCheckedChange={(event) =>
-                    handleCheckboxChange(event, bodyPart)
-                  }
-                />
+                <Checkbox name={bodyPart} />
                 <label
                   htmlFor={bodyPart}
                   className="text-sm font-medium capitalize leading-none"
@@ -153,7 +129,10 @@ export default function Home() {
         )}
 
         <div>Additional details:</div>
-        <Textarea placeholder="ex. '6 sets total' 'high volume' 'I have a shoulder injury'" />
+        <Textarea
+          name="additionalDetails"
+          placeholder="ex. '6 sets total' 'high volume' 'I have a shoulder injury'"
+        />
         <Button type="submit" className="mt-4">
           Submit
         </Button>
