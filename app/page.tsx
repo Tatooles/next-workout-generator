@@ -39,13 +39,23 @@ export default function Home() {
   const [split, setSplit] = useState<CheckedState>(false);
   const [bodyPart, setBodyPart] = useState<CheckedState>(false);
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    console.log("formData", formData);
-    // for (const p of formData) {
-    //   console.log(p);
-    // }
+
+    const bodyParts = [];
+    for (const p of formData) {
+      if (p[1] == "on") bodyParts.push(p[0]);
+    }
+
+    const response = await fetch("/api/gpt", {
+      method: "POST",
+      body: JSON.stringify({
+        bodyParts: bodyParts,
+        workoutType: formData.get("workoutType"),
+        additionalDetails: formData.get("additionalDetails"),
+      }),
+    });
   };
 
   return (
