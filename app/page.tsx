@@ -39,6 +39,8 @@ export default function Home() {
   const [split, setSplit] = useState<CheckedState>(false);
   const [bodyPart, setBodyPart] = useState<CheckedState>(false);
 
+  const [answer, setAnswer] = useState("");
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -56,6 +58,10 @@ export default function Home() {
         additionalDetails: formData.get("additionalDetails"),
       }),
     });
+
+    const data = await response.json();
+
+    setAnswer(data.message);
   };
 
   return (
@@ -150,7 +156,7 @@ export default function Home() {
           Submit
         </Button>
       </form>
-      <div>Here is where the output will go</div>
+      <div className="mt-4">{answer}</div>
     </main>
   );
 }
