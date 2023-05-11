@@ -156,7 +156,7 @@ export default function Home() {
           Submit
         </Button>
       </form>
-      <div className="mt-4">{answer}</div>
+      <div className="mt-4 whitespace-pre-line">{answer}</div>
     </main>
   );
 }

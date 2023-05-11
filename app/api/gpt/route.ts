@@ -17,7 +17,7 @@ export async function POST(request: Request) {
           content: prompt,
         },
       ],
-      temperature: 0.6,
+      temperature: 0.8,
     });
     return new Response(
       JSON.stringify({ message: completion.data.choices[0].message?.content })
@@ -29,9 +29,12 @@ export async function POST(request: Request) {
 }
 
 function constructPrompt(userInformation: any) {
-  if (userInformation.additionalDetails) {
-    return userInformation.additionalDetails;
-  } else {
-    return "give me a random exercise";
+  let prompt = "";
+  if (userInformation.workoutType) {
+    prompt = `Generate a ${userInformation.workoutType} for me`;
   }
+  if (userInformation.additionalDetails) {
+    prompt += `Here are some additional details: ${userInformation.additionalDetails}`;
+  }
+  return prompt;
 }
