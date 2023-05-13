@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import Response from "./response";
 
 type CheckboxValue =
   | "quads"
@@ -41,6 +42,8 @@ export default function Home() {
 
   const [answer, setAnswer] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -50,6 +53,7 @@ export default function Home() {
       if (p[1] == "on") bodyParts.push(p[0]);
     }
 
+    setLoading(true);
     const response = await fetch("/api/gpt", {
       method: "POST",
       body: JSON.stringify({
@@ -58,6 +62,7 @@ export default function Home() {
         additionalDetails: formData.get("additionalDetails"),
       }),
     });
+    setLoading(false);
 
     const data = await response.json();
 
@@ -65,11 +70,11 @@ export default function Home() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-screen flex-col items-center p-5 sm:max-w-xs">
+    <main className="mx-auto flex min-h-screen w-screen flex-col items-center py-5 sm:max-w-xs">
       <h1 className="text-3xl">Workout Generator</h1>
       <form
         onSubmit={handleSubmit}
-        className="mt-4 rounded-md border-2 p-5 shadow-md"
+        className="mt-4 w-11/12 rounded-md border-2 p-5 shadow-md"
       >
         <div className="mb-4 flex justify-between">
           <Label className="text-xl">Select Workout Split</Label>
@@ -156,7 +161,7 @@ export default function Home() {
           Submit
         </Button>
       </form>
-      <div className="mt-4 whitespace-pre-line">{answer}</div>
+      <Response answer={answer} loading={loading}></Response>
     </main>
   );
 }
