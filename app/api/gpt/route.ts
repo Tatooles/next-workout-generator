@@ -51,5 +51,13 @@ function constructPrompt(userInformation: any) {
   if (userInformation.additionalDetails) {
     prompt += ` Here are some additional details: ${userInformation.additionalDetails}`;
   }
+
+  // Specify format of output
+  prompt += `The workout should be in this format:
+              Exercise 1: sets x reps
+              Exercise 2: sets x reps
+              Exercise 3: sets x reps
+              etc.`;
+
   return prompt;
 }
