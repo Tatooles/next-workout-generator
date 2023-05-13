@@ -1,18 +1,10 @@
-import { Configuration, OpenAIApi } from "openai";
-
 export const runtime = "edge";
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
 
 export async function POST(request: Request) {
   const body = await request.json();
   const prompt = constructPrompt(body);
-  console.log(prompt);
   try {
-    const completion = await openai.createChatCompletion({
+    const payload = {
       model: "gpt-3.5-turbo",
       messages: [
         {
@@ -21,9 +13,20 @@ export async function POST(request: Request) {
         },
       ],
       temperature: 0.8,
+    };
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}`,
+      },
+      method: "POST",
+      body: JSON.stringify(payload),
     });
+
+    const data = await response.json();
     return new Response(
-      JSON.stringify({ message: completion.data.choices[0].message?.content })
+      JSON.stringify({ message: data.choices[0].message?.content })
     );
   } catch (error) {
     console.log("An error ocurred!");
