@@ -7,7 +7,7 @@ export default function Response({
 }) {
   return (
     <div className="mt-4 w-11/12 whitespace-pre-line rounded-md border-2 p-5">
-      {answer}
+      {!loading && answer}
       {loading && <div>Loading...</div>}
     </div>
   );
