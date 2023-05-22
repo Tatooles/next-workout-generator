@@ -74,7 +74,7 @@ export default function Home() {
       <h1 className="text-3xl">Workout Generator</h1>
       <form
         onSubmit={handleSubmit}
-        className="mt-4 w-11/12 rounded-md border-2 p-5 shadow-md"
+        className="mt-4 flex w-11/12 flex-col rounded-md border-2 p-5 shadow-md"
       >
         <div className="mb-4 flex justify-between">
           <Label className="text-xl">Select Workout Split</Label>
@@ -157,7 +157,7 @@ export default function Home() {
           name="additionalDetails"
           placeholder="ex. '6 sets total' 'high volume' 'I have a shoulder injury'"
         />
-        <Button type="submit" className="mt-4">
+        <Button type="submit" className="mx-auto mt-4">
           Submit
         </Button>
       </form>
