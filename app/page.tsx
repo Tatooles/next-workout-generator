@@ -155,7 +155,7 @@ export default function Home() {
         <div>Additional details:</div>
         <Textarea
           name="additionalDetails"
-          placeholder="ex. '6 sets total' 'high volume' 'I have a shoulder injury'"
+          placeholder="e.g. '6 sets total,' 'high volume,' 'I have a shoulder injury'"
         />
         <Button type="submit" className="mx-auto mt-4">
           Submit
