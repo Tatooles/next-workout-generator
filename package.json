@@ -35,6 +35,6 @@
     "prettier-plugin-tailwindcss": "^0.2.8"
   },
   "engines": {
-    "node": "22.x"
+    "node": ">=22"
   }
 }
