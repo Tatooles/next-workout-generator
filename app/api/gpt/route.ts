@@ -26,16 +26,17 @@ export async function POST(request: Request) {
 
     const data = await response.json();
     return new Response(
-      JSON.stringify({ message: data.choices[0].message?.content })
+      JSON.stringify({ message: data.choices?.[0]?.message?.content || "No response" })
     );
   } catch (error) {
     console.log("An error ocurred!");
     if (error instanceof Error) console.log(error.message);
+    return new Response(JSON.stringify({ error: "Failed to generate workout" }), { status: 500 });
   }
 }
 
 function constructPrompt(userInformation: any) {
-  console.log(userInformation);
+  console.log("Information from user:", userInformation);
   let prompt = "";
   if (userInformation.workoutType) {
     prompt = `Generate a ${userInformation.workoutType} for me `;
