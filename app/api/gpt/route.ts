@@ -1,5 +1,11 @@
 export const runtime = "edge";
 
+interface UserInformation {
+  bodyParts: string[];
+  workoutType?: string | null;
+  additionalDetails?: string | null;
+}
+
 export async function POST(request: Request) {
   const body = await request.json();
   const prompt = constructPrompt(body);
@@ -47,7 +53,7 @@ export async function POST(request: Request) {
   }
 }
 
-function constructPrompt(userInformation: any) {
+function constructPrompt(userInformation: UserInformation) {
   console.log("Information from user:", userInformation);
   let prompt = "";
   if (userInformation.workoutType) {
