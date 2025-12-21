@@ -44,9 +44,9 @@ export default function Home() {
 
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
 
     const bodyParts = [];
     for (const p of formData) {
@@ -138,12 +138,12 @@ export default function Home() {
         </div>
         {bodyPart && (
           <div className="grid grid-cols-2 pb-4 pl-4">
-            {bodyParts.map((bodyPart, index) => (
+            {bodyParts.map((bodyPart) => (
               <div key={bodyPart} className="flex items-center space-x-2">
                 <Checkbox name={bodyPart} />
                 <label
                   htmlFor={bodyPart}
-                  className="text-sm font-medium capitalize leading-none"
+                  className="text-sm leading-none font-medium capitalize"
                 >
                   {bodyPart}
                 </label>

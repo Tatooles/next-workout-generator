@@ -1,5 +1,11 @@
 export const runtime = "edge";
 
+interface UserInformation {
+  bodyParts: string[];
+  workoutType?: string | null;
+  additionalDetails?: string | null;
+}
+
 export async function POST(request: Request) {
   const body = await request.json();
   const prompt = constructPrompt(body);
@@ -25,17 +31,30 @@ export async function POST(request: Request) {
     });
 
     const data = await response.json();
+
+    if (data.error) {
+      console.error("OpenAI API Error:", data.error);
+      return new Response("OpenAI API error", {
+        status: response.status || 500,
+      });
+    }
+
     return new Response(
-      JSON.stringify({ message: data.choices[0].message?.content })
+      JSON.stringify({
+        message: data.choices?.[0]?.message?.content || "No response",
+      }),
     );
   } catch (error) {
-    console.log("An error ocurred!");
-    if (error instanceof Error) console.log(error.message);
+    console.log("An error ocurred!", error);
+    return new Response(
+      JSON.stringify({ error: "Failed to generate workout" }),
+      { status: 500 },
+    );
   }
 }
 
-function constructPrompt(userInformation: any) {
-  console.log(userInformation);
+function constructPrompt(userInformation: UserInformation) {
+  console.log("Information from user:", userInformation);
   let prompt = "";
   if (userInformation.workoutType) {
     prompt = `Generate a ${userInformation.workoutType} for me `;
