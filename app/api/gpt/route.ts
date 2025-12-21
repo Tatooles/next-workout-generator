@@ -25,21 +25,25 @@ export async function POST(request: Request) {
     });
 
     const data = await response.json();
-    
+
     if (data.error) {
       console.error("OpenAI API Error:", data.error);
-      return new Response(
-        "OpenAI API error", 
-        { status: response.status || 500 }
-      );
+      return new Response("OpenAI API error", {
+        status: response.status || 500,
+      });
     }
-    
+
     return new Response(
-      JSON.stringify({ message: data.choices?.[0]?.message?.content || "No response" })
+      JSON.stringify({
+        message: data.choices?.[0]?.message?.content || "No response",
+      }),
     );
   } catch (error) {
     console.log("An error ocurred!", error);
-    return new Response(JSON.stringify({ error: "Failed to generate workout" }), { status: 500 });
+    return new Response(
+      JSON.stringify({ error: "Failed to generate workout" }),
+      { status: 500 },
+    );
   }
 }
 

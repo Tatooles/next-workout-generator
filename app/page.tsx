@@ -143,7 +143,7 @@ export default function Home() {
                 <Checkbox name={bodyPart} />
                 <label
                   htmlFor={bodyPart}
-                  className="text-sm font-medium capitalize leading-none"
+                  className="text-sm leading-none font-medium capitalize"
                 >
                   {bodyPart}
                 </label>
