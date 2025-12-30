@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   const prompt = constructPrompt(body);
   try {
     const payload = {
-      model: "gpt-3.5-turbo",
+      model: "openai/gpt-3.5-turbo",
       messages: [
         {
           role: "user",
@@ -21,20 +21,26 @@ export async function POST(request: Request) {
       temperature: 0.8,
     };
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}`,
+    const response = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY ?? ""}`,
+          "HTTP-Referer":
+            process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+          "X-Title": "Workout Generator",
+        },
+        method: "POST",
+        body: JSON.stringify(payload),
       },
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
+    );
 
     const data = await response.json();
 
     if (data.error) {
-      console.error("OpenAI API Error:", data.error);
-      return new Response("OpenAI API error", {
+      console.error("OpenRouter API Error:", data.error);
+      return new Response("OpenRouter API error", {
         status: response.status || 500,
       });
     }
