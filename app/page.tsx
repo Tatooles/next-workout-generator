@@ -54,7 +54,7 @@ export default function Home() {
     }
 
     setLoading(true);
-    const response = await fetch("/api/gpt", {
+    const response = await fetch("/api/workout", {
       method: "POST",
       body: JSON.stringify({
         bodyParts: bodyParts,
