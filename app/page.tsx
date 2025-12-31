@@ -162,7 +162,7 @@ export default function Home() {
           <RadioGroup
             name="model"
             className="pb-4 pl-4"
-            defaultValue="anthropic/claude-3.5-haiku"
+            defaultValue="google/gemini-3-flash-preview"
           >
             <div className="flex flex-col gap-2">
               <div className="flex gap-2">
@@ -171,7 +171,7 @@ export default function Home() {
                   id="gemini-3-flash"
                 />
                 <Label htmlFor="gemini-3-flash" className="text-sm">
-                  Gemini 3 Flash Preview
+                  Gemini 3 Flash Preview (Default)
                 </Label>
               </div>
               <div className="flex gap-2">
@@ -213,7 +213,7 @@ export default function Home() {
                   id="claude-3.5-haiku"
                 />
                 <Label htmlFor="claude-3.5-haiku" className="text-sm">
-                  Claude 3.5 Haiku (Default)
+                  Claude 3.5 Haiku
                 </Label>
               </div>
             </div>

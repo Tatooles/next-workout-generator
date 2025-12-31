@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const prompt = constructPrompt(body);
   try {
     const payload = {
-      model: body.model || "anthropic/claude-3.5-haiku",
+      model: body.model || "google/gemini-3-flash-preview",
       messages: [
         {
           role: "user",
