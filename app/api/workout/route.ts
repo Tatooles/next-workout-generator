@@ -4,6 +4,7 @@ interface UserInformation {
   bodyParts: string[];
   workoutType?: string | null;
   additionalDetails?: string | null;
+  model?: string | null;
 }
 
 export async function POST(request: Request) {
@@ -11,7 +12,7 @@ export async function POST(request: Request) {
   const prompt = constructPrompt(body);
   try {
     const payload = {
-      model: "anthropic/claude-3.5-haiku",
+      model: body.model || "anthropic/claude-3.5-haiku",
       messages: [
         {
           role: "user",
