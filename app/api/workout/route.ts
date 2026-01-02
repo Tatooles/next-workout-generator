@@ -1,17 +1,44 @@
 export const runtime = "edge";
 
+// Allowlist of permitted AI models
+const ALLOWED_MODELS = [
+  "google/gemini-3-flash-preview",
+  "meta-llama/llama-3.3-70b-instruct:free",
+  "openai/gpt-4o-mini",
+  "anthropic/claude-3-haiku",
+  "deepseek/deepseek-chat",
+  "anthropic/claude-3.5-haiku",
+] as const;
+
+const DEFAULT_MODEL = "google/gemini-3-flash-preview";
+
 interface UserInformation {
   bodyParts: string[];
   workoutType?: string | null;
   additionalDetails?: string | null;
+  model?: string | null;
 }
 
 export async function POST(request: Request) {
   const body = await request.json();
   const prompt = constructPrompt(body);
+
+  // Validate model against allowlist
+  const requestedModel = body.model || DEFAULT_MODEL;
+  if (
+    !ALLOWED_MODELS.includes(requestedModel as (typeof ALLOWED_MODELS)[number])
+  ) {
+    return new Response(
+      JSON.stringify({
+        error: "Invalid model specified. Please select a valid model.",
+      }),
+      { status: 400 },
+    );
+  }
+
   try {
     const payload = {
-      model: "anthropic/claude-3.5-haiku",
+      model: requestedModel,
       messages: [
         {
           role: "user",

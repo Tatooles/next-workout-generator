@@ -39,6 +39,7 @@ const bodyParts: CheckboxValue[] = [
 export default function Home() {
   const [split, setSplit] = useState<CheckedState>(false);
   const [bodyPart, setBodyPart] = useState<CheckedState>(false);
+  const [modelPicker, setModelPicker] = useState<CheckedState>(false);
 
   const [answer, setAnswer] = useState("");
 
@@ -60,6 +61,7 @@ export default function Home() {
         bodyParts: bodyParts,
         workoutType: formData.get("workoutType"),
         additionalDetails: formData.get("additionalDetails"),
+        model: formData.get("model"),
       }),
     });
     setLoading(false);
@@ -150,6 +152,72 @@ export default function Home() {
               </div>
             ))}
           </div>
+        )}
+
+        <div className="mb-4 flex justify-between">
+          <Label className="text-xl">Select AI Model</Label>
+          <Checkbox className="my-auto" onCheckedChange={setModelPicker} />
+        </div>
+        {modelPicker && (
+          <RadioGroup
+            name="model"
+            className="pb-4 pl-4"
+            defaultValue="google/gemini-3-flash-preview"
+          >
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <RadioGroupItem
+                  value="google/gemini-3-flash-preview"
+                  id="gemini-3-flash"
+                />
+                <Label htmlFor="gemini-3-flash" className="text-sm">
+                  Gemini 3 Flash Preview (Default)
+                </Label>
+              </div>
+              <div className="flex gap-2">
+                <RadioGroupItem
+                  value="meta-llama/llama-3.3-70b-instruct:free"
+                  id="llama-3.3-70b"
+                />
+                <Label htmlFor="llama-3.3-70b" className="text-sm">
+                  Llama 3.3 70B
+                </Label>
+              </div>
+              <div className="flex gap-2">
+                <RadioGroupItem value="openai/gpt-4o-mini" id="gpt-4o-mini" />
+                <Label htmlFor="gpt-4o-mini" className="text-sm">
+                  GPT-4o Mini
+                </Label>
+              </div>
+              <div className="flex gap-2">
+                <RadioGroupItem
+                  value="anthropic/claude-3-haiku"
+                  id="claude-3-haiku"
+                />
+                <Label htmlFor="claude-3-haiku" className="text-sm">
+                  Claude 3 Haiku
+                </Label>
+              </div>
+              <div className="flex gap-2">
+                <RadioGroupItem
+                  value="deepseek/deepseek-chat"
+                  id="deepseek-v3"
+                />
+                <Label htmlFor="deepseek-v3" className="text-sm">
+                  DeepSeek V3
+                </Label>
+              </div>
+              <div className="flex gap-2">
+                <RadioGroupItem
+                  value="anthropic/claude-3.5-haiku"
+                  id="claude-3.5-haiku"
+                />
+                <Label htmlFor="claude-3.5-haiku" className="text-sm">
+                  Claude 3.5 Haiku
+                </Label>
+              </div>
+            </div>
+          </RadioGroup>
         )}
 
         <div>Additional details:</div>
