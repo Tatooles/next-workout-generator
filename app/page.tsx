@@ -6,7 +6,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import Response from "./response";
 
 type CheckboxValue =
   | "quads"
@@ -259,7 +258,9 @@ export default function Home() {
           Submit
         </Button>
       </form>
-      <Response answer={answer} loading={loading}></Response>
+      <div className="mt-4 w-11/12 rounded-md border-2 p-5 whitespace-pre-line">
+        {answer}
+      </div>
     </main>
   );
 }
