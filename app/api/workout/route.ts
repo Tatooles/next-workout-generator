@@ -46,6 +46,7 @@ export async function POST(request: Request) {
         },
       ],
       temperature: 0.8,
+      stream: true,
     };
 
     const response = await fetch(
@@ -64,20 +65,83 @@ export async function POST(request: Request) {
       },
     );
 
-    const data = await response.json();
-
-    if (data.error) {
-      console.error("OpenRouter API Error:", data.error);
+    if (!response.ok) {
+      console.error("OpenRouter API Error:", response.status);
       return new Response("OpenRouter API error", {
         status: response.status || 500,
       });
     }
 
-    return new Response(
-      JSON.stringify({
-        message: data.choices?.[0]?.message?.content || "No response",
-      }),
-    );
+    // Create a ReadableStream to forward the streaming response
+    const stream = new ReadableStream({
+      async start(controller) {
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+
+        if (!reader) {
+          controller.close();
+          return;
+        }
+
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+
+            if (done) {
+              controller.close();
+              break;
+            }
+
+            // Decode the chunk
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split("\n");
+
+            for (const line of lines) {
+              const trimmedLine = line.trim();
+
+              // Skip empty lines
+              if (!trimmedLine) continue;
+
+              // Check for the done signal
+              if (trimmedLine === "data: [DONE]") {
+                controller.close();
+                return;
+              }
+
+              // Parse SSE data
+              if (trimmedLine.startsWith("data: ")) {
+                try {
+                  const jsonStr = trimmedLine.slice(6); // Remove "data: " prefix
+                  const data = JSON.parse(jsonStr);
+
+                  // Extract the content delta
+                  const content = data.choices?.[0]?.delta?.content;
+
+                  if (content) {
+                    // Send the content token to the client
+                    controller.enqueue(new TextEncoder().encode(content));
+                  }
+                } catch (e) {
+                  // Skip invalid JSON lines
+                  console.error("Failed to parse SSE line:", e);
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Stream reading error:", error);
+          controller.error(error);
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      },
+    });
   } catch (error) {
     console.log("An error ocurred!", error);
     return new Response(

@@ -55,20 +55,50 @@ export default function Home() {
     }
 
     setLoading(true);
-    const response = await fetch("/api/workout", {
-      method: "POST",
-      body: JSON.stringify({
-        bodyParts: bodyParts,
-        workoutType: formData.get("workoutType"),
-        additionalDetails: formData.get("additionalDetails"),
-        model: formData.get("model"),
-      }),
-    });
-    setLoading(false);
+    setAnswer(""); // Clear previous answer before starting stream
 
-    const data = await response.json();
+    try {
+      const response = await fetch("/api/workout", {
+        method: "POST",
+        body: JSON.stringify({
+          bodyParts: bodyParts,
+          workoutType: formData.get("workoutType"),
+          additionalDetails: formData.get("additionalDetails"),
+          model: formData.get("model"),
+        }),
+      });
 
-    setAnswer(data.message);
+      if (!response.ok) {
+        throw new Error("Failed to generate workout");
+      }
+
+      // Get the reader from the response body stream
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) {
+        throw new Error("No response body");
+      }
+
+      setLoading(false);
+
+      // Read the stream
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          break;
+        }
+
+        // Decode the chunk and append to answer
+        const chunk = decoder.decode(value, { stream: true });
+        setAnswer((prev) => prev + chunk);
+      }
+    } catch (error) {
+      console.error("Error streaming response:", error);
+      setLoading(false);
+      setAnswer("Failed to generate workout. Please try again.");
+    }
   };
 
   return (
