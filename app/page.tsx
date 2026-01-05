@@ -6,7 +6,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import Response from "./response";
 
 type CheckboxValue =
   | "quads"
@@ -55,20 +54,50 @@ export default function Home() {
     }
 
     setLoading(true);
-    const response = await fetch("/api/workout", {
-      method: "POST",
-      body: JSON.stringify({
-        bodyParts: bodyParts,
-        workoutType: formData.get("workoutType"),
-        additionalDetails: formData.get("additionalDetails"),
-        model: formData.get("model"),
-      }),
-    });
-    setLoading(false);
+    setAnswer(""); // Clear previous answer before starting stream
 
-    const data = await response.json();
+    try {
+      const response = await fetch("/api/workout", {
+        method: "POST",
+        body: JSON.stringify({
+          bodyParts: bodyParts,
+          workoutType: formData.get("workoutType"),
+          additionalDetails: formData.get("additionalDetails"),
+          model: formData.get("model"),
+        }),
+      });
 
-    setAnswer(data.message);
+      if (!response.ok) {
+        throw new Error("Failed to generate workout");
+      }
+
+      // Get the reader from the response body stream
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) {
+        throw new Error("No response body");
+      }
+
+      setLoading(false);
+
+      // Read the stream
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          break;
+        }
+
+        // Decode the chunk and append to answer
+        const chunk = decoder.decode(value, { stream: true });
+        setAnswer((prev) => prev + chunk);
+      }
+    } catch (error) {
+      console.error("Error streaming response:", error);
+      setLoading(false);
+      setAnswer("Failed to generate workout. Please try again.");
+    }
   };
 
   return (
@@ -229,7 +258,9 @@ export default function Home() {
           Submit
         </Button>
       </form>
-      <Response answer={answer} loading={loading}></Response>
+      <div className="mt-4 w-11/12 rounded-md border-2 p-5 whitespace-pre-line">
+        {answer}
+      </div>
     </main>
   );
 }
