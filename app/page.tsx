@@ -152,7 +152,7 @@ export default function Home() {
                   <Label className="text-base font-semibold">
                     Push Pull Legs Split
                   </Label>
-                  <div className="grid gap-2 pl-6">
+                  <div className="grid gap-2">
                     {[
                       {
                         value: "leg workout",
@@ -189,7 +189,7 @@ export default function Home() {
                   <Label className="text-base font-semibold">
                     Upper/Lower Split
                   </Label>
-                  <div className="grid gap-2 pl-6">
+                  <div className="grid gap-2">
                     {[
                       {
                         value: "upper body workout",
@@ -220,7 +220,7 @@ export default function Home() {
                 {/* Other */}
                 <div className="space-y-3 pt-4">
                   <Label className="text-base font-semibold">Other</Label>
-                  <div className="grid gap-2 pl-6">
+                  <div className="grid gap-2">
                     <label
                       htmlFor="full body workout"
                       className="hover:bg-accent flex cursor-pointer items-center space-x-3 rounded-lg border p-4 transition-colors"
@@ -257,7 +257,7 @@ export default function Home() {
                       <Label className="text-base font-semibold capitalize">
                         {category}
                       </Label>
-                      <div className="grid grid-cols-1 gap-3 pl-4 sm:grid-cols-2">
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         {categoryMuscles.map((bodyPart) => {
                           const config = muscleGroupConfig[bodyPart];
                           const isSelected =
