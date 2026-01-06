@@ -1,69 +1,65 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CheckedState } from "@radix-ui/react-checkbox";
 import { Textarea } from "@/components/ui/textarea";
-
-type CheckboxValue =
-  | "quads"
-  | "hamstrings"
-  | "glutes"
-  | "triceps"
-  | "biceps"
-  | "chest"
-  | "lats"
-  | "upper back"
-  | "front delts"
-  | "rear delts"
-  | "side delts"
-  | "abs";
-const bodyParts: CheckboxValue[] = [
-  "quads",
-  "hamstrings",
-  "glutes",
-  "triceps",
-  "biceps",
-  "chest",
-  "lats",
-  "upper back",
-  "front delts",
-  "rear delts",
-  "side delts",
-  "abs",
-];
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ModelSelector } from "@/components/model-selector";
+import { WorkoutPreview } from "@/components/workout-preview";
+import {
+  muscleGroups,
+  muscleGroupConfig,
+  type MuscleGroup,
+  type WorkoutType,
+} from "@/lib/muscle-groups";
+import { BicepsFlexed, Dumbbell, Zap } from "lucide-react";
 
 export default function Home() {
-  const [split, setSplit] = useState<CheckedState>(false);
-  const [bodyPart, setBodyPart] = useState<CheckedState>(false);
-  const [modelPicker, setModelPicker] = useState<CheckedState>(false);
-
+  const [workoutType, setWorkoutType] = useState<WorkoutType | null>(null);
+  const [selectedBodyParts, setSelectedBodyParts] = useState<MuscleGroup[]>([]);
+  const [additionalDetails, setAdditionalDetails] = useState("");
+  const [model, setModel] = useState("google/gemini-3-flash-preview");
   const [answer, setAnswer] = useState("");
-
   const [loading, setLoading] = useState(false);
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to results when answer appears
+  useEffect(() => {
+    if (answer && resultsRef.current) {
+      setTimeout(() => {
+        resultsRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }
+  }, [answer]);
+
+  const handleBodyPartToggle = (bodyPart: MuscleGroup, checked: boolean) => {
+    if (checked) {
+      setSelectedBodyParts([...selectedBodyParts, bodyPart]);
+    } else {
+      setSelectedBodyParts(selectedBodyParts.filter((bp) => bp !== bodyPart));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-
-    const bodyParts = [];
-    for (const p of formData) {
-      if (p[1] == "on") bodyParts.push(p[0]);
-    }
 
     setLoading(true);
-    setAnswer(""); // Clear previous answer before starting stream
+    setAnswer("");
 
     try {
       const response = await fetch("/api/workout", {
         method: "POST",
         body: JSON.stringify({
-          bodyParts: bodyParts,
-          workoutType: formData.get("workoutType"),
-          additionalDetails: formData.get("additionalDetails"),
-          model: formData.get("model"),
+          bodyParts: selectedBodyParts,
+          workoutType: workoutType,
+          additionalDetails: additionalDetails || null,
+          model: model,
         }),
       });
 
@@ -71,7 +67,6 @@ export default function Home() {
         throw new Error("Failed to generate workout");
       }
 
-      // Get the reader from the response body stream
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
 
@@ -81,7 +76,6 @@ export default function Home() {
 
       setLoading(false);
 
-      // Read the stream
       while (true) {
         const { done, value } = await reader.read();
 
@@ -89,7 +83,6 @@ export default function Home() {
           break;
         }
 
-        // Decode the chunk and append to answer
         const chunk = decoder.decode(value, { stream: true });
         setAnswer((prev) => prev + chunk);
       }
@@ -100,166 +93,268 @@ export default function Home() {
     }
   };
 
+  const canSubmit = workoutType || selectedBodyParts.length > 0;
+
   return (
-    <main className="mx-auto flex min-h-screen w-screen flex-col items-center py-5 sm:max-w-xs">
-      <h1 className="text-3xl">Workout Generator</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="mt-4 flex w-11/12 flex-col rounded-md border-2 p-5 shadow-md"
-      >
-        <div className="mb-4 flex justify-between">
-          <Label className="text-xl">Select Workout Split</Label>
-          <Checkbox className="my-auto" onCheckedChange={setSplit} />
+    <main className="bg-background min-h-screen">
+      <div className="container mx-auto max-w-4xl px-4 py-6 sm:py-8">
+        {/* Header */}
+        <div className="mb-6 flex items-center justify-between sm:mb-8">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full sm:h-12 sm:w-12">
+              <Dumbbell className="text-primary h-5 w-5 sm:h-6 sm:w-6" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                Workout Generator
+              </h1>
+              <p className="text-muted-foreground text-xs sm:text-sm">
+                AI-powered personalized workouts
+              </p>
+            </div>
+          </div>
+          <ModelSelector value={model} onValueChange={setModel} />
         </div>
 
-        {split && (
-          <RadioGroup
-            name="workoutType"
-            className="pb-4 pl-4"
-            defaultValue="option-one"
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Main Content - Tabs */}
+          <Tabs defaultValue="split" className="w-full">
+            <TabsList className="grid h-auto w-full grid-cols-2">
+              <TabsTrigger
+                value="split"
+                className="flex items-center gap-1.5 py-2.5 text-sm sm:gap-2 sm:py-3"
+              >
+                <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="xs:inline hidden">Workout Split</span>
+                <span className="xs:hidden">Split</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="bodyparts"
+                className="flex items-center gap-1.5 py-2.5 text-sm sm:gap-2 sm:py-3"
+              >
+                <BicepsFlexed className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="xs:inline hidden">Specific Muscles</span>
+                <span className="xs:hidden">Muscles</span>
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Split Workout Tab */}
+            <TabsContent value="split" className="mt-6 space-y-4">
+              <div className="text-muted-foreground mb-4 text-sm">
+                Choose a structured workout split
+              </div>
+              <RadioGroup
+                value={workoutType || ""}
+                onValueChange={(value) => setWorkoutType(value as WorkoutType)}
+              >
+                {/* Push Pull Legs */}
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold">
+                    Push Pull Legs Split
+                  </Label>
+                  <div className="grid gap-2 pl-6">
+                    {[
+                      {
+                        value: "leg workout",
+                        label: "Leg Workout",
+                      },
+                      {
+                        value: "push workout",
+                        label: "Push Workout",
+                      },
+                      {
+                        value: "pull workout",
+                        label: "Pull Workout",
+                      },
+                    ].map((option) => (
+                      <label
+                        key={option.value}
+                        htmlFor={option.value}
+                        className="hover:bg-accent flex cursor-pointer items-center space-x-3 rounded-lg border p-4 transition-colors"
+                      >
+                        <RadioGroupItem
+                          value={option.value}
+                          id={option.value}
+                        />
+                        <span className="flex-1 font-medium">
+                          {option.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Upper/Lower Split */}
+                <div className="space-y-3 pt-4">
+                  <Label className="text-base font-semibold">
+                    Upper/Lower Split
+                  </Label>
+                  <div className="grid gap-2 pl-6">
+                    {[
+                      {
+                        value: "upper body workout",
+                        label: "Upper Body Workout",
+                      },
+                      {
+                        value: "lower body workout",
+                        label: "Lower Body Workout",
+                      },
+                    ].map((option) => (
+                      <label
+                        key={option.value}
+                        htmlFor={option.value}
+                        className="hover:bg-accent flex cursor-pointer items-center space-x-3 rounded-lg border p-4 transition-colors"
+                      >
+                        <RadioGroupItem
+                          value={option.value}
+                          id={option.value}
+                        />
+                        <span className="flex-1 font-medium">
+                          {option.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Other */}
+                <div className="space-y-3 pt-4">
+                  <Label className="text-base font-semibold">Other</Label>
+                  <div className="grid gap-2 pl-6">
+                    <label
+                      htmlFor="full body workout"
+                      className="hover:bg-accent flex cursor-pointer items-center space-x-3 rounded-lg border p-4 transition-colors"
+                    >
+                      <RadioGroupItem
+                        value="full body workout"
+                        id="full body workout"
+                      />
+                      <span className="flex-1 font-medium">
+                        Full Body Workout
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </RadioGroup>
+            </TabsContent>
+
+            {/* Body Parts Tab */}
+            <TabsContent value="bodyparts" className="mt-6 space-y-4">
+              <div className="text-muted-foreground mb-4 text-sm">
+                Select specific muscle groups to target
+              </div>
+
+              {/* Group by category */}
+              {["legs", "upper", "arms", "shoulders", "core"].map(
+                (category) => {
+                  const categoryMuscles = muscleGroups.filter(
+                    (muscle) => muscleGroupConfig[muscle].category === category,
+                  );
+                  if (categoryMuscles.length === 0) return null;
+
+                  return (
+                    <div key={category} className="space-y-3">
+                      <Label className="text-base font-semibold capitalize">
+                        {category}
+                      </Label>
+                      <div className="grid grid-cols-1 gap-3 pl-4 sm:grid-cols-2">
+                        {categoryMuscles.map((bodyPart) => {
+                          const config = muscleGroupConfig[bodyPart];
+                          const isSelected =
+                            selectedBodyParts.includes(bodyPart);
+
+                          return (
+                            <label
+                              key={bodyPart}
+                              className={`flex cursor-pointer items-center space-x-3 rounded-lg border p-3 transition-all ${
+                                isSelected
+                                  ? `${config.color} border-current`
+                                  : "hover:bg-accent"
+                              }`}
+                            >
+                              <Checkbox
+                                checked={isSelected}
+                                onCheckedChange={(checked) =>
+                                  handleBodyPartToggle(
+                                    bodyPart,
+                                    checked === true,
+                                  )
+                                }
+                              />
+                              <span className="flex-1 text-sm font-medium capitalize">
+                                {bodyPart}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                },
+              )}
+            </TabsContent>
+          </Tabs>
+
+          {/* Additional Details */}
+          <div className="space-y-3">
+            <Label
+              htmlFor="additionalDetails"
+              className="text-base font-semibold"
+            >
+              Additional Details (Optional)
+            </Label>
+            <Textarea
+              id="additionalDetails"
+              value={additionalDetails}
+              onChange={(e) => setAdditionalDetails(e.target.value)}
+              placeholder="e.g., '6 sets total,' 'high volume,' 'I have a shoulder injury,' 'focus on hypertrophy'"
+              className="min-h-[100px] resize-none"
+            />
+          </div>
+
+          {/* Preview Card */}
+          <WorkoutPreview
+            workoutType={workoutType}
+            bodyParts={selectedBodyParts}
+            additionalDetails={additionalDetails}
+          />
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full transition-all hover:scale-[1.02] active:scale-[0.98]"
+            disabled={!canSubmit || loading}
           >
-            <div className="flex flex-col gap-1">
-              <Label className="text-md">Push Pull Legs Split</Label>
-              <div className="flex gap-2">
-                <RadioGroupItem value="leg workout" id="leg workout" />
-                <Label htmlFor="leg workout">Leg Workout</Label>
-              </div>
-              <div className="flex gap-2">
-                <RadioGroupItem value="push workout" id="push workout" />
-                <Label htmlFor="push workout">Push Workout</Label>
-              </div>
-              <div className="flex gap-2">
-                <RadioGroupItem value="pull workout" id="pull workout" />
-                <Label htmlFor="pull workout">Pull Workout</Label>
-              </div>
-            </div>
+            {loading ? (
+              <>
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Zap className="mr-2 h-4 w-4" />
+                Generate Workout
+              </>
+            )}
+          </Button>
+        </form>
 
-            <Label className="text-lg">Upper/Lower Split</Label>
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-2">
-                <RadioGroupItem
-                  value="upper body workout"
-                  id="upper body workout"
-                />
-                <Label htmlFor="upper body workout">Upper Workout</Label>
-              </div>
-              <div className="flex gap-2">
-                <RadioGroupItem
-                  value="lower body workout"
-                  id="lower body workout"
-                />
-                <Label htmlFor="lower body workout">Lower Workout</Label>
-              </div>
+        {/* Results */}
+        {answer && (
+          <div
+            ref={resultsRef}
+            className="bg-card animate-in fade-in slide-in-from-bottom-4 mt-6 rounded-lg border p-4 shadow-sm duration-500 sm:mt-8 sm:p-6"
+          >
+            <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold sm:text-xl">
+              <Dumbbell className="h-5 w-5" />
+              Your Workout
+            </h2>
+            <div className="text-foreground/90 text-sm leading-relaxed whitespace-pre-line sm:text-base">
+              {answer}
             </div>
-
-            <Label className="text-lg">Other</Label>
-            <div className="flex gap-2">
-              <RadioGroupItem
-                value="full body workout"
-                id="full body workout"
-              />
-              <Label htmlFor="full body workout">Full Body Workout</Label>
-            </div>
-          </RadioGroup>
-        )}
-
-        <div className="mb-4 flex justify-between">
-          <Label className="text-xl">Select Body Parts</Label>
-          <Checkbox className="my-auto" onCheckedChange={setBodyPart} />
-        </div>
-        {bodyPart && (
-          <div className="grid grid-cols-2 pb-4 pl-4">
-            {bodyParts.map((bodyPart) => (
-              <div key={bodyPart} className="flex items-center space-x-2">
-                <Checkbox name={bodyPart} />
-                <label
-                  htmlFor={bodyPart}
-                  className="text-sm leading-none font-medium capitalize"
-                >
-                  {bodyPart}
-                </label>
-              </div>
-            ))}
           </div>
         )}
-
-        <div className="mb-4 flex justify-between">
-          <Label className="text-xl">Select AI Model</Label>
-          <Checkbox className="my-auto" onCheckedChange={setModelPicker} />
-        </div>
-        {modelPicker && (
-          <RadioGroup
-            name="model"
-            className="pb-4 pl-4"
-            defaultValue="google/gemini-3-flash-preview"
-          >
-            <div className="flex flex-col gap-2">
-              <div className="flex gap-2">
-                <RadioGroupItem
-                  value="google/gemini-3-flash-preview"
-                  id="gemini-3-flash"
-                />
-                <Label htmlFor="gemini-3-flash" className="text-sm">
-                  Gemini 3 Flash Preview (Default)
-                </Label>
-              </div>
-              <div className="flex gap-2">
-                <RadioGroupItem
-                  value="meta-llama/llama-3.3-70b-instruct:free"
-                  id="llama-3.3-70b"
-                />
-                <Label htmlFor="llama-3.3-70b" className="text-sm">
-                  Llama 3.3 70B
-                </Label>
-              </div>
-              <div className="flex gap-2">
-                <RadioGroupItem value="openai/gpt-4o-mini" id="gpt-4o-mini" />
-                <Label htmlFor="gpt-4o-mini" className="text-sm">
-                  GPT-4o Mini
-                </Label>
-              </div>
-              <div className="flex gap-2">
-                <RadioGroupItem
-                  value="anthropic/claude-3-haiku"
-                  id="claude-3-haiku"
-                />
-                <Label htmlFor="claude-3-haiku" className="text-sm">
-                  Claude 3 Haiku
-                </Label>
-              </div>
-              <div className="flex gap-2">
-                <RadioGroupItem
-                  value="deepseek/deepseek-chat"
-                  id="deepseek-v3"
-                />
-                <Label htmlFor="deepseek-v3" className="text-sm">
-                  DeepSeek V3
-                </Label>
-              </div>
-              <div className="flex gap-2">
-                <RadioGroupItem
-                  value="anthropic/claude-3.5-haiku"
-                  id="claude-3.5-haiku"
-                />
-                <Label htmlFor="claude-3.5-haiku" className="text-sm">
-                  Claude 3.5 Haiku
-                </Label>
-              </div>
-            </div>
-          </RadioGroup>
-        )}
-
-        <div>Additional details:</div>
-        <Textarea
-          name="additionalDetails"
-          placeholder="e.g. '6 sets total,' 'high volume,' 'I have a shoulder injury'"
-        />
-        <Button type="submit" className="mx-auto mt-4">
-          Submit
-        </Button>
-      </form>
-      <div className="mt-4 w-11/12 rounded-md border-2 p-5 whitespace-pre-line">
-        {answer}
       </div>
     </main>
   );
