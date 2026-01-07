@@ -15,7 +15,7 @@ import {
   type MuscleGroup,
   type WorkoutType,
 } from "@/lib/muscle-groups";
-import { BicepsFlexed, Dumbbell, Zap } from "lucide-react";
+import { BicepsFlexed, Dumbbell, Zap, Copy, Check } from "lucide-react";
 
 export default function Home() {
   const [workoutType, setWorkoutType] = useState<WorkoutType | null>(null);
@@ -24,6 +24,7 @@ export default function Home() {
   const [model, setModel] = useState("google/gemini-3-flash-preview");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Scroll to results when answer appears
@@ -94,6 +95,16 @@ export default function Home() {
   };
 
   const canSubmit = workoutType || selectedBodyParts.length > 0;
+
+  const handleCopyWorkout = async () => {
+    try {
+      await navigator.clipboard.writeText(answer);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy:", error);
+    }
+  };
 
   return (
     <main className="bg-background min-h-screen">
@@ -346,10 +357,30 @@ export default function Home() {
             ref={resultsRef}
             className="bg-card animate-in fade-in slide-in-from-bottom-4 mt-6 rounded-lg border p-4 shadow-sm duration-500 sm:mt-8 sm:p-6"
           >
-            <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold sm:text-xl">
-              <Dumbbell className="h-5 w-5" />
-              Your Workout
-            </h2>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-lg font-semibold sm:text-xl">
+                <Dumbbell className="h-5 w-5" />
+                Your Workout
+              </h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopyWorkout}
+                className="gap-2 transition-all hover:scale-105"
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Copy
+                  </>
+                )}
+              </Button>
+            </div>
             <div className="text-foreground/90 text-sm leading-relaxed whitespace-pre-line sm:text-base">
               {answer}
             </div>
