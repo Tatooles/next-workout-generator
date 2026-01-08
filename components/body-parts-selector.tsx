@@ -1,5 +1,24 @@
+"use client";
+
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Check, ChevronsUpDown, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   muscleGroups,
   muscleGroupConfig,
@@ -11,59 +30,115 @@ interface BodyPartsSelectorProps {
   onToggle: (bodyPart: MuscleGroup, checked: boolean) => void;
 }
 
+const categories = [
+  { id: "legs", label: "Legs" },
+  { id: "upper", label: "Upper Body" },
+  { id: "arms", label: "Arms" },
+  { id: "shoulders", label: "Shoulders" },
+  { id: "core", label: "Core" },
+] as const;
+
 export function BodyPartsSelector({
   selectedBodyParts,
   onToggle,
 }: BodyPartsSelectorProps) {
+  const [open, setOpen] = useState(false);
+
+  const handleSelect = (muscle: MuscleGroup) => {
+    const isSelected = selectedBodyParts.includes(muscle);
+    onToggle(muscle, !isSelected);
+  };
+
+  const handleRemove = (muscle: MuscleGroup) => {
+    onToggle(muscle, false);
+  };
+
   return (
-    <div className="space-y-4">
-      <div className="text-muted-foreground mb-4 text-sm">
-        Select specific muscle groups to target
-      </div>
+    <div className="space-y-3">
+      <Label htmlFor="muscle-selector" className="text-sm font-medium">
+        Specific Muscles (Optional)
+      </Label>
 
-      {/* Group by category */}
-      {["legs", "upper", "arms", "shoulders", "core"].map((category) => {
-        const categoryMuscles = muscleGroups.filter(
-          (muscle) => muscleGroupConfig[muscle].category === category
-        );
-        if (categoryMuscles.length === 0) return null;
-
-        return (
-          <div key={category} className="space-y-3">
-            <Label className="text-base font-semibold capitalize">
-              {category}
-            </Label>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {categoryMuscles.map((bodyPart) => {
-                const config = muscleGroupConfig[bodyPart];
-                const isSelected = selectedBodyParts.includes(bodyPart);
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            id="muscle-selector"
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between"
+          >
+            {selectedBodyParts.length > 0
+              ? `${selectedBodyParts.length} muscle${selectedBodyParts.length > 1 ? "s" : ""} selected`
+              : "Select muscle groups..."}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent
+          className="w-(--radix-popover-trigger-width) p-0"
+          align="start"
+        >
+          <Command>
+            <CommandInput placeholder="Search muscles..." />
+            <CommandList>
+              <CommandEmpty>No muscle found.</CommandEmpty>
+              {categories.map((category) => {
+                const categoryMuscles = muscleGroups.filter(
+                  (muscle) =>
+                    muscleGroupConfig[muscle].category === category.id,
+                );
+                if (categoryMuscles.length === 0) return null;
 
                 return (
-                  <label
-                    key={bodyPart}
-                    className={`flex cursor-pointer items-center space-x-3 rounded-lg border p-3 transition-all ${
-                      isSelected
-                        ? `${config.color} border-current`
-                        : "hover:bg-accent"
-                    }`}
-                  >
-                    <Checkbox
-                      checked={isSelected}
-                      onCheckedChange={(checked) =>
-                        onToggle(bodyPart, checked === true)
-                      }
-                    />
-                    <span className="flex-1 text-sm font-medium capitalize">
-                      {bodyPart}
-                    </span>
-                  </label>
+                  <CommandGroup key={category.id} heading={category.label}>
+                    {categoryMuscles.map((muscle) => {
+                      const isSelected = selectedBodyParts.includes(muscle);
+                      return (
+                        <CommandItem
+                          key={muscle}
+                          value={muscle}
+                          onSelect={() => handleSelect(muscle)}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              isSelected ? "opacity-100" : "opacity-0",
+                            )}
+                          />
+                          <span className="capitalize">{muscle}</span>
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
                 );
               })}
-            </div>
-          </div>
-        );
-      })}
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+
+      {/* Display selected muscles as badges */}
+      {selectedBodyParts.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {selectedBodyParts.map((muscle) => (
+            <Badge
+              key={muscle}
+              variant="secondary"
+              className="gap-1 pr-1 capitalize"
+            >
+              {muscle}
+              <button
+                type="button"
+                onClick={() => handleRemove(muscle)}
+                className="hover:bg-accent hover:text-accent-foreground ml-1 rounded-sm"
+                aria-label={`Remove ${muscle}`}
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
-

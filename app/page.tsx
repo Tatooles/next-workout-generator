@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BicepsFlexed, Zap } from "lucide-react";
 import { WorkoutHeader } from "@/components/workout-header";
 import { SplitWorkoutSelector } from "@/components/split-workout-selector";
 import { BodyPartsSelector } from "@/components/body-parts-selector";
@@ -51,43 +49,17 @@ export default function Home() {
         />
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Main Content - Tabs */}
-          <Tabs defaultValue="split" className="w-full">
-            <TabsList className="grid h-auto w-full grid-cols-2">
-              <TabsTrigger
-                value="split"
-                className="flex items-center gap-1.5 py-2.5 text-sm sm:gap-2 sm:py-3"
-              >
-                <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="xs:inline hidden">Workout Split</span>
-                <span className="xs:hidden">Split</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="bodyparts"
-                className="flex items-center gap-1.5 py-2.5 text-sm sm:gap-2 sm:py-3"
-              >
-                <BicepsFlexed className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="xs:inline hidden">Specific Muscles</span>
-                <span className="xs:hidden">Muscles</span>
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Split Workout Tab */}
-            <TabsContent value="split" className="mt-6 space-y-4">
-              <SplitWorkoutSelector
-                workoutType={workoutForm.workoutType}
-                onWorkoutTypeChange={workoutForm.setWorkoutType}
-              />
-            </TabsContent>
-
-            {/* Body Parts Tab */}
-            <TabsContent value="bodyparts" className="mt-6 space-y-4">
-              <BodyPartsSelector
-                selectedBodyParts={workoutForm.selectedBodyParts}
-                onToggle={workoutForm.handleBodyPartToggle}
-              />
-            </TabsContent>
-          </Tabs>
+          {/* Workout Selectors */}
+          <div className="space-y-4">
+            <SplitWorkoutSelector
+              workoutType={workoutForm.workoutType}
+              onWorkoutTypeChange={workoutForm.setWorkoutType}
+            />
+            <BodyPartsSelector
+              selectedBodyParts={workoutForm.selectedBodyParts}
+              onToggle={workoutForm.handleBodyPartToggle}
+            />
+          </div>
 
           {/* Additional Details */}
           <AdditionalDetailsInput
