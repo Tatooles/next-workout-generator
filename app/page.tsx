@@ -1,30 +1,23 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
+import { useEffect, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ModelSelector } from "@/components/model-selector";
+import { BicepsFlexed, Zap } from "lucide-react";
+import { WorkoutHeader } from "@/components/workout-header";
+import { SplitWorkoutSelector } from "@/components/split-workout-selector";
+import { BodyPartsSelector } from "@/components/body-parts-selector";
+import { AdditionalDetailsInput } from "@/components/additional-details-input";
+import { SubmitButton } from "@/components/submit-button";
 import { WorkoutPreview } from "@/components/workout-preview";
-import {
-  muscleGroups,
-  muscleGroupConfig,
-  type MuscleGroup,
-  type WorkoutType,
-} from "@/lib/muscle-groups";
-import { BicepsFlexed, Dumbbell, Zap, Copy, Check } from "lucide-react";
+import { WorkoutResults } from "@/components/workout-results";
+import { useWorkoutForm } from "@/lib/hooks/use-workout-form";
+import { useStreamingSubmit } from "@/lib/hooks/use-streaming-submit";
+import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
 
 export default function Home() {
-  const [workoutType, setWorkoutType] = useState<WorkoutType | null>(null);
-  const [selectedBodyParts, setSelectedBodyParts] = useState<MuscleGroup[]>([]);
-  const [additionalDetails, setAdditionalDetails] = useState("");
-  const [model, setModel] = useState("google/gemini-3-flash-preview");
-  const [answer, setAnswer] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const workoutForm = useWorkoutForm();
+  const { answer, loading, submitWorkout } = useStreamingSubmit();
+  const { copied, copyToClipboard } = useCopyToClipboard();
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Scroll to results when answer appears
@@ -39,93 +32,23 @@ export default function Home() {
     }
   }, [answer]);
 
-  const handleBodyPartToggle = (bodyPart: MuscleGroup, checked: boolean) => {
-    if (checked) {
-      setSelectedBodyParts([...selectedBodyParts, bodyPart]);
-    } else {
-      setSelectedBodyParts(selectedBodyParts.filter((bp) => bp !== bodyPart));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    setLoading(true);
-    setAnswer("");
-
-    try {
-      const response = await fetch("/api/workout", {
-        method: "POST",
-        body: JSON.stringify({
-          bodyParts: selectedBodyParts,
-          workoutType: workoutType,
-          additionalDetails: additionalDetails || null,
-          model: model,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate workout");
-      }
-
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
-      if (!reader) {
-        throw new Error("No response body");
-      }
-
-      setLoading(false);
-
-      while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) {
-          break;
-        }
-
-        const chunk = decoder.decode(value, { stream: true });
-        setAnswer((prev) => prev + chunk);
-      }
-    } catch (error) {
-      console.error("Error streaming response:", error);
-      setLoading(false);
-      setAnswer("Failed to generate workout. Please try again.");
-    }
-  };
-
-  const canSubmit = workoutType || selectedBodyParts.length > 0;
-
-  const handleCopyWorkout = async () => {
-    try {
-      await navigator.clipboard.writeText(answer);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      console.error("Failed to copy:", error);
-    }
+    await submitWorkout(e, {
+      bodyParts: workoutForm.selectedBodyParts,
+      workoutType: workoutForm.workoutType,
+      additionalDetails: workoutForm.additionalDetails || null,
+      model: workoutForm.model,
+    });
   };
 
   return (
     <main className="bg-background min-h-screen">
       <div className="container mx-auto max-w-4xl px-4 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between sm:mb-8">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full sm:h-12 sm:w-12">
-              <Dumbbell className="text-primary h-5 w-5 sm:h-6 sm:w-6" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                Workout Generator
-              </h1>
-              <p className="text-muted-foreground text-xs sm:text-sm">
-                AI-powered personalized workouts
-              </p>
-            </div>
-          </div>
-          <ModelSelector value={model} onValueChange={setModel} />
-        </div>
+        <WorkoutHeader
+          model={workoutForm.model}
+          onModelChange={workoutForm.setModel}
+        />
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Main Content - Tabs */}
@@ -151,240 +74,46 @@ export default function Home() {
 
             {/* Split Workout Tab */}
             <TabsContent value="split" className="mt-6 space-y-4">
-              <div className="text-muted-foreground mb-4 text-sm">
-                Choose a structured workout split
-              </div>
-              <RadioGroup
-                value={workoutType || ""}
-                onValueChange={(value) => setWorkoutType(value as WorkoutType)}
-              >
-                {/* Push Pull Legs */}
-                <div className="space-y-3">
-                  <Label className="text-base font-semibold">
-                    Push Pull Legs Split
-                  </Label>
-                  <div className="grid gap-2">
-                    {[
-                      {
-                        value: "leg workout",
-                        label: "Leg Workout",
-                      },
-                      {
-                        value: "push workout",
-                        label: "Push Workout",
-                      },
-                      {
-                        value: "pull workout",
-                        label: "Pull Workout",
-                      },
-                    ].map((option) => (
-                      <label
-                        key={option.value}
-                        htmlFor={option.value}
-                        className="hover:bg-accent flex cursor-pointer items-center space-x-3 rounded-lg border p-4 transition-colors"
-                      >
-                        <RadioGroupItem
-                          value={option.value}
-                          id={option.value}
-                        />
-                        <span className="flex-1 font-medium">
-                          {option.label}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Upper/Lower Split */}
-                <div className="space-y-3 pt-4">
-                  <Label className="text-base font-semibold">
-                    Upper/Lower Split
-                  </Label>
-                  <div className="grid gap-2">
-                    {[
-                      {
-                        value: "upper body workout",
-                        label: "Upper Body Workout",
-                      },
-                      {
-                        value: "lower body workout",
-                        label: "Lower Body Workout",
-                      },
-                    ].map((option) => (
-                      <label
-                        key={option.value}
-                        htmlFor={option.value}
-                        className="hover:bg-accent flex cursor-pointer items-center space-x-3 rounded-lg border p-4 transition-colors"
-                      >
-                        <RadioGroupItem
-                          value={option.value}
-                          id={option.value}
-                        />
-                        <span className="flex-1 font-medium">
-                          {option.label}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Other */}
-                <div className="space-y-3 pt-4">
-                  <Label className="text-base font-semibold">Other</Label>
-                  <div className="grid gap-2">
-                    <label
-                      htmlFor="full body workout"
-                      className="hover:bg-accent flex cursor-pointer items-center space-x-3 rounded-lg border p-4 transition-colors"
-                    >
-                      <RadioGroupItem
-                        value="full body workout"
-                        id="full body workout"
-                      />
-                      <span className="flex-1 font-medium">
-                        Full Body Workout
-                      </span>
-                    </label>
-                  </div>
-                </div>
-              </RadioGroup>
+              <SplitWorkoutSelector
+                workoutType={workoutForm.workoutType}
+                onWorkoutTypeChange={workoutForm.setWorkoutType}
+              />
             </TabsContent>
 
             {/* Body Parts Tab */}
             <TabsContent value="bodyparts" className="mt-6 space-y-4">
-              <div className="text-muted-foreground mb-4 text-sm">
-                Select specific muscle groups to target
-              </div>
-
-              {/* Group by category */}
-              {["legs", "upper", "arms", "shoulders", "core"].map(
-                (category) => {
-                  const categoryMuscles = muscleGroups.filter(
-                    (muscle) => muscleGroupConfig[muscle].category === category,
-                  );
-                  if (categoryMuscles.length === 0) return null;
-
-                  return (
-                    <div key={category} className="space-y-3">
-                      <Label className="text-base font-semibold capitalize">
-                        {category}
-                      </Label>
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        {categoryMuscles.map((bodyPart) => {
-                          const config = muscleGroupConfig[bodyPart];
-                          const isSelected =
-                            selectedBodyParts.includes(bodyPart);
-
-                          return (
-                            <label
-                              key={bodyPart}
-                              className={`flex cursor-pointer items-center space-x-3 rounded-lg border p-3 transition-all ${
-                                isSelected
-                                  ? `${config.color} border-current`
-                                  : "hover:bg-accent"
-                              }`}
-                            >
-                              <Checkbox
-                                checked={isSelected}
-                                onCheckedChange={(checked) =>
-                                  handleBodyPartToggle(
-                                    bodyPart,
-                                    checked === true,
-                                  )
-                                }
-                              />
-                              <span className="flex-1 text-sm font-medium capitalize">
-                                {bodyPart}
-                              </span>
-                            </label>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                },
-              )}
+              <BodyPartsSelector
+                selectedBodyParts={workoutForm.selectedBodyParts}
+                onToggle={workoutForm.handleBodyPartToggle}
+              />
             </TabsContent>
           </Tabs>
 
           {/* Additional Details */}
-          <div className="space-y-3">
-            <Label
-              htmlFor="additionalDetails"
-              className="text-base font-semibold"
-            >
-              Additional Details (Optional)
-            </Label>
-            <Textarea
-              id="additionalDetails"
-              value={additionalDetails}
-              onChange={(e) => setAdditionalDetails(e.target.value)}
-              placeholder="e.g., '6 sets total,' 'high volume,' 'I have a shoulder injury,' 'focus on hypertrophy'"
-              className="min-h-[100px] resize-none"
-            />
-          </div>
+          <AdditionalDetailsInput
+            value={workoutForm.additionalDetails}
+            onChange={workoutForm.setAdditionalDetails}
+          />
 
           {/* Preview Card */}
           <WorkoutPreview
-            workoutType={workoutType}
-            bodyParts={selectedBodyParts}
-            additionalDetails={additionalDetails}
+            workoutType={workoutForm.workoutType}
+            bodyParts={workoutForm.selectedBodyParts}
+            additionalDetails={workoutForm.additionalDetails}
           />
 
           {/* Submit Button */}
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full transition-all hover:scale-[1.02] active:scale-[0.98]"
-            disabled={!canSubmit || loading}
-          >
-            {loading ? (
-              <>
-                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Zap className="mr-2 h-4 w-4" />
-                Generate Workout
-              </>
-            )}
-          </Button>
+          <SubmitButton loading={loading} canSubmit={workoutForm.canSubmit} />
         </form>
 
         {/* Results */}
         {answer && (
-          <div
+          <WorkoutResults
             ref={resultsRef}
-            className="bg-card animate-in fade-in slide-in-from-bottom-4 mt-6 rounded-lg border p-4 shadow-sm duration-500 sm:mt-8 sm:p-6"
-          >
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-lg font-semibold sm:text-xl">
-                <Dumbbell className="h-5 w-5" />
-                Your Workout
-              </h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCopyWorkout}
-                className="gap-2 transition-all hover:scale-105"
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-4 w-4" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-4 w-4" />
-                    Copy
-                  </>
-                )}
-              </Button>
-            </div>
-            <div className="text-foreground/90 text-sm leading-relaxed whitespace-pre-line sm:text-base">
-              {answer}
-            </div>
-          </div>
+            answer={answer}
+            onCopy={() => copyToClipboard(answer)}
+            copied={copied}
+          />
         )}
       </div>
     </main>
