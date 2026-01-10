@@ -9,7 +9,7 @@ export function useStreamingSubmit() {
 
   const submitWorkout = async (
     e: React.FormEvent<HTMLFormElement>,
-    params: WorkoutParams
+    params: WorkoutParams,
   ) => {
     e.preventDefault();
 
@@ -19,12 +19,12 @@ export function useStreamingSubmit() {
     try {
       for await (const chunk of streamWorkoutResponse(params)) {
         setAnswer((prev) => prev + chunk);
-        setLoading(false);
       }
     } catch (error) {
       console.error("Error streaming response:", error);
-      setLoading(false);
       setAnswer("Failed to generate workout. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,4 +37,3 @@ export function useStreamingSubmit() {
     resetAnswer,
   };
 }
-
