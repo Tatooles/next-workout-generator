@@ -6,7 +6,6 @@ import { SplitWorkoutSelector } from "@/components/split-workout-selector";
 import { BodyPartsSelector } from "@/components/body-parts-selector";
 import { AdditionalDetailsInput } from "@/components/additional-details-input";
 import { SubmitButton } from "@/components/submit-button";
-import { WorkoutPreview } from "@/components/workout-preview";
 import { WorkoutResults } from "@/components/workout-results";
 import { useWorkoutForm } from "@/lib/hooks/use-workout-form";
 import { useStreamingSubmit } from "@/lib/hooks/use-streaming-submit";
@@ -65,13 +64,6 @@ export default function Home() {
           <AdditionalDetailsInput
             value={workoutForm.additionalDetails}
             onChange={workoutForm.setAdditionalDetails}
-          />
-
-          {/* Preview Card */}
-          <WorkoutPreview
-            workoutType={workoutForm.workoutType}
-            bodyParts={workoutForm.selectedBodyParts}
-            additionalDetails={workoutForm.additionalDetails}
           />
 
           {/* Submit Button */}
