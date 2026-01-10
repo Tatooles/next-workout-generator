@@ -52,12 +52,12 @@ export const AI_MODELS: AIModel[] = [
   },
 ];
 
-interface ModelSelectorProps {
+interface SettingsMenuProps {
   value: string;
   onValueChange: (value: string) => void;
 }
 
-export function ModelSelector({ value, onValueChange }: ModelSelectorProps) {
+export function SettingsMenu({ value, onValueChange }: SettingsMenuProps) {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 

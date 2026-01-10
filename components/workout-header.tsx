@@ -1,5 +1,5 @@
 import { Dumbbell } from "lucide-react";
-import { ModelSelector } from "@/components/model-selector";
+import { SettingsMenu } from "@/components/settings-menu";
 
 interface WorkoutHeaderProps {
   model: string;
@@ -22,7 +22,7 @@ export function WorkoutHeader({ model, onModelChange }: WorkoutHeaderProps) {
           </p>
         </div>
       </div>
-      <ModelSelector value={model} onValueChange={onModelChange} />
+      <SettingsMenu value={model} onValueChange={onModelChange} />
     </div>
   );
 }
