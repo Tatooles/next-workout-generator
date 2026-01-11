@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { fetchWorkout, WorkoutParams } from "@/lib/utils";
+import type { WorkoutData } from "@/lib/workout-types";
 
 export function useWorkoutSubmit() {
-  const [answer, setAnswer] = useState("");
+  const [workoutData, setWorkoutData] = useState<WorkoutData | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const submitWorkout = async (
@@ -14,25 +16,34 @@ export function useWorkoutSubmit() {
     e.preventDefault();
 
     setLoading(true);
-    setAnswer("");
+    setWorkoutData(null);
+    setError(null);
 
     try {
       const result = await fetchWorkout(params);
-      setAnswer(result);
+      setWorkoutData(result);
     } catch (error) {
       console.error("Error fetching response:", error);
-      setAnswer("Failed to generate workout. Please try again.");
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to generate workout. Please try again.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  const resetAnswer = () => setAnswer("");
+  const resetWorkout = () => {
+    setWorkoutData(null);
+    setError(null);
+  };
 
   return {
-    answer,
+    workoutData,
+    error,
     loading,
     submitWorkout,
-    resetAnswer,
+    resetWorkout,
   };
 }

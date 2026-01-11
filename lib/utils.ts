@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { MuscleGroup, WorkoutType } from "./muscle-groups";
+import type { WorkoutData } from "./workout-types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -31,9 +32,11 @@ export interface WorkoutParams {
 /**
  * Fetch workout response from API
  * @param params - Workout generation parameters
- * @returns Promise with the complete workout text
+ * @returns Promise with the structured workout data
  */
-export async function fetchWorkout(params: WorkoutParams): Promise<string> {
+export async function fetchWorkout(
+  params: WorkoutParams,
+): Promise<WorkoutData> {
   const response = await fetch("/api/workout", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -41,9 +44,58 @@ export async function fetchWorkout(params: WorkoutParams): Promise<string> {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to generate workout");
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Failed to generate workout");
   }
 
   const data = await response.json();
-  return data.content;
+
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
+  if (!data.workout) {
+    throw new Error("Invalid response format from server");
+  }
+
+  return data.workout;
+}
+
+/**
+ * Format structured workout data as readable text for copying
+ * @param workout - Structured workout data
+ * @returns Formatted text string
+ */
+export function formatWorkoutAsText(workout: WorkoutData): string {
+  let text = "";
+
+  // Add header with duration
+  text += `WORKOUT PLAN\n`;
+  text += `Estimated Duration: ${workout.estimatedDuration}\n`;
+  text += `${"=".repeat(50)}\n\n`;
+
+  // Add each exercise
+  workout.exercises.forEach((exercise, index) => {
+    text += `${index + 1}. ${exercise.name.toUpperCase()}\n`;
+    text += `   Sets: ${exercise.sets} | Reps: ${exercise.reps} | Rest: ${exercise.restTime}\n`;
+    text += `   Targets: ${exercise.muscleGroups.join(", ")}\n`;
+
+    // Add form tips
+    if (exercise.formTips && exercise.formTips.length > 0) {
+      text += `   Form Tips:\n`;
+      exercise.formTips.forEach((tip) => {
+        text += `   • ${tip}\n`;
+      });
+    }
+
+    text += `\n`;
+  });
+
+  // Add general notes if present
+  if (workout.notes) {
+    text += `${"-".repeat(50)}\n`;
+    text += `NOTES:\n${workout.notes}\n`;
+  }
+
+  return text;
 }
