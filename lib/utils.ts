@@ -29,15 +29,14 @@ export interface WorkoutParams {
 }
 
 /**
- * Stream workout response from API
+ * Fetch workout response from API
  * @param params - Workout generation parameters
- * @yields string chunks as they arrive from the API
+ * @returns Promise with the complete workout text
  */
-export async function* streamWorkoutResponse(
-  params: WorkoutParams,
-): AsyncGenerator<string, void, unknown> {
+export async function fetchWorkout(params: WorkoutParams): Promise<string> {
   const response = await fetch("/api/workout", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(params),
   });
 
@@ -45,25 +44,6 @@ export async function* streamWorkoutResponse(
     throw new Error("Failed to generate workout");
   }
 
-  const reader = response.body?.getReader();
-  if (!reader) {
-    throw new Error("No response body");
-  }
-
-  const decoder = new TextDecoder();
-
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-
-      if (done) {
-        break;
-      }
-
-      const chunk = decoder.decode(value, { stream: true });
-      yield chunk;
-    }
-  } finally {
-    reader.releaseLock();
-  }
+  const data = await response.json();
+  return data.content;
 }

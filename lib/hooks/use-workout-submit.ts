@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { streamWorkoutResponse, WorkoutParams } from "@/lib/utils";
+import { fetchWorkout, WorkoutParams } from "@/lib/utils";
 
-export function useStreamingSubmit() {
+export function useWorkoutSubmit() {
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -17,11 +17,10 @@ export function useStreamingSubmit() {
     setAnswer("");
 
     try {
-      for await (const chunk of streamWorkoutResponse(params)) {
-        setAnswer((prev) => prev + chunk);
-      }
+      const result = await fetchWorkout(params);
+      setAnswer(result);
     } catch (error) {
-      console.error("Error streaming response:", error);
+      console.error("Error fetching response:", error);
       setAnswer("Failed to generate workout. Please try again.");
     } finally {
       setLoading(false);

@@ -8,12 +8,12 @@ import { AdditionalDetailsInput } from "@/components/additional-details-input";
 import { SubmitButton } from "@/components/submit-button";
 import { WorkoutResults } from "@/components/workout-results";
 import { useWorkoutForm } from "@/lib/hooks/use-workout-form";
-import { useStreamingSubmit } from "@/lib/hooks/use-streaming-submit";
+import { useWorkoutSubmit } from "@/lib/hooks/use-workout-submit";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
 
 export default function Home() {
   const workoutForm = useWorkoutForm();
-  const { answer, loading, submitWorkout } = useStreamingSubmit();
+  const { answer, loading, submitWorkout } = useWorkoutSubmit();
   const { copied, copyToClipboard } = useCopyToClipboard();
   const resultsRef = useRef<HTMLDivElement>(null);
 

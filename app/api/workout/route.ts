@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         },
       ],
       temperature: 0.8,
-      stream: true,
+      stream: false,
     };
 
     const response = await fetch(
@@ -72,91 +72,12 @@ export async function POST(request: Request) {
       });
     }
 
-    // Create a ReadableStream to forward the streaming response
-    const stream = new ReadableStream({
-      async start(controller) {
-        const reader = response.body?.getReader();
-        const decoder = new TextDecoder();
-        let buffer = ""; // Buffer for incomplete lines
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content || "";
 
-        if (!reader) {
-          controller.close();
-          return;
-        }
-
-        try {
-          while (true) {
-            const { done, value } = await reader.read();
-
-            if (done) {
-              // Process any remaining buffered content before closing
-              if (buffer.trim()) {
-                processLine(buffer.trim(), controller);
-              }
-              controller.close();
-              break;
-            }
-
-            // Decode the chunk and prepend any buffered partial line
-            const chunk = decoder.decode(value, { stream: true });
-            buffer += chunk;
-
-            // Split on newlines but keep the last (potentially incomplete) line in buffer
-            const lines = buffer.split("\n");
-            buffer = lines.pop() || ""; // Keep the last line (may be incomplete)
-
-            for (const line of lines) {
-              const trimmedLine = line.trim();
-
-              // Skip empty lines
-              if (!trimmedLine) continue;
-
-              // Check for the done signal
-              if (trimmedLine === "data: [DONE]") {
-                controller.close();
-                return;
-              }
-
-              processLine(trimmedLine, controller);
-            }
-          }
-        } catch (error) {
-          console.error("Stream reading error:", error);
-          controller.error(error);
-        }
-      },
-    });
-
-    // Helper function to process a complete SSE line
-    function processLine(
-      trimmedLine: string,
-      controller: ReadableStreamDefaultController,
-    ) {
-      // Parse SSE data
-      if (trimmedLine.startsWith("data: ")) {
-        try {
-          const jsonStr = trimmedLine.slice(6); // Remove "data: " prefix
-          const data = JSON.parse(jsonStr);
-
-          // Extract the content delta
-          const content = data.choices?.[0]?.delta?.content;
-
-          if (content) {
-            // Send the content token to the client
-            controller.enqueue(new TextEncoder().encode(content));
-          }
-        } catch (e) {
-          // Skip invalid JSON lines
-          console.error("Failed to parse SSE line:", e);
-        }
-      }
-    }
-
-    return new Response(stream, {
+    return new Response(JSON.stringify({ content }), {
       headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
+        "Content-Type": "application/json",
       },
     });
   } catch (error) {
