@@ -70,13 +70,13 @@ export function formatWorkoutAsText(workout: WorkoutData): string {
   let text = "";
 
   // Add header with duration
-  text += `WORKOUT PLAN\n`;
+  text += `Workout Plan\n`;
   text += `Estimated Duration: ${workout.estimatedDuration}\n`;
   text += `${"=".repeat(50)}\n\n`;
 
   // Add each exercise
   workout.exercises.forEach((exercise, index) => {
-    text += `${index + 1}. ${exercise.name.toUpperCase()}\n`;
+    text += `${index + 1}. ${exercise.name}\n`;
     text += `   Sets: ${exercise.sets} | Reps: ${exercise.reps} | Rest: ${exercise.restTime}\n`;
     text += `   Targets: ${exercise.muscleGroups.join(", ")}\n`;
 
@@ -94,7 +94,7 @@ export function formatWorkoutAsText(workout: WorkoutData): string {
   // Add general notes if present
   if (workout.notes) {
     text += `${"-".repeat(50)}\n`;
-    text += `NOTES:\n${workout.notes}\n`;
+    text += `Notes:\n${workout.notes}\n`;
   }
 
   return text;
