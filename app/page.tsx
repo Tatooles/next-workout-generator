@@ -10,12 +10,12 @@ import { WorkoutResults } from "@/components/workout-results";
 import { useWorkoutForm } from "@/lib/hooks/use-workout-form";
 import { useWorkoutSubmit } from "@/lib/hooks/use-workout-submit";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
-import { formatWorkoutAsText } from "@/lib/utils";
+import { formatWorkoutAsText, formatWorkoutAsTemplate } from "@/lib/utils";
 
 export default function Home() {
   const workoutForm = useWorkoutForm();
   const { workoutData, error, loading, submitWorkout } = useWorkoutSubmit();
-  const { copied, copyToClipboard } = useCopyToClipboard();
+  const { copiedStates, copyToClipboard } = useCopyToClipboard();
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Scroll to results when workout data appears
@@ -30,11 +30,19 @@ export default function Home() {
     }
   }, [workoutData]);
 
-  // Handle copying workout as formatted text
-  const handleCopyWorkout = () => {
+  // Handle copying full workout as formatted text
+  const handleCopyFullWorkout = () => {
     if (workoutData) {
       const formattedText = formatWorkoutAsText(workoutData);
-      copyToClipboard(formattedText);
+      copyToClipboard(formattedText, "full");
+    }
+  };
+
+  // Handle copying workout as template
+  const handleCopyTemplate = () => {
+    if (workoutData) {
+      const formattedTemplate = formatWorkoutAsTemplate(workoutData);
+      copyToClipboard(formattedTemplate, "template");
     }
   };
 
@@ -84,8 +92,10 @@ export default function Home() {
           <WorkoutResults
             ref={resultsRef}
             workout={workoutData}
-            onCopy={handleCopyWorkout}
-            copied={copied}
+            onCopyFull={handleCopyFullWorkout}
+            onCopyTemplate={handleCopyTemplate}
+            copiedFull={copiedStates["full"] || false}
+            copiedTemplate={copiedStates["template"] || false}
           />
         )}
 

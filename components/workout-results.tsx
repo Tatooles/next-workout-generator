@@ -6,8 +6,10 @@ import type { WorkoutData } from "@/lib/workout-types";
 
 interface WorkoutResultsProps {
   workout: WorkoutData;
-  onCopy: () => void;
-  copied: boolean;
+  onCopyFull: () => void;
+  onCopyTemplate: () => void;
+  copiedFull: boolean;
+  copiedTemplate: boolean;
 }
 
 interface ExerciseCardProps {
@@ -59,7 +61,10 @@ function ExerciseCard({ exercise, index }: ExerciseCardProps) {
 }
 
 export const WorkoutResults = forwardRef<HTMLDivElement, WorkoutResultsProps>(
-  ({ workout, onCopy, copied }, ref) => {
+  (
+    { workout, onCopyFull, onCopyTemplate, copiedFull, copiedTemplate },
+    ref,
+  ) => {
     return (
       <div ref={ref} className="mt-6 sm:mt-8">
         {/* Header */}
@@ -73,24 +78,44 @@ export const WorkoutResults = forwardRef<HTMLDivElement, WorkoutResultsProps>(
                 Duration: {workout.estimatedDuration}
               </p>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onCopy}
-              className="gap-2"
-            >
-              {copied ? (
-                <>
-                  <Check className="h-4 w-4" />
-                  Copied!
-                </>
-              ) : (
-                <>
-                  <Copy className="h-4 w-4" />
-                  Copy
-                </>
-              )}
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onCopyFull}
+                className="gap-2"
+              >
+                {copiedFull ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Copy Workout
+                  </>
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onCopyTemplate}
+                className="gap-2"
+              >
+                {copiedTemplate ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Copy Template
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
 
           {/* General Notes */}

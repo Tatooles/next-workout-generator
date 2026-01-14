@@ -99,3 +99,39 @@ export function formatWorkoutAsText(workout: WorkoutData): string {
 
   return text;
 }
+
+/**
+ * Format structured workout data as a fillable template for copying
+ * @param workout - Structured workout data
+ * @returns Formatted template string with blank lines for tracking
+ */
+export function formatWorkoutAsTemplate(workout: WorkoutData): string {
+  let text = "";
+
+  // Add header with duration
+  text += `Workout Plan\n`;
+  text += `Estimated Duration: ${workout.estimatedDuration}\n`;
+  text += `${"=".repeat(50)}\n\n`;
+
+  // Add each exercise
+  workout.exercises.forEach((exercise, index) => {
+    text += `${index + 1}. ${exercise.name}\n`;
+    text += `   Sets: ${exercise.sets} | Reps: ${exercise.reps} | Rest: ${exercise.restTime}\n`;
+    text += `   Targets: ${exercise.muscleGroups.join(", ")}\n\n`;
+
+    // Add blank lines for each set
+    for (let i = 1; i <= exercise.sets; i++) {
+      text += `   Set ${i}: \n`;
+    }
+
+    text += `\n`;
+  });
+
+  // Add general notes if present
+  if (workout.notes) {
+    text += `${"-".repeat(50)}\n`;
+    text += `Notes:\n${workout.notes}\n`;
+  }
+
+  return text;
+}
