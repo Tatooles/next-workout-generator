@@ -1,6 +1,7 @@
 export const runtime = "edge";
 
 import type { WorkoutData } from "@/lib/workout-types";
+import { WorkoutDataSchema } from "@/lib/workout-types";
 
 // Allowlist of permitted AI models
 const ALLOWED_MODELS = [
@@ -187,37 +188,18 @@ function parseWorkoutJSON(
     }
 
     const parsed = JSON.parse(jsonStr);
+    const result = WorkoutDataSchema.safeParse(parsed);
 
-    // Basic validation
-    if (!Array.isArray(parsed.exercises) || parsed.exercises.length === 0) {
-      return { success: false, error: "Invalid or empty exercises array" };
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error.issues
+          .map((i) => `${i.path.join(".")}: ${i.message}`)
+          .join(", "),
+      };
     }
 
-    if (!parsed.estimatedDuration) {
-      return { success: false, error: "Missing estimatedDuration" };
-    }
-
-    // Validate each exercise has required fields
-    const requiredFields = [
-      "name",
-      "sets",
-      "reps",
-      "restTime",
-      "muscleGroups",
-      "formTips",
-    ];
-    for (const exercise of parsed.exercises) {
-      for (const field of requiredFields) {
-        if (!exercise[field]) {
-          return {
-            success: false,
-            error: `Exercise missing required field: ${field}`,
-          };
-        }
-      }
-    }
-
-    return { success: true, data: parsed as WorkoutData };
+    return { success: true, data: result.data };
   } catch (error) {
     return {
       success: false,

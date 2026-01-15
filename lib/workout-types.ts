@@ -1,14 +1,20 @@
-export interface Exercise {
-  name: string;
-  sets: number;
-  reps: string; // Can be "8-10", "12-15", "AMRAP", etc.
-  restTime: string; // e.g., "60s", "90s"
-  muscleGroups: string[];
-  formTips: string[];
-}
+import { z } from "zod";
 
-export interface WorkoutData {
-  exercises: Exercise[];
-  estimatedDuration: string; // e.g., "45-60 minutes"
-  notes?: string; // Optional general notes
-}
+export const ExerciseSchema = z.object({
+  name: z.string().min(1),
+  sets: z.number().int().positive(),
+  reps: z.string().min(1), // "8-10", "AMRAP", etc.
+  restTime: z.string().min(1), // "60s", "90s", etc.
+  muscleGroups: z.array(z.string()).min(1),
+  formTips: z.array(z.string()), // No minimum required
+});
+
+export const WorkoutDataSchema = z.object({
+  exercises: z.array(ExerciseSchema).min(1), // At least 1 exercise
+  estimatedDuration: z.string().min(1),
+  notes: z.string().optional(),
+});
+
+// Infer TypeScript types from schemas
+export type Exercise = z.infer<typeof ExerciseSchema>;
+export type WorkoutData = z.infer<typeof WorkoutDataSchema>;
