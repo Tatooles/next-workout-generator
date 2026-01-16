@@ -8,18 +8,19 @@ import { AdditionalDetailsInput } from "@/components/additional-details-input";
 import { SubmitButton } from "@/components/submit-button";
 import { WorkoutResults } from "@/components/workout-results";
 import { useWorkoutForm } from "@/lib/hooks/use-workout-form";
-import { useStreamingSubmit } from "@/lib/hooks/use-streaming-submit";
+import { useWorkoutSubmit } from "@/lib/hooks/use-workout-submit";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
+import { formatWorkoutAsText, formatWorkoutAsTemplate } from "@/lib/utils";
 
 export default function Home() {
   const workoutForm = useWorkoutForm();
-  const { answer, loading, submitWorkout } = useStreamingSubmit();
-  const { copied, copyToClipboard } = useCopyToClipboard();
+  const { workoutData, error, loading, submitWorkout } = useWorkoutSubmit();
+  const { copiedStates, copyToClipboard } = useCopyToClipboard();
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to results when answer appears
+  // Scroll to results when workout data appears
   useEffect(() => {
-    if (answer && resultsRef.current) {
+    if (workoutData && resultsRef.current) {
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({
           behavior: "smooth",
@@ -27,7 +28,23 @@ export default function Home() {
         });
       }, 100);
     }
-  }, [answer]);
+  }, [workoutData]);
+
+  // Handle copying full workout as formatted text
+  const handleCopyFullWorkout = () => {
+    if (workoutData) {
+      const formattedText = formatWorkoutAsText(workoutData);
+      copyToClipboard(formattedText, "full");
+    }
+  };
+
+  // Handle copying workout as template
+  const handleCopyTemplate = () => {
+    if (workoutData) {
+      const formattedTemplate = formatWorkoutAsTemplate(workoutData);
+      copyToClipboard(formattedTemplate, "template");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     await submitWorkout(e, {
@@ -71,13 +88,23 @@ export default function Home() {
         </form>
 
         {/* Results */}
-        {answer && (
+        {workoutData && (
           <WorkoutResults
             ref={resultsRef}
-            answer={answer}
-            onCopy={() => copyToClipboard(answer)}
-            copied={copied}
+            workout={workoutData}
+            onCopyFull={handleCopyFullWorkout}
+            onCopyTemplate={handleCopyTemplate}
+            copiedFull={copiedStates["full"] || false}
+            copiedTemplate={copiedStates["template"] || false}
           />
+        )}
+
+        {/* Error Display */}
+        {error && (
+          <div className="bg-destructive/10 text-destructive animate-in fade-in slide-in-from-bottom-4 border-destructive/20 mt-6 rounded-lg border p-4 duration-500 sm:mt-8 sm:p-6">
+            <p className="mb-1 font-semibold">Error generating workout</p>
+            <p className="text-sm">{error}</p>
+          </div>
         )}
       </div>
     </main>
