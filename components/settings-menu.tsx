@@ -26,29 +26,24 @@ export const AI_MODELS: AIModel[] = [
     description: "Fast and reliable (Default)",
   },
   {
-    id: "meta-llama/llama-3.3-70b-instruct:free",
-    name: "Llama 3.3 70B",
-    description: "Free and capable",
+    id: "moonshotai/kimi-k2.5",
+    name: "Kimi K2.5",
+    description: "Advanced reasoning with 262k context",
   },
   {
-    id: "openai/gpt-4o-mini",
-    name: "GPT-4o Mini",
-    description: "Efficient OpenAI model",
-  },
-  {
-    id: "anthropic/claude-3-haiku",
-    name: "Claude 3 Haiku",
-    description: "Quick responses",
-  },
-  {
-    id: "deepseek/deepseek-chat",
-    name: "DeepSeek V3",
-    description: "Advanced reasoning",
+    id: "openai/gpt-5-mini",
+    name: "GPT-5 Mini",
+    description: "Advanced reasoning with 400k context",
   },
   {
     id: "anthropic/claude-3.5-haiku",
     name: "Claude 3.5 Haiku",
     description: "Enhanced Claude",
+  },
+  {
+    id: "meta-llama/llama-3.3-70b-instruct:free",
+    name: "Llama 3.3 70B",
+    description: "Free and capable",
   },
 ];
 
