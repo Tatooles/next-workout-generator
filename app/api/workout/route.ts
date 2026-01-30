@@ -7,11 +7,9 @@ import { WorkoutDataSchema } from "@/lib/workout-types";
 const ALLOWED_MODELS = [
   "google/gemini-3-flash-preview",
   "moonshotai/kimi-k2.5",
-  "meta-llama/llama-3.3-70b-instruct:free",
-  "openai/gpt-4o-mini",
-  "anthropic/claude-3-haiku",
-  "deepseek/deepseek-chat",
+  "openai/gpt-5-mini",
   "anthropic/claude-3.5-haiku",
+  "meta-llama/llama-3.3-70b-instruct:free",
 ] as const;
 
 const DEFAULT_MODEL = "google/gemini-3-flash-preview";
