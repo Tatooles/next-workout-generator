@@ -26,6 +26,11 @@ export const AI_MODELS: AIModel[] = [
     description: "Fast and reliable (Default)",
   },
   {
+    id: "moonshotai/kimi-k2.5",
+    name: "Kimi K2.5",
+    description: "Advanced reasoning with 262k context",
+  },
+  {
     id: "meta-llama/llama-3.3-70b-instruct:free",
     name: "Llama 3.3 70B",
     description: "Free and capable",

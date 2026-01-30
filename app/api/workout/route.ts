@@ -6,6 +6,7 @@ import { WorkoutDataSchema } from "@/lib/workout-types";
 // Allowlist of permitted AI models
 const ALLOWED_MODELS = [
   "google/gemini-3-flash-preview",
+  "moonshotai/kimi-k2.5",
   "meta-llama/llama-3.3-70b-instruct:free",
   "openai/gpt-4o-mini",
   "anthropic/claude-3-haiku",
