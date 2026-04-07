@@ -2,6 +2,11 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { MuscleGroup, WorkoutType } from "./muscle-groups";
 import type { WorkoutData } from "./workout-types";
+import {
+  EquipmentOption,
+  GymProfile,
+  WorkoutDuration,
+} from "./workout-preferences";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -26,6 +31,9 @@ export interface WorkoutParams {
   bodyParts: MuscleGroup[];
   workoutType: WorkoutType | null;
   additionalDetails: string | null;
+  desiredDuration: WorkoutDuration | null;
+  gymProfile: GymProfile | null;
+  availableEquipment: EquipmentOption[];
   model: string;
 }
 

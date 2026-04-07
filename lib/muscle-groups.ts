@@ -8,27 +8,33 @@ import {
   LucideIcon,
 } from "lucide-react";
 
-export type MuscleGroup = 
-  | "quads"
-  | "hamstrings"
-  | "glutes"
-  | "triceps"
-  | "biceps"
-  | "chest"
-  | "lats"
-  | "upper back"
-  | "front delts"
-  | "rear delts"
-  | "side delts"
-  | "abs";
+export const muscleGroups = [
+  "quads",
+  "hamstrings",
+  "glutes",
+  "triceps",
+  "biceps",
+  "chest",
+  "lats",
+  "upper back",
+  "front delts",
+  "rear delts",
+  "side delts",
+  "abs",
+] as const;
 
-export type WorkoutType =
-  | "leg workout"
-  | "push workout"
-  | "pull workout"
-  | "upper body workout"
-  | "lower body workout"
-  | "full body workout";
+export type MuscleGroup = (typeof muscleGroups)[number];
+
+export const workoutTypes = [
+  "leg workout",
+  "push workout",
+  "pull workout",
+  "upper body workout",
+  "lower body workout",
+  "full body workout",
+] as const;
+
+export type WorkoutType = (typeof workoutTypes)[number];
 
 export interface MuscleGroupConfig {
   icon: LucideIcon;
@@ -59,19 +65,4 @@ export const workoutTypeIcons: Record<WorkoutType, LucideIcon> = {
   "lower body workout": Dumbbell,
   "full body workout": Flame,
 };
-
-export const muscleGroups: MuscleGroup[] = [
-  "quads",
-  "hamstrings",
-  "glutes",
-  "triceps",
-  "biceps",
-  "chest",
-  "lats",
-  "upper back",
-  "front delts",
-  "rear delts",
-  "side delts",
-  "abs",
-];
 

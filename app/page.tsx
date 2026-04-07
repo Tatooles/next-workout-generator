@@ -3,7 +3,9 @@
 import { useEffect, useRef } from "react";
 import { WorkoutHeader } from "@/components/workout-header";
 import { SplitWorkoutSelector } from "@/components/split-workout-selector";
+import { DurationSelector } from "@/components/duration-selector";
 import { BodyPartsSelector } from "@/components/body-parts-selector";
+import { EquipmentSelector } from "@/components/equipment-selector";
 import { AdditionalDetailsInput } from "@/components/additional-details-input";
 import { SubmitButton } from "@/components/submit-button";
 import { WorkoutResults } from "@/components/workout-results";
@@ -51,6 +53,9 @@ export default function Home() {
       bodyParts: workoutForm.selectedBodyParts,
       workoutType: workoutForm.workoutType,
       additionalDetails: workoutForm.additionalDetails || null,
+      desiredDuration: workoutForm.desiredDuration,
+      gymProfile: workoutForm.gymProfile,
+      availableEquipment: workoutForm.availableEquipment,
       model: workoutForm.model,
     });
   };
@@ -71,9 +76,19 @@ export default function Home() {
               workoutType={workoutForm.workoutType}
               onWorkoutTypeChange={workoutForm.setWorkoutType}
             />
+            <DurationSelector
+              value={workoutForm.desiredDuration}
+              onValueChange={workoutForm.setDesiredDuration}
+            />
             <BodyPartsSelector
               selectedBodyParts={workoutForm.selectedBodyParts}
               onToggle={workoutForm.handleBodyPartToggle}
+            />
+            <EquipmentSelector
+              gymProfile={workoutForm.gymProfile}
+              onGymProfileChange={workoutForm.setGymProfile}
+              selectedEquipment={workoutForm.availableEquipment}
+              onEquipmentToggle={workoutForm.handleEquipmentToggle}
             />
           </div>
 
