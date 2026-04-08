@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { MuscleGroup, WorkoutType } from "@/lib/muscle-groups";
 import {
   EquipmentOption,
   GymProfile,
+  MuscleGroup,
   WorkoutDuration,
-} from "@/lib/workout-preferences";
+  WorkoutType,
+} from "@/lib/workout-options";
 
 export function useWorkoutForm() {
   const [workoutType, setWorkoutType] = useState<WorkoutType | null>(null);

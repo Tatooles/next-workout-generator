@@ -31,7 +31,7 @@ import {
   gymProfiles,
   type EquipmentOption,
   type GymProfile,
-} from "@/lib/workout-preferences";
+} from "@/lib/workout-options";
 
 interface EquipmentSelectorProps {
   gymProfile: GymProfile | null;

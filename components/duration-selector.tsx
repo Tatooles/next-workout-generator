@@ -11,7 +11,7 @@ import {
 import {
   workoutDurations,
   type WorkoutDuration,
-} from "@/lib/workout-preferences";
+} from "@/lib/workout-options";
 
 interface DurationSelectorProps {
   value: WorkoutDuration | null;

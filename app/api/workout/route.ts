@@ -2,6 +2,7 @@ export const runtime = "edge";
 
 import type { WorkoutData } from "@/lib/workout-types";
 import { WorkoutDataSchema } from "@/lib/workout-types";
+import { WorkoutRequest, WorkoutRequestSchema } from "@/lib/workout-options";
 
 // Allowlist of permitted AI models
 const ALLOWED_MODELS = [
@@ -14,15 +15,35 @@ const ALLOWED_MODELS = [
 
 const DEFAULT_MODEL = "google/gemini-3-flash-preview";
 
-interface UserInformation {
-  bodyParts: string[];
-  workoutType?: string | null;
-  additionalDetails?: string | null;
-  model?: string | null;
-}
-
 export async function POST(request: Request) {
-  const body = await request.json();
+  let requestBody: unknown;
+
+  try {
+    requestBody = await request.json();
+  } catch {
+    return new Response(JSON.stringify({ error: "Invalid JSON body." }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const parsedRequest = WorkoutRequestSchema.safeParse(requestBody);
+
+  if (!parsedRequest.success) {
+    return new Response(
+      JSON.stringify({
+        error: parsedRequest.error.issues
+          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+          .join(", "),
+      }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+  }
+
+  const body = parsedRequest.data;
   const prompt = constructPrompt(body);
 
   // Validate model against allowlist
@@ -110,33 +131,56 @@ export async function POST(request: Request) {
   }
 }
 
-function constructPrompt(userInformation: UserInformation) {
-  console.log("Information from user:", userInformation);
-  let prompt = "";
+function constructPrompt(userInformation: WorkoutRequest) {
+  const promptParts: string[] = [];
 
-  // Build the workout request
   if (userInformation.workoutType) {
-    prompt = `Generate a ${userInformation.workoutType} for me `;
-    if (userInformation.bodyParts.length) {
-      prompt += `with these additional body parts:`;
-      for (const part of userInformation.bodyParts) {
-        prompt += ` ${part}`;
-      }
-    }
+    promptParts.push(`Generate a ${userInformation.workoutType} for me.`);
+  } else if (userInformation.bodyParts.length > 0) {
+    promptParts.push("Generate a workout for me.");
   } else {
-    if (userInformation.bodyParts.length) {
-      prompt = "Generate a workout for me to hit these body parts:";
-      for (const part of userInformation.bodyParts) {
-        prompt += ` ${part}`;
-      }
-    }
+    promptParts.push("Generate a balanced workout for me.");
   }
+
+  if (userInformation.bodyParts.length > 0) {
+    promptParts.push(
+      `Prioritize these body parts: ${userInformation.bodyParts.join(", ")}.`,
+    );
+  }
+
+  if (userInformation.desiredDuration) {
+    promptParts.push(
+      `Target a total workout duration of ${userInformation.desiredDuration}. Keep the session length as close to that target as possible while still being realistic, and return the actual best estimatedDuration in the response.`,
+    );
+  }
+
+  if (userInformation.gymProfile) {
+    promptParts.push(`Available gym setup: ${userInformation.gymProfile}.`);
+  }
+
+  if (userInformation.availableEquipment.length > 0) {
+    promptParts.push(
+      `Additional equipment available: ${userInformation.availableEquipment.join(", ")}.`,
+    );
+  }
+
+  if (
+    userInformation.gymProfile ||
+    userInformation.availableEquipment.length > 0
+  ) {
+    promptParts.push(
+      "Only include exercises that can be performed with the available setup, listed equipment, or bodyweight.",
+    );
+  }
+
   if (userInformation.additionalDetails) {
-    prompt += ` Here are some additional details: ${userInformation.additionalDetails}`;
+    promptParts.push(
+      `Additional details: ${userInformation.additionalDetails}.`,
+    );
   }
 
   // Specify strict JSON format
-  prompt += `
+  promptParts.push(`
 
 IMPORTANT: You MUST respond with ONLY valid JSON in the exact format specified below. Do not include any markdown code blocks, explanations, or additional text. Return only the raw JSON object.
 
@@ -170,9 +214,9 @@ Requirements:
 - "estimatedDuration": Total estimated workout duration including warm-up (required)
 - "notes": Any general notes about the workout, tips, or modifications (optional)
 
-Remember: Return ONLY the JSON object, no markdown formatting, no code blocks, no additional text.`;
+Remember: Return ONLY the JSON object, no markdown formatting, no code blocks, no additional text.`);
 
-  return prompt;
+  return promptParts.join(" ");
 }
 
 function parseWorkoutJSON(

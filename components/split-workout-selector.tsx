@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { WorkoutType } from "@/lib/muscle-groups";
+import { WorkoutType } from "@/lib/workout-options";
 
 interface SplitWorkoutSelectorProps {
   workoutType: WorkoutType | null;

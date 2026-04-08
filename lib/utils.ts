@@ -1,12 +1,13 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { MuscleGroup, WorkoutType } from "./muscle-groups";
-import type { WorkoutData } from "./workout-types";
 import {
   EquipmentOption,
   GymProfile,
+  MuscleGroup,
   WorkoutDuration,
-} from "./workout-preferences";
+  WorkoutType,
+} from "./workout-options";
+import type { WorkoutData } from "./workout-types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

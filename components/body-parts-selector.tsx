@@ -23,7 +23,7 @@ import {
   muscleGroups,
   muscleGroupConfig,
   type MuscleGroup,
-} from "@/lib/muscle-groups";
+} from "@/lib/workout-options";
 
 interface BodyPartsSelectorProps {
   selectedBodyParts: MuscleGroup[];
