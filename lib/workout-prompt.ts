@@ -4,7 +4,9 @@ export function buildWorkoutPrompt(userInformation: WorkoutRequest) {
   const promptParts: string[] = [];
 
   if (userInformation.workoutType) {
-    promptParts.push(`Generate a ${userInformation.workoutType} for me.`);
+    promptParts.push(
+      `Generate a ${userInformation.workoutType.toLowerCase()} for me.`,
+    );
   } else if (userInformation.bodyParts.length > 0) {
     promptParts.push("Generate a workout for me.");
   } else {
@@ -19,7 +21,7 @@ export function buildWorkoutPrompt(userInformation: WorkoutRequest) {
 
   if (userInformation.experienceLevel) {
     promptParts.push(
-      `The user is at a ${userInformation.experienceLevel} experience level. Match exercise selection, movement complexity, and total training demand appropriately.`,
+      `The user is at a ${userInformation.experienceLevel.toLowerCase()} experience level. Match exercise selection, movement complexity, and total training demand appropriately.`,
     );
   }
 
@@ -30,7 +32,9 @@ export function buildWorkoutPrompt(userInformation: WorkoutRequest) {
   }
 
   if (userInformation.gymProfile) {
-    promptParts.push(`Available gym setup: ${userInformation.gymProfile}.`);
+    promptParts.push(
+      `Available gym setup: ${userInformation.gymProfile.toLowerCase()}.`,
+    );
   }
 
   if (userInformation.availableEquipment.length > 0) {

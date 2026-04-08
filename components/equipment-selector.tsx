@@ -47,7 +47,7 @@ export function EquipmentSelector({
   onEquipmentToggle,
 }: EquipmentSelectorProps) {
   const [open, setOpen] = useState(false);
-  const isFullGym = gymProfile === "full commercial gym";
+  const isFullGym = gymProfile === "Full Commercial Gym";
 
   const handleSelect = (equipment: EquipmentOption) => {
     const isSelected = selectedEquipment.includes(equipment);
@@ -143,7 +143,7 @@ export function EquipmentSelector({
                               isSelected ? "opacity-100" : "opacity-0",
                             )}
                           />
-                          <span className="capitalize">{equipment}</span>
+                          <span>{equipment}</span>
                         </CommandItem>
                       );
                     })}
@@ -156,11 +156,7 @@ export function EquipmentSelector({
           {selectedEquipment.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {selectedEquipment.map((equipment) => (
-                <Badge
-                  key={equipment}
-                  variant="secondary"
-                  className="gap-1 pr-1 capitalize"
-                >
+                <Badge key={equipment} variant="secondary" className="gap-1 pr-1">
                   {equipment}
                   <button
                     type="button"

@@ -50,7 +50,7 @@ export function ExperienceLevelSelector({
         </SelectTrigger>
         <SelectContent>
           {experienceLevels.map((level) => (
-            <SelectItem key={level} value={level} className="capitalize">
+            <SelectItem key={level} value={level}>
               {level}
             </SelectItem>
           ))}

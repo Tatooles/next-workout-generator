@@ -36,7 +36,7 @@ export function useWorkoutForm() {
   const setGymProfile = (value: GymProfile | null) => {
     setGymProfileState(value);
 
-    if (value === "full commercial gym") {
+    if (value === "Full Commercial Gym") {
       setAvailableEquipment([]);
     }
   };
@@ -45,7 +45,7 @@ export function useWorkoutForm() {
     equipment: EquipmentOption,
     checked: boolean,
   ) => {
-    if (gymProfile === "full commercial gym") {
+    if (gymProfile === "Full Commercial Gym") {
       return;
     }
 

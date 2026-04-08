@@ -34,22 +34,22 @@ export function SplitWorkoutSelector({
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Push Pull Legs Split</SelectLabel>
-            <SelectItem value="leg workout">Leg Workout</SelectItem>
-            <SelectItem value="push workout">Push Workout</SelectItem>
-            <SelectItem value="pull workout">Pull Workout</SelectItem>
+            <SelectItem value="Leg Workout">Leg Workout</SelectItem>
+            <SelectItem value="Push Workout">Push Workout</SelectItem>
+            <SelectItem value="Pull Workout">Pull Workout</SelectItem>
           </SelectGroup>
           <SelectGroup>
             <SelectLabel>Upper/Lower Split</SelectLabel>
-            <SelectItem value="upper body workout">
+            <SelectItem value="Upper Body Workout">
               Upper Body Workout
             </SelectItem>
-            <SelectItem value="lower body workout">
+            <SelectItem value="Lower Body Workout">
               Lower Body Workout
             </SelectItem>
           </SelectGroup>
           <SelectGroup>
             <SelectLabel>Other</SelectLabel>
-            <SelectItem value="full body workout">Full Body Workout</SelectItem>
+            <SelectItem value="Full Body Workout">Full Body Workout</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>

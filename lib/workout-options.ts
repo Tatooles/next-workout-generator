@@ -10,29 +10,29 @@ import {
 import { z } from "zod";
 
 export const muscleGroups = [
-  "quads",
-  "hamstrings",
-  "glutes",
-  "triceps",
-  "biceps",
-  "chest",
-  "lats",
-  "upper back",
-  "front delts",
-  "rear delts",
-  "side delts",
-  "abs",
+  "Quads",
+  "Hamstrings",
+  "Glutes",
+  "Triceps",
+  "Biceps",
+  "Chest",
+  "Lats",
+  "Upper Back",
+  "Front Delts",
+  "Rear Delts",
+  "Side Delts",
+  "Abs",
 ] as const;
 
 export type MuscleGroup = (typeof muscleGroups)[number];
 
 export const workoutTypes = [
-  "leg workout",
-  "push workout",
-  "pull workout",
-  "upper body workout",
-  "lower body workout",
-  "full body workout",
+  "Leg Workout",
+  "Push Workout",
+  "Pull Workout",
+  "Upper Body Workout",
+  "Lower Body Workout",
+  "Full Body Workout",
 ] as const;
 
 export type WorkoutType = (typeof workoutTypes)[number];
@@ -44,43 +44,43 @@ export interface MuscleGroupConfig {
 }
 
 export const muscleGroupConfig: Record<MuscleGroup, MuscleGroupConfig> = {
-  quads: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
-  hamstrings: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
-  glutes: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
-  triceps: { icon: Zap, color: "muscle-arms", category: "arms" },
-  biceps: { icon: Zap, color: "muscle-arms", category: "arms" },
-  chest: { icon: Heart, color: "muscle-upper", category: "upper" },
-  lats: { icon: Activity, color: "muscle-upper", category: "upper" },
-  "upper back": {
+  Quads: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
+  Hamstrings: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
+  Glutes: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
+  Triceps: { icon: Zap, color: "muscle-arms", category: "arms" },
+  Biceps: { icon: Zap, color: "muscle-arms", category: "arms" },
+  Chest: { icon: Heart, color: "muscle-upper", category: "upper" },
+  Lats: { icon: Activity, color: "muscle-upper", category: "upper" },
+  "Upper Back": {
     icon: Activity,
     color: "muscle-upper",
     category: "upper",
   },
-  "front delts": {
+  "Front Delts": {
     icon: Target,
     color: "muscle-shoulders",
     category: "shoulders",
   },
-  "rear delts": {
+  "Rear Delts": {
     icon: Target,
     color: "muscle-shoulders",
     category: "shoulders",
   },
-  "side delts": {
+  "Side Delts": {
     icon: Target,
     color: "muscle-shoulders",
     category: "shoulders",
   },
-  abs: { icon: Flame, color: "muscle-core", category: "core" },
+  Abs: { icon: Flame, color: "muscle-core", category: "core" },
 };
 
 export const workoutTypeIcons: Record<WorkoutType, LucideIcon> = {
-  "leg workout": Dumbbell,
-  "push workout": Zap,
-  "pull workout": Activity,
-  "upper body workout": Heart,
-  "lower body workout": Dumbbell,
-  "full body workout": Flame,
+  "Leg Workout": Dumbbell,
+  "Push Workout": Zap,
+  "Pull Workout": Activity,
+  "Upper Body Workout": Heart,
+  "Lower Body Workout": Dumbbell,
+  "Full Body Workout": Flame,
 };
 
 export const workoutDurations = [
@@ -94,32 +94,32 @@ export const workoutDurations = [
 export type WorkoutDuration = (typeof workoutDurations)[number];
 
 export const experienceLevels = [
-  "beginner",
-  "intermediate",
-  "advanced",
+  "Beginner",
+  "Intermediate",
+  "Advanced",
 ] as const;
 
 export type ExperienceLevel = (typeof experienceLevels)[number];
 
 export const gymProfiles = [
-  "bodyweight only",
-  "minimal apartment/hotel gym",
-  "home dumbbells and bench",
-  "full commercial gym",
+  "Bodyweight Only",
+  "Minimal Apartment/Hotel Gym",
+  "Home Dumbbells and Bench",
+  "Full Commercial Gym",
 ] as const;
 
 export type GymProfile = (typeof gymProfiles)[number];
 
 export const equipmentOptions = [
-  "dumbbells",
-  "adjustable bench",
-  "barbell and plates",
-  "kettlebells",
-  "resistance bands",
-  "pull-up bar",
-  "cable machine",
-  "selectorized machines",
-  "cardio machine",
+  "Dumbbells",
+  "Adjustable Bench",
+  "Barbell and Plates",
+  "Kettlebells",
+  "Resistance Bands",
+  "Pull-up Bar",
+  "Cable Machine",
+  "Selectorized Machines",
+  "Cardio Machine",
 ] as const;
 
 export type EquipmentOption = (typeof equipmentOptions)[number];
@@ -137,14 +137,14 @@ export const WorkoutRequestSchema = z
   })
   .superRefine((value, ctx) => {
     if (
-      value.gymProfile === "full commercial gym" &&
+      value.gymProfile === "Full Commercial Gym" &&
       value.availableEquipment.length > 0
     ) {
       ctx.addIssue({
         code: "custom",
         path: ["availableEquipment"],
         message:
-          "Additional equipment should not be provided for full commercial gym.",
+          "Additional equipment should not be provided for Full Commercial Gym.",
       });
     }
   });
