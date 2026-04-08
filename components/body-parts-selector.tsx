@@ -23,7 +23,7 @@ import {
   muscleGroups,
   muscleGroupConfig,
   type MuscleGroup,
-} from "@/lib/muscle-groups";
+} from "@/lib/workout-options";
 
 interface BodyPartsSelectorProps {
   selectedBodyParts: MuscleGroup[];
@@ -105,7 +105,7 @@ export function BodyPartsSelector({
                               isSelected ? "opacity-100" : "opacity-0",
                             )}
                           />
-                          <span className="capitalize">{muscle}</span>
+                          <span>{muscle}</span>
                         </CommandItem>
                       );
                     })}
@@ -121,11 +121,7 @@ export function BodyPartsSelector({
       {selectedBodyParts.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {selectedBodyParts.map((muscle) => (
-            <Badge
-              key={muscle}
-              variant="secondary"
-              className="gap-1 pr-1 capitalize"
-            >
+            <Badge key={muscle} variant="secondary" className="gap-1 pr-1">
               {muscle}
               <button
                 type="button"

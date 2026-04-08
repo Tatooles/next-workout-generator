@@ -1,12 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { MuscleGroup, WorkoutType } from "@/lib/muscle-groups";
+import {
+  EquipmentOption,
+  ExperienceLevel,
+  GymProfile,
+  MuscleGroup,
+  WorkoutDuration,
+  WorkoutType,
+} from "@/lib/workout-options";
 
 export function useWorkoutForm() {
   const [workoutType, setWorkoutType] = useState<WorkoutType | null>(null);
   const [selectedBodyParts, setSelectedBodyParts] = useState<MuscleGroup[]>([]);
   const [additionalDetails, setAdditionalDetails] = useState("");
+  const [experienceLevel, setExperienceLevel] =
+    useState<ExperienceLevel | null>(null);
+  const [desiredDuration, setDesiredDuration] = useState<WorkoutDuration | null>(
+    null,
+  );
+  const [gymProfile, setGymProfileState] = useState<GymProfile | null>(null);
+  const [availableEquipment, setAvailableEquipment] = useState<
+    EquipmentOption[]
+  >([]);
   const [model, setModel] = useState("google/gemini-3-flash-preview");
 
   const handleBodyPartToggle = (bodyPart: MuscleGroup, checked: boolean) => {
@@ -17,7 +33,38 @@ export function useWorkoutForm() {
     }
   };
 
-  const canSubmit = !!workoutType || selectedBodyParts.length > 0;
+  const setGymProfile = (value: GymProfile | null) => {
+    setGymProfileState(value);
+
+    if (value === "Full Commercial Gym") {
+      setAvailableEquipment([]);
+    }
+  };
+
+  const handleEquipmentToggle = (
+    equipment: EquipmentOption,
+    checked: boolean,
+  ) => {
+    if (gymProfile === "Full Commercial Gym") {
+      return;
+    }
+
+    if (checked) {
+      setAvailableEquipment((current) => [...current, equipment]);
+    } else {
+      setAvailableEquipment((current) =>
+        current.filter((item) => item !== equipment),
+      );
+    }
+  };
+
+  const canSubmit =
+    !!workoutType ||
+    selectedBodyParts.length > 0 ||
+    !!experienceLevel ||
+    !!desiredDuration ||
+    !!gymProfile ||
+    availableEquipment.length > 0;
 
   return {
     workoutType,
@@ -26,9 +73,16 @@ export function useWorkoutForm() {
     handleBodyPartToggle,
     additionalDetails,
     setAdditionalDetails,
+    experienceLevel,
+    setExperienceLevel,
+    desiredDuration,
+    setDesiredDuration,
+    gymProfile,
+    setGymProfile,
+    availableEquipment,
+    handleEquipmentToggle,
     model,
     setModel,
     canSubmit,
   };
 }
-

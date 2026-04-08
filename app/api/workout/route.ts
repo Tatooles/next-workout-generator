@@ -1,5 +1,7 @@
 export const runtime = "edge";
 
+import { buildWorkoutPrompt } from "@/lib/workout-prompt";
+import { WorkoutRequestSchema } from "@/lib/workout-options";
 import type { WorkoutData } from "@/lib/workout-types";
 import { WorkoutDataSchema } from "@/lib/workout-types";
 
@@ -14,16 +16,36 @@ const ALLOWED_MODELS = [
 
 const DEFAULT_MODEL = "google/gemini-3-flash-preview";
 
-interface UserInformation {
-  bodyParts: string[];
-  workoutType?: string | null;
-  additionalDetails?: string | null;
-  model?: string | null;
-}
-
 export async function POST(request: Request) {
-  const body = await request.json();
-  const prompt = constructPrompt(body);
+  let requestBody: unknown;
+
+  try {
+    requestBody = await request.json();
+  } catch {
+    return new Response(JSON.stringify({ error: "Invalid JSON body." }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const parsedRequest = WorkoutRequestSchema.safeParse(requestBody);
+
+  if (!parsedRequest.success) {
+    return new Response(
+      JSON.stringify({
+        error: parsedRequest.error.issues
+          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+          .join(", "),
+      }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+  }
+
+  const body = parsedRequest.data;
+  const prompt = buildWorkoutPrompt(body);
 
   // Validate model against allowlist
   const requestedModel = body.model || DEFAULT_MODEL;
@@ -108,71 +130,6 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
-}
-
-function constructPrompt(userInformation: UserInformation) {
-  console.log("Information from user:", userInformation);
-  let prompt = "";
-
-  // Build the workout request
-  if (userInformation.workoutType) {
-    prompt = `Generate a ${userInformation.workoutType} for me `;
-    if (userInformation.bodyParts.length) {
-      prompt += `with these additional body parts:`;
-      for (const part of userInformation.bodyParts) {
-        prompt += ` ${part}`;
-      }
-    }
-  } else {
-    if (userInformation.bodyParts.length) {
-      prompt = "Generate a workout for me to hit these body parts:";
-      for (const part of userInformation.bodyParts) {
-        prompt += ` ${part}`;
-      }
-    }
-  }
-  if (userInformation.additionalDetails) {
-    prompt += ` Here are some additional details: ${userInformation.additionalDetails}`;
-  }
-
-  // Specify strict JSON format
-  prompt += `
-
-IMPORTANT: You MUST respond with ONLY valid JSON in the exact format specified below. Do not include any markdown code blocks, explanations, or additional text. Return only the raw JSON object.
-
-Required JSON structure:
-{
-  "exercises": [
-    {
-      "name": "Exercise name",
-      "sets": 3,
-      "reps": "8-10",
-      "restTime": "60s",
-      "muscleGroups": ["Chest", "Triceps"],
-      "formTips": [
-        "Keep your core engaged throughout the movement",
-        "Control the weight on the way down"
-      ]
-    }
-  ],
-  "estimatedDuration": "45-60 minutes",
-  "notes": "Optional general notes about the workout"
-}
-
-Requirements:
-- "exercises": Array of exercise objects (required, minimum 4-8 exercises)
-- "name": Full name of the exercise (required)
-- "sets": Number of sets as an integer (required)
-- "reps": Rep range as a string, can be "8-10", "12-15", "AMRAP", "30 seconds", etc. (required)
-- "restTime": Rest period as a string, e.g., "60s", "90s", "2 minutes" (required)
-- "muscleGroups": Array of primary muscle groups targeted (required, at least 1)
-- "formTips": Array of 2-3 specific form cues or tips (required)
-- "estimatedDuration": Total estimated workout duration including warm-up (required)
-- "notes": Any general notes about the workout, tips, or modifications (optional)
-
-Remember: Return ONLY the JSON object, no markdown formatting, no code blocks, no additional text.`;
-
-  return prompt;
 }
 
 function parseWorkoutJSON(
