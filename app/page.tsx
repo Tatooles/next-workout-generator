@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { WorkoutHeader } from "@/components/workout-header";
 import { SplitWorkoutSelector } from "@/components/split-workout-selector";
+import { ExperienceLevelSelector } from "@/components/experience-level-selector";
 import { DurationSelector } from "@/components/duration-selector";
 import { BodyPartsSelector } from "@/components/body-parts-selector";
 import { EquipmentSelector } from "@/components/equipment-selector";
@@ -53,6 +54,7 @@ export default function Home() {
       bodyParts: workoutForm.selectedBodyParts,
       workoutType: workoutForm.workoutType,
       additionalDetails: workoutForm.additionalDetails || null,
+      experienceLevel: workoutForm.experienceLevel,
       desiredDuration: workoutForm.desiredDuration,
       gymProfile: workoutForm.gymProfile,
       availableEquipment: workoutForm.availableEquipment,
@@ -75,6 +77,10 @@ export default function Home() {
             <SplitWorkoutSelector
               workoutType={workoutForm.workoutType}
               onWorkoutTypeChange={workoutForm.setWorkoutType}
+            />
+            <ExperienceLevelSelector
+              value={workoutForm.experienceLevel}
+              onValueChange={workoutForm.setExperienceLevel}
             />
             <DurationSelector
               value={workoutForm.desiredDuration}

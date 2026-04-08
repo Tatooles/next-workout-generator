@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {
   EquipmentOption,
+  ExperienceLevel,
   GymProfile,
   MuscleGroup,
   WorkoutDuration,
@@ -13,6 +14,8 @@ export function useWorkoutForm() {
   const [workoutType, setWorkoutType] = useState<WorkoutType | null>(null);
   const [selectedBodyParts, setSelectedBodyParts] = useState<MuscleGroup[]>([]);
   const [additionalDetails, setAdditionalDetails] = useState("");
+  const [experienceLevel, setExperienceLevel] =
+    useState<ExperienceLevel | null>(null);
   const [desiredDuration, setDesiredDuration] = useState<WorkoutDuration | null>(
     null,
   );
@@ -58,6 +61,7 @@ export function useWorkoutForm() {
   const canSubmit =
     !!workoutType ||
     selectedBodyParts.length > 0 ||
+    !!experienceLevel ||
     !!desiredDuration ||
     !!gymProfile ||
     availableEquipment.length > 0;
@@ -69,6 +73,8 @@ export function useWorkoutForm() {
     handleBodyPartToggle,
     additionalDetails,
     setAdditionalDetails,
+    experienceLevel,
+    setExperienceLevel,
     desiredDuration,
     setDesiredDuration,
     gymProfile,

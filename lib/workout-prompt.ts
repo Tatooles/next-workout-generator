@@ -17,6 +17,12 @@ export function buildWorkoutPrompt(userInformation: WorkoutRequest) {
     );
   }
 
+  if (userInformation.experienceLevel) {
+    promptParts.push(
+      `The user is at a ${userInformation.experienceLevel} experience level. Match exercise selection, movement complexity, and total training demand appropriately.`,
+    );
+  }
+
   if (userInformation.desiredDuration) {
     promptParts.push(
       `Target a total workout duration of ${userInformation.desiredDuration}. Keep the session length as close to that target as possible while still being realistic, and return the actual best estimatedDuration in the response.`,

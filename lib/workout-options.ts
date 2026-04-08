@@ -93,6 +93,14 @@ export const workoutDurations = [
 
 export type WorkoutDuration = (typeof workoutDurations)[number];
 
+export const experienceLevels = [
+  "beginner",
+  "intermediate",
+  "advanced",
+] as const;
+
+export type ExperienceLevel = (typeof experienceLevels)[number];
+
 export const gymProfiles = [
   "bodyweight only",
   "minimal apartment/hotel gym",
@@ -121,6 +129,7 @@ export const WorkoutRequestSchema = z
     bodyParts: z.array(z.enum(muscleGroups)).default([]),
     workoutType: z.enum(workoutTypes).nullable().optional(),
     additionalDetails: z.string().max(500).nullable().optional(),
+    experienceLevel: z.enum(experienceLevels).nullable().optional(),
     desiredDuration: z.enum(workoutDurations).nullable().optional(),
     gymProfile: z.enum(gymProfiles).nullable().optional(),
     availableEquipment: z.array(z.enum(equipmentOptions)).default([]),

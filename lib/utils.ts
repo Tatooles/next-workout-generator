@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {
   EquipmentOption,
+  ExperienceLevel,
   GymProfile,
   MuscleGroup,
   WorkoutDuration,
@@ -32,6 +33,7 @@ export interface WorkoutParams {
   bodyParts: MuscleGroup[];
   workoutType: WorkoutType | null;
   additionalDetails: string | null;
+  experienceLevel: ExperienceLevel | null;
   desiredDuration: WorkoutDuration | null;
   gymProfile: GymProfile | null;
   availableEquipment: EquipmentOption[];
