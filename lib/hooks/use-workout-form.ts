@@ -16,9 +16,8 @@ export function useWorkoutForm() {
   const [additionalDetails, setAdditionalDetails] = useState("");
   const [experienceLevel, setExperienceLevel] =
     useState<ExperienceLevel | null>(null);
-  const [desiredDuration, setDesiredDuration] = useState<WorkoutDuration | null>(
-    null,
-  );
+  const [desiredDuration, setDesiredDuration] =
+    useState<WorkoutDuration | null>(null);
   const [gymProfile, setGymProfileState] = useState<GymProfile | null>(null);
   const [availableEquipment, setAvailableEquipment] = useState<
     EquipmentOption[]

@@ -8,10 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  workoutDurations,
-  type WorkoutDuration,
-} from "@/lib/workout-options";
+import { workoutDurations, type WorkoutDuration } from "@/lib/workout-options";
 
 interface DurationSelectorProps {
   value: WorkoutDuration | null;

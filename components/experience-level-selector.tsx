@@ -8,10 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  experienceLevels,
-  type ExperienceLevel,
-} from "@/lib/workout-options";
+import { experienceLevels, type ExperienceLevel } from "@/lib/workout-options";
 
 interface ExperienceLevelSelectorProps {
   value: ExperienceLevel | null;
@@ -25,7 +22,10 @@ export function ExperienceLevelSelector({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3">
-        <Label htmlFor="experience-level-select" className="text-sm font-medium">
+        <Label
+          htmlFor="experience-level-select"
+          className="text-sm font-medium"
+        >
           Experience Level (Optional)
         </Label>
         {value ? (

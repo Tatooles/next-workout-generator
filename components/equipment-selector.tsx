@@ -156,7 +156,11 @@ export function EquipmentSelector({
           {selectedEquipment.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {selectedEquipment.map((equipment) => (
-                <Badge key={equipment} variant="secondary" className="gap-1 pr-1">
+                <Badge
+                  key={equipment}
+                  variant="secondary"
+                  className="gap-1 pr-1"
+                >
                   {equipment}
                   <button
                     type="button"

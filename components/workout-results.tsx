@@ -61,7 +61,10 @@ function ExerciseCard({ exercise, index }: ExerciseCardProps) {
 }
 
 export const WorkoutResults = forwardRef<HTMLDivElement, WorkoutResultsProps>(
-  ({ workout, onCopyFull, onCopyTemplate, copiedFull, copiedTemplate }, ref) => {
+  (
+    { workout, onCopyFull, onCopyTemplate, copiedFull, copiedTemplate },
+    ref,
+  ) => {
     return (
       <div ref={ref} className="mt-6 sm:mt-8">
         {/* Header */}

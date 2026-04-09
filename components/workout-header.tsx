@@ -26,4 +26,3 @@ export function WorkoutHeader({ model, onModelChange }: WorkoutHeaderProps) {
     </div>
   );
 }
-

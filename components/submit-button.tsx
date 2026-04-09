@@ -28,4 +28,3 @@ export function SubmitButton({ loading, canSubmit }: SubmitButtonProps) {
     </Button>
   );
 }
-
