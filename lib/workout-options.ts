@@ -37,6 +37,18 @@ export const workoutTypes = [
 
 export type WorkoutType = (typeof workoutTypes)[number];
 
+export const programSplits = [
+  "Push/Pull/Legs",
+  "Upper/Lower",
+  "Full Body",
+  "Body Part Split",
+  "Arnold Split",
+  "Powerbuilding",
+  "Strength + Conditioning",
+] as const;
+
+export type ProgramSplit = (typeof programSplits)[number];
+
 export interface MuscleGroupConfig {
   icon: LucideIcon;
   color: string;
@@ -128,6 +140,7 @@ export const WorkoutRequestSchema = z
   .object({
     bodyParts: z.array(z.enum(muscleGroups)).default([]),
     workoutType: z.enum(workoutTypes).nullable().optional(),
+    programSplit: z.enum(programSplits).nullable().optional(),
     additionalDetails: z.string().max(500).nullable().optional(),
     experienceLevel: z.enum(experienceLevels).nullable().optional(),
     desiredDuration: z.enum(workoutDurations).nullable().optional(),

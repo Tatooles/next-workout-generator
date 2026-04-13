@@ -4,8 +4,10 @@ import { X } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import type { GenerationMode } from "@/lib/generation-types";
 
 interface AdditionalDetailsInputProps {
+  mode: GenerationMode;
   value: string;
   onChange: (value: string) => void;
 }
@@ -13,6 +15,7 @@ interface AdditionalDetailsInputProps {
 const MAX_CHARACTERS = 500;
 
 export function AdditionalDetailsInput({
+  mode,
   value,
   onChange,
 }: AdditionalDetailsInputProps) {
@@ -23,6 +26,7 @@ export function AdditionalDetailsInput({
   const handleClear = () => {
     onChange("");
   };
+  const isProgramMode = mode === "program";
 
   return (
     <div className="space-y-3">
@@ -45,8 +49,9 @@ export function AdditionalDetailsInput({
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Add preferences, injuries, goals, or training style (e.g., high volume,
-        focus on hypertrophy)
+        {isProgramMode
+          ? "Add weekly goals, injuries, recovery preferences, or training style (e.g., 2 harder days and more recovery work)."
+          : "Add preferences, injuries, goals, or training style (e.g., high volume, focus on hypertrophy)."}
       </p>
 
       {/* Textarea with character count */}
@@ -59,8 +64,12 @@ export function AdditionalDetailsInput({
               onChange(e.target.value);
             }
           }}
-          placeholder="Add details..."
-          className="min-h-[120px] resize-none pr-20"
+          placeholder={
+            isProgramMode
+              ? "Add weekly goals, recovery notes, or program preferences..."
+              : "Add details..."
+          }
+          className="min-h-30 resize-none pr-20"
           maxLength={MAX_CHARACTERS}
         />
         <div

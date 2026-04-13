@@ -1,12 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
+import type { GenerationMode } from "@/lib/generation-types";
 
 interface SubmitButtonProps {
+  mode: GenerationMode;
   loading: boolean;
   canSubmit: boolean;
 }
 
-export function SubmitButton({ loading, canSubmit }: SubmitButtonProps) {
+export function SubmitButton({
+  mode,
+  loading,
+  canSubmit,
+}: SubmitButtonProps) {
+  const isProgramMode = mode === "program";
+
   return (
     <Button
       type="submit"
@@ -17,12 +25,12 @@ export function SubmitButton({ loading, canSubmit }: SubmitButtonProps) {
       {loading ? (
         <>
           <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-          Generating...
+          Generating {isProgramMode ? "Program" : "Workout"}...
         </>
       ) : (
         <>
           <Zap className="mr-2 h-4 w-4" />
-          Generate Workout
+          Generate {isProgramMode ? "Program" : "Workout"}
         </>
       )}
     </Button>

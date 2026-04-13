@@ -6,12 +6,14 @@ import {
   ExperienceLevel,
   GymProfile,
   MuscleGroup,
+  ProgramSplit,
   WorkoutDuration,
   WorkoutType,
 } from "@/lib/workout-options";
 
 export function useWorkoutForm() {
   const [workoutType, setWorkoutType] = useState<WorkoutType | null>(null);
+  const [programSplit, setProgramSplit] = useState<ProgramSplit | null>(null);
   const [selectedBodyParts, setSelectedBodyParts] = useState<MuscleGroup[]>([]);
   const [additionalDetails, setAdditionalDetails] = useState("");
   const [experienceLevel, setExperienceLevel] =
@@ -59,6 +61,7 @@ export function useWorkoutForm() {
 
   const canSubmit =
     !!workoutType ||
+    !!programSplit ||
     selectedBodyParts.length > 0 ||
     !!experienceLevel ||
     !!desiredDuration ||
@@ -68,6 +71,8 @@ export function useWorkoutForm() {
   return {
     workoutType,
     setWorkoutType,
+    programSplit,
+    setProgramSplit,
     selectedBodyParts,
     handleBodyPartToggle,
     additionalDetails,
