@@ -49,6 +49,11 @@ export const programSplits = [
 
 export type ProgramSplit = (typeof programSplits)[number];
 
+export const programTrainingDaysPerWeekOptions = [2, 3, 4, 5, 6] as const;
+
+export type ProgramTrainingDaysPerWeek =
+  (typeof programTrainingDaysPerWeekOptions)[number];
+
 export interface MuscleGroupConfig {
   icon: LucideIcon;
   color: string;
@@ -141,6 +146,16 @@ export const WorkoutRequestSchema = z
     bodyParts: z.array(z.enum(muscleGroups)).default([]),
     workoutType: z.enum(workoutTypes).nullable().optional(),
     programSplit: z.enum(programSplits).nullable().optional(),
+    programTrainingDaysPerWeek: z
+      .union([
+        z.literal(2),
+        z.literal(3),
+        z.literal(4),
+        z.literal(5),
+        z.literal(6),
+      ])
+      .nullable()
+      .optional(),
     additionalDetails: z.string().max(500).nullable().optional(),
     experienceLevel: z.enum(experienceLevels).nullable().optional(),
     desiredDuration: z.enum(workoutDurations).nullable().optional(),

@@ -6,6 +6,7 @@ import {
   GymProfile,
   MuscleGroup,
   ProgramSplit,
+  ProgramTrainingDaysPerWeek,
   WorkoutDuration,
   WorkoutType,
 } from "./workout-options";
@@ -34,6 +35,7 @@ export interface GenerationParams {
   bodyParts: MuscleGroup[];
   workoutType: WorkoutType | null;
   programSplit: ProgramSplit | null;
+  programTrainingDaysPerWeek: ProgramTrainingDaysPerWeek | null;
   additionalDetails: string | null;
   experienceLevel: ExperienceLevel | null;
   desiredDuration: WorkoutDuration | null;
@@ -190,7 +192,6 @@ export function formatProgramAsText(program: ProgramData): string {
 
   program.days.forEach((day) => {
     text += `${day.day} - ${day.title}\n`;
-    text += `Type: ${day.type === "workout" ? "Workout" : "Rest / Recovery"}\n`;
 
     if (day.focus) {
       text += `Focus: ${day.focus}\n`;
@@ -254,15 +255,6 @@ export function formatProgramAsTemplate(program: ProgramData): string {
 
     if (day.estimatedDuration) {
       text += `Estimated Duration: ${day.estimatedDuration}\n`;
-    }
-
-    if (day.exercises.length === 0) {
-      if (day.notes) {
-        text += `Notes: ${day.notes}\n`;
-      }
-
-      text += `${"-".repeat(50)}\n`;
-      return;
     }
 
     text += "\n";

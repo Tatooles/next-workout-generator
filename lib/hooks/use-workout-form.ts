@@ -7,6 +7,7 @@ import {
   GymProfile,
   MuscleGroup,
   ProgramSplit,
+  ProgramTrainingDaysPerWeek,
   WorkoutDuration,
   WorkoutType,
 } from "@/lib/workout-options";
@@ -14,6 +15,8 @@ import {
 export function useWorkoutForm() {
   const [workoutType, setWorkoutType] = useState<WorkoutType | null>(null);
   const [programSplit, setProgramSplit] = useState<ProgramSplit | null>(null);
+  const [programTrainingDaysPerWeek, setProgramTrainingDaysPerWeek] =
+    useState<ProgramTrainingDaysPerWeek | null>(null);
   const [selectedBodyParts, setSelectedBodyParts] = useState<MuscleGroup[]>([]);
   const [additionalDetails, setAdditionalDetails] = useState("");
   const [experienceLevel, setExperienceLevel] =
@@ -73,6 +76,8 @@ export function useWorkoutForm() {
     setWorkoutType,
     programSplit,
     setProgramSplit,
+    programTrainingDaysPerWeek,
+    setProgramTrainingDaysPerWeek,
     selectedBodyParts,
     handleBodyPartToggle,
     additionalDetails,

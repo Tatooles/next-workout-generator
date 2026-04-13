@@ -8,7 +8,7 @@ import {
 } from "@/lib/ai-generation";
 import { buildProgramPrompt } from "@/lib/program-prompt";
 import { WorkoutRequestSchema } from "@/lib/workout-options";
-import { ProgramDataSchema } from "@/lib/workout-types";
+import { createProgramDataSchema } from "@/lib/workout-types";
 
 export async function POST(request: Request) {
   let requestBody: unknown;
@@ -48,7 +48,10 @@ export async function POST(request: Request) {
       requestedModel,
       "Workout Generator",
     );
-    const parsedProgram = parseStructuredJson(content, ProgramDataSchema);
+    const parsedProgram = parseStructuredJson(
+      content,
+      createProgramDataSchema(body.programTrainingDaysPerWeek),
+    );
 
     if (!parsedProgram.success) {
       console.error("Failed to parse program JSON:", parsedProgram.error);

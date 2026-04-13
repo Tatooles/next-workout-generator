@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ProgramResults } from "@/components/program-results";
 import { WorkoutHeader } from "@/components/workout-header";
 import { SplitWorkoutSelector } from "@/components/split-workout-selector";
+import { ProgramDaysPerWeekSelector } from "@/components/program-days-per-week-selector";
 import { ExperienceLevelSelector } from "@/components/experience-level-selector";
 import { DurationSelector } from "@/components/duration-selector";
 import { BodyPartsSelector } from "@/components/body-parts-selector";
@@ -83,6 +84,7 @@ export default function Home() {
       bodyParts: workoutForm.selectedBodyParts,
       workoutType: workoutForm.workoutType,
       programSplit: workoutForm.programSplit,
+      programTrainingDaysPerWeek: workoutForm.programTrainingDaysPerWeek,
       additionalDetails: workoutForm.additionalDetails || null,
       experienceLevel: workoutForm.experienceLevel,
       desiredDuration: workoutForm.desiredDuration,
@@ -111,6 +113,13 @@ export default function Home() {
               onWorkoutTypeChange={workoutForm.setWorkoutType}
               onProgramSplitChange={workoutForm.setProgramSplit}
             />
+            {mode === "program" ? (
+              <ProgramDaysPerWeekSelector
+                value={workoutForm.programTrainingDaysPerWeek}
+                programSplit={workoutForm.programSplit}
+                onValueChange={workoutForm.setProgramTrainingDaysPerWeek}
+              />
+            ) : null}
             <ExperienceLevelSelector
               value={workoutForm.experienceLevel}
               onValueChange={workoutForm.setExperienceLevel}

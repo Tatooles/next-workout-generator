@@ -13,8 +13,6 @@ interface ProgramResultsProps {
 }
 
 function ProgramDayCard({ day }: { day: ProgramDay }) {
-  const isWorkoutDay = day.type === "workout";
-
   return (
     <section className="bg-card rounded-lg border p-4 shadow-sm sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -26,12 +24,7 @@ function ProgramDayCard({ day }: { day: ProgramDay }) {
           ) : null}
         </div>
         <div className="text-right">
-          <p className="text-muted-foreground text-sm">
-            {isWorkoutDay ? "Workout Day" : "Rest / Recovery"}
-          </p>
-          {day.estimatedDuration ? (
-            <p className="text-sm font-medium">{day.estimatedDuration}</p>
-          ) : null}
+          <p className="text-sm font-medium">{day.estimatedDuration}</p>
         </div>
       </div>
 
@@ -41,13 +34,11 @@ function ProgramDayCard({ day }: { day: ProgramDay }) {
         </div>
       ) : null}
 
-      {isWorkoutDay ? (
-        <div className="mt-4 space-y-4">
-          {day.exercises.map((exercise, index) => (
-            <ExerciseCard key={index} exercise={exercise} index={index} />
-          ))}
-        </div>
-      ) : null}
+      <div className="mt-4 space-y-4">
+        {day.exercises.map((exercise, index) => (
+          <ExerciseCard key={index} exercise={exercise} index={index} />
+        ))}
+      </div>
     </section>
   );
 }
@@ -66,7 +57,7 @@ export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
                 Your Program
               </h2>
               <p className="text-muted-foreground text-sm">
-                A full 7-day week from Monday through Sunday
+                {program.days.length}-day training program
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
