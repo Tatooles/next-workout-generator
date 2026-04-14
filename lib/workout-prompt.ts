@@ -82,7 +82,7 @@ Required JSON structure:
 }
 
 Requirements:
-- "exercises": Array of exercise objects (required, minimum 4-8 exercises)
+- "exercises": Array of exercise objects (required, minimum 4 exercises)
 - "name": Full name of the exercise (required)
 - "sets": Number of sets as an integer (required)
 - "reps": Rep range as a string, can be "8-10", "12-15", "AMRAP", "30 seconds", etc. (required)

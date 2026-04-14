@@ -101,7 +101,6 @@ export const workoutTypeIcons: Record<WorkoutType, LucideIcon> = {
 };
 
 export const workoutDurations = [
-  "15 minutes",
   "30 minutes",
   "45 minutes",
   "60 minutes",

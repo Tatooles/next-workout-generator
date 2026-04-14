@@ -21,7 +21,7 @@ export const ExerciseSchema = z.object({
 });
 
 export const WorkoutDataSchema = z.object({
-  exercises: z.array(ExerciseSchema).min(1), // At least 1 exercise
+  exercises: z.array(ExerciseSchema).min(4), // At least 4 exercises
   estimatedDuration: z.string().min(1),
   notes: z.string().optional(),
 });
@@ -31,7 +31,7 @@ const WorkoutProgramDaySchema = z.object({
   title: z.string().min(1),
   focus: z.string().min(1).optional(),
   estimatedDuration: z.string().min(1),
-  exercises: z.array(ExerciseSchema).min(1),
+  exercises: z.array(ExerciseSchema).min(4),
   notes: z.string().optional(),
 });
 

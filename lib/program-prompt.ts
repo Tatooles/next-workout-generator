@@ -124,7 +124,7 @@ Requirements:
 - Every workout day must include:
   - "title" (required)
   - "estimatedDuration" (required)
-  - "exercises" with 4-8 exercises (required)
+  - "exercises" with at least 4 exercises (required)
 - "focus" is optional for any day
 - "notes" is optional for any day
 - "weeklyOverview" is optional
