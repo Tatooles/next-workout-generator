@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import type { GenerationMode } from "@/lib/generation-types";
+import type { GenerationParams } from "@/lib/utils";
 import {
   EquipmentOption,
   ExperienceLevel,
@@ -62,14 +64,39 @@ export function useWorkoutForm() {
     }
   };
 
-  const canSubmit =
-    !!workoutType ||
-    !!programSplit ||
+  const hasSharedInputs =
     selectedBodyParts.length > 0 ||
+    additionalDetails.trim().length > 0 ||
     !!experienceLevel ||
     !!desiredDuration ||
     !!gymProfile ||
     availableEquipment.length > 0;
+
+  const canSubmit = (mode: GenerationMode) => {
+    if (mode === "program") {
+      return hasSharedInputs || !!programSplit || !!programTrainingDaysPerWeek;
+    }
+
+    return hasSharedInputs || !!workoutType;
+  };
+
+  const getGenerationParams = (mode: GenerationMode): GenerationParams => {
+    const trimmedAdditionalDetails = additionalDetails.trim();
+
+    return {
+      bodyParts: selectedBodyParts,
+      workoutType: mode === "workout" ? workoutType : null,
+      programSplit: mode === "program" ? programSplit : null,
+      programTrainingDaysPerWeek:
+        mode === "program" ? programTrainingDaysPerWeek : null,
+      additionalDetails: trimmedAdditionalDetails || null,
+      experienceLevel,
+      desiredDuration,
+      gymProfile,
+      availableEquipment,
+      model,
+    };
+  };
 
   return {
     workoutType,
@@ -93,5 +120,6 @@ export function useWorkoutForm() {
     model,
     setModel,
     canSubmit,
+    getGenerationParams,
   };
 }

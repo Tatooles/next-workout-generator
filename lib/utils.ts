@@ -55,11 +55,13 @@ async function fetchGeneration<T>(
   endpoint: string,
   params: GenerationParams,
   key: "workout" | "program",
+  signal?: AbortSignal,
 ): Promise<T> {
   const response = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(params),
+    signal,
   });
 
   if (!response.ok) {
@@ -87,8 +89,9 @@ async function fetchGeneration<T>(
  */
 export async function fetchWorkout(
   params: GenerationParams,
+  signal?: AbortSignal,
 ): Promise<WorkoutData> {
-  return fetchGeneration<WorkoutData>("/api/workout", params, "workout");
+  return fetchGeneration<WorkoutData>("/api/workout", params, "workout", signal);
 }
 
 /**
@@ -98,8 +101,9 @@ export async function fetchWorkout(
  */
 export async function fetchProgram(
   params: GenerationParams,
+  signal?: AbortSignal,
 ): Promise<ProgramData> {
-  return fetchGeneration<ProgramData>("/api/program", params, "program");
+  return fetchGeneration<ProgramData>("/api/program", params, "program", signal);
 }
 
 /**

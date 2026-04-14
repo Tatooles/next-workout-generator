@@ -26,8 +26,14 @@ import {
 export default function Home() {
   const [mode, setMode] = useState<GenerationMode>("workout");
   const workoutForm = useWorkoutForm();
-  const { result, error, loading, submitGeneration, resetGeneration } =
-    useGenerationSubmit();
+  const {
+    result,
+    error,
+    loading,
+    submitGeneration,
+    cancelGeneration,
+    resetGeneration,
+  } = useGenerationSubmit();
   const { copiedStates, copyToClipboard } = useCopyToClipboard();
   const resultsRef = useRef<HTMLDivElement>(null);
   const workoutData = result?.mode === "workout" ? result.workout : null;
@@ -75,23 +81,14 @@ export default function Home() {
       return;
     }
 
-    setMode(nextMode);
+    cancelGeneration();
     resetGeneration();
+    setMode(nextMode);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    await submitGeneration(e, mode, {
-      bodyParts: workoutForm.selectedBodyParts,
-      workoutType: workoutForm.workoutType,
-      programSplit: workoutForm.programSplit,
-      programTrainingDaysPerWeek: workoutForm.programTrainingDaysPerWeek,
-      additionalDetails: workoutForm.additionalDetails || null,
-      experienceLevel: workoutForm.experienceLevel,
-      desiredDuration: workoutForm.desiredDuration,
-      gymProfile: workoutForm.gymProfile,
-      availableEquipment: workoutForm.availableEquipment,
-      model: workoutForm.model,
-    });
+    e.preventDefault();
+    await submitGeneration(mode, workoutForm.getGenerationParams(mode));
   };
 
   return (
@@ -150,7 +147,7 @@ export default function Home() {
           <SubmitButton
             mode={mode}
             loading={loading}
-            canSubmit={workoutForm.canSubmit}
+            canSubmit={workoutForm.canSubmit(mode)}
           />
         </form>
 
