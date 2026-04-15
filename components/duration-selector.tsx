@@ -8,22 +8,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { GenerationMode } from "@/lib/generation-types";
 import { workoutDurations, type WorkoutDuration } from "@/lib/workout-options";
 
 interface DurationSelectorProps {
+  mode: GenerationMode;
   value: WorkoutDuration | null;
   onValueChange: (value: WorkoutDuration | null) => void;
 }
 
 export function DurationSelector({
+  mode,
   value,
   onValueChange,
 }: DurationSelectorProps) {
+  const isProgramMode = mode === "program";
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3">
         <Label htmlFor="duration-select" className="text-sm font-medium">
-          Desired Workout Duration (Optional)
+          {isProgramMode
+            ? "Target Workout Duration Per Session (Optional)"
+            : "Desired Workout Duration (Optional)"}
         </Label>
         {value ? (
           <Button
@@ -43,7 +50,13 @@ export function DurationSelector({
         onValueChange={(next) => onValueChange(next as WorkoutDuration)}
       >
         <SelectTrigger id="duration-select" className="w-full">
-          <SelectValue placeholder="Choose a target duration..." />
+          <SelectValue
+            placeholder={
+              isProgramMode
+                ? "Choose a target duration per workout day..."
+                : "Choose a target duration..."
+            }
+          />
         </SelectTrigger>
         <SelectContent>
           {workoutDurations.map((duration) => (

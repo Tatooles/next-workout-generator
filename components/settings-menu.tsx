@@ -121,7 +121,7 @@ export function SettingsMenu({ value, onValueChange }: SettingsMenuProps) {
           <div className="space-y-2">
             <h4 className="leading-none font-medium">AI Model</h4>
             <p className="text-muted-foreground text-sm">
-              Choose which AI model generates your workout
+              Choose which AI model powers your workout or program
             </p>
           </div>
           <RadioGroup value={value} onValueChange={onValueChange}>

@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Workout Generator",
-  description: "Generate workouts with ChatGPT",
+  description: "Generate personalized workouts and weekly training programs",
 };
 
 export default function RootLayout({

@@ -6,9 +6,9 @@ import {
   parseStructuredJson,
   resolveRequestedModel,
 } from "@/lib/ai-generation";
-import { buildWorkoutPrompt } from "@/lib/workout-prompt";
+import { buildProgramPrompt } from "@/lib/program-prompt";
 import { WorkoutRequestSchema } from "@/lib/workout-options";
-import { WorkoutDataSchema } from "@/lib/workout-types";
+import { createProgramDataSchema } from "@/lib/workout-types";
 
 export async function POST(request: Request) {
   let requestBody: unknown;
@@ -39,7 +39,18 @@ export async function POST(request: Request) {
   }
 
   const body = parsedRequest.data;
-  const prompt = buildWorkoutPrompt(body);
+
+  if (!body.programSplit) {
+    return new Response(
+      JSON.stringify({ error: "programSplit: Program split is required." }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+  }
+
+  const prompt = buildProgramPrompt(body);
 
   try {
     const requestedModel = resolveRequestedModel(body.model);
@@ -48,16 +59,19 @@ export async function POST(request: Request) {
       requestedModel,
       "Workout Generator",
     );
-    const parsedWorkout = parseStructuredJson(content, WorkoutDataSchema);
+    const parsedProgram = parseStructuredJson(
+      content,
+      createProgramDataSchema(body.programTrainingDaysPerWeek),
+    );
 
-    if (!parsedWorkout.success) {
-      console.error("Failed to parse workout JSON:", parsedWorkout.error);
+    if (!parsedProgram.success) {
+      console.error("Failed to parse program JSON:", parsedProgram.error);
       console.log("Raw response:", content);
       return new Response(
         JSON.stringify({
-          error: "Failed to parse workout data. Please try again.",
+          error: "Failed to parse program data. Please try again.",
           rawResponse: content,
-          parseError: parsedWorkout.error,
+          parseError: parsedProgram.error,
         }),
         {
           status: 422,
@@ -66,7 +80,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return new Response(JSON.stringify({ workout: parsedWorkout.data }), {
+    return new Response(JSON.stringify({ program: parsedProgram.data }), {
       headers: {
         "Content-Type": "application/json",
       },
@@ -81,7 +95,7 @@ export async function POST(request: Request) {
 
     console.log("An error ocurred!", error);
     return new Response(
-      JSON.stringify({ error: "Failed to generate workout" }),
+      JSON.stringify({ error: "Failed to generate program" }),
       { status: 500 },
     );
   }

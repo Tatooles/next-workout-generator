@@ -37,6 +37,23 @@ export const workoutTypes = [
 
 export type WorkoutType = (typeof workoutTypes)[number];
 
+export const programSplits = [
+  "Push/Pull/Legs",
+  "Upper/Lower",
+  "Full Body",
+  "Body Part Split",
+  "Arnold Split",
+  "Powerbuilding",
+  "Strength + Conditioning",
+] as const;
+
+export type ProgramSplit = (typeof programSplits)[number];
+
+export const programTrainingDaysPerWeekOptions = [2, 3, 4, 5, 6] as const;
+
+export type ProgramTrainingDaysPerWeek =
+  (typeof programTrainingDaysPerWeekOptions)[number];
+
 export interface MuscleGroupConfig {
   icon: LucideIcon;
   color: string;
@@ -84,7 +101,6 @@ export const workoutTypeIcons: Record<WorkoutType, LucideIcon> = {
 };
 
 export const workoutDurations = [
-  "15 minutes",
   "30 minutes",
   "45 minutes",
   "60 minutes",
@@ -128,6 +144,17 @@ export const WorkoutRequestSchema = z
   .object({
     bodyParts: z.array(z.enum(muscleGroups)).default([]),
     workoutType: z.enum(workoutTypes).nullable().optional(),
+    programSplit: z.enum(programSplits).nullable().optional(),
+    programTrainingDaysPerWeek: z
+      .union([
+        z.literal(2),
+        z.literal(3),
+        z.literal(4),
+        z.literal(5),
+        z.literal(6),
+      ])
+      .nullable()
+      .optional(),
     additionalDetails: z.string().max(500).nullable().optional(),
     experienceLevel: z.enum(experienceLevels).nullable().optional(),
     desiredDuration: z.enum(workoutDurations).nullable().optional(),
