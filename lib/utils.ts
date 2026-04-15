@@ -57,6 +57,7 @@ async function fetchGeneration<T>(
   key: "workout" | "program",
   signal?: AbortSignal,
 ): Promise<T> {
+  const noun = key === "program" ? "program" : "workout";
   const response = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -66,7 +67,7 @@ async function fetchGeneration<T>(
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || "Failed to generate workout");
+    throw new Error(errorData.error || `Failed to generate ${noun}`);
   }
 
   const data = await response.json();

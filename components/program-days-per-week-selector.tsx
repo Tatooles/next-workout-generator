@@ -58,8 +58,7 @@ export function ProgramDaysPerWeekSelector({
           Training Days Per Week
         </Label>
         <p className="text-muted-foreground text-xs">
-          Optional. Choose 2-6 days, or leave on Auto to let the generator
-          decide.
+          Choose 2-6 days, or leave on Auto to let the generator decide.
         </p>
       </div>
 

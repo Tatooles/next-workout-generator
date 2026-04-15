@@ -74,7 +74,7 @@ export function useWorkoutForm() {
 
   const canSubmit = (mode: GenerationMode) => {
     if (mode === "program") {
-      return hasSharedInputs || !!programSplit || !!programTrainingDaysPerWeek;
+      return !!programSplit;
     }
 
     return hasSharedInputs || !!workoutType;

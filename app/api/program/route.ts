@@ -39,6 +39,17 @@ export async function POST(request: Request) {
   }
 
   const body = parsedRequest.data;
+
+  if (!body.programSplit) {
+    return new Response(
+      JSON.stringify({ error: "programSplit: Program split is required." }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+  }
+
   const prompt = buildProgramPrompt(body);
 
   try {

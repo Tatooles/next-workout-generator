@@ -39,8 +39,7 @@ export function SplitWorkoutSelector({
         </Label>
         {isProgramMode ? (
           <p className="text-muted-foreground text-xs">
-            This sets the primary weekly structure the program should build
-            around.
+            Select the primary weekly structure the program should build around.
           </p>
         ) : null}
       </div>
