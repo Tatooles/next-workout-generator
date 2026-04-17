@@ -9,6 +9,7 @@ import {
   WorkoutDuration,
   WorkoutType,
 } from "@/lib/workout-options";
+import { DEFAULT_AI_MODEL, type AIModelId } from "@/lib/ai-models";
 
 export function useWorkoutForm() {
   const [workoutType, setWorkoutType] = useState<WorkoutType | null>(null);
@@ -22,7 +23,7 @@ export function useWorkoutForm() {
   const [availableEquipment, setAvailableEquipment] = useState<
     EquipmentOption[]
   >([]);
-  const [model, setModel] = useState("google/gemini-3-flash-preview");
+  const [model, setModel] = useState<AIModelId>(DEFAULT_AI_MODEL);
 
   const handleBodyPartToggle = (bodyPart: MuscleGroup, checked: boolean) => {
     if (checked) {

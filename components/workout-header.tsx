@@ -1,9 +1,10 @@
 import { Dumbbell } from "lucide-react";
 import { SettingsMenu } from "@/components/settings-menu";
+import type { AIModelId } from "@/lib/ai-models";
 
 interface WorkoutHeaderProps {
-  model: string;
-  onModelChange: (value: string) => void;
+  model: AIModelId;
+  onModelChange: (value: AIModelId) => void;
 }
 
 export function WorkoutHeader({ model, onModelChange }: WorkoutHeaderProps) {

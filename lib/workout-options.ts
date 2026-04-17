@@ -8,6 +8,7 @@ import {
   LucideIcon,
 } from "lucide-react";
 import { z } from "zod";
+import { AI_MODEL_IDS, DEFAULT_AI_MODEL } from "@/lib/ai-models";
 
 export const muscleGroups = [
   "Quads",
@@ -133,7 +134,7 @@ export const WorkoutRequestSchema = z
     desiredDuration: z.enum(workoutDurations).nullable().optional(),
     gymProfile: z.enum(gymProfiles).nullable().optional(),
     availableEquipment: z.array(z.enum(equipmentOptions)).default([]),
-    model: z.string().nullable().optional(),
+    model: z.enum(AI_MODEL_IDS).default(DEFAULT_AI_MODEL),
   })
   .superRefine((value, ctx) => {
     if (

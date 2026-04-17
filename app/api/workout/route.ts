@@ -1,20 +1,10 @@
 export const runtime = "edge";
 
+import { DEFAULT_AI_MODEL } from "@/lib/ai-models";
 import { buildWorkoutPrompt } from "@/lib/workout-prompt";
 import { WorkoutRequestSchema } from "@/lib/workout-options";
 import type { WorkoutData } from "@/lib/workout-types";
 import { WorkoutDataSchema } from "@/lib/workout-types";
-
-// Allowlist of permitted AI models
-const ALLOWED_MODELS = [
-  "google/gemini-3-flash-preview",
-  "moonshotai/kimi-k2.5",
-  "openai/gpt-5-mini",
-  "anthropic/claude-3.5-haiku",
-  "meta-llama/llama-3.3-70b-instruct:free",
-] as const;
-
-const DEFAULT_MODEL = "google/gemini-3-flash-preview";
 
 export async function POST(request: Request) {
   let requestBody: unknown;
@@ -47,18 +37,7 @@ export async function POST(request: Request) {
   const body = parsedRequest.data;
   const prompt = buildWorkoutPrompt(body);
 
-  // Validate model against allowlist
-  const requestedModel = body.model || DEFAULT_MODEL;
-  if (
-    !ALLOWED_MODELS.includes(requestedModel as (typeof ALLOWED_MODELS)[number])
-  ) {
-    return new Response(
-      JSON.stringify({
-        error: "Invalid model specified. Please select a valid model.",
-      }),
-      { status: 400 },
-    );
-  }
+  const requestedModel = body.model ?? DEFAULT_AI_MODEL;
 
   try {
     const payload = {

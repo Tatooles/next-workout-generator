@@ -10,46 +10,13 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
+import { AI_MODELS, type AIModelId } from "@/lib/ai-models";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-export interface AIModel {
-  id: string;
-  name: string;
-  description?: string;
-}
-
-export const AI_MODELS: AIModel[] = [
-  {
-    id: "google/gemini-3-flash-preview",
-    name: "Gemini 3 Flash Preview",
-    description: "Fast and reliable (Default)",
-  },
-  {
-    id: "moonshotai/kimi-k2.5",
-    name: "Kimi K2.5",
-    description: "Advanced reasoning with 262k context",
-  },
-  {
-    id: "openai/gpt-5-mini",
-    name: "GPT-5 Mini",
-    description: "Advanced reasoning with 400k context",
-  },
-  {
-    id: "anthropic/claude-3.5-haiku",
-    name: "Claude 3.5 Haiku",
-    description: "Enhanced Claude",
-  },
-  {
-    id: "meta-llama/llama-3.3-70b-instruct:free",
-    name: "Llama 3.3 70B",
-    description: "Free and capable",
-  },
-];
-
 interface SettingsMenuProps {
-  value: string;
-  onValueChange: (value: string) => void;
+  value: AIModelId;
+  onValueChange: (value: AIModelId) => void;
 }
 
 export function SettingsMenu({ value, onValueChange }: SettingsMenuProps) {
