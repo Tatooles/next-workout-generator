@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { z } from "zod";
 import { twMerge } from "tailwind-merge";
 import {
   EquipmentOption,
@@ -8,17 +9,12 @@ import {
   WorkoutDuration,
   WorkoutType,
 } from "./workout-options";
-import type { WorkoutData } from "./workout-types";
+import { WorkoutDataSchema, type WorkoutData } from "./workout-types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/**
- * Copy text to clipboard
- * @param text - The text to copy
- * @returns Promise<boolean> - true if successful, false otherwise
- */
 export async function copyToClipboard(text: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
@@ -40,11 +36,6 @@ export interface WorkoutParams {
   model: string;
 }
 
-/**
- * Fetch workout response from API
- * @param params - Workout generation parameters
- * @returns Promise with the structured workout data
- */
 export async function fetchWorkout(
   params: WorkoutParams,
 ): Promise<WorkoutData> {
@@ -55,94 +46,117 @@ export async function fetchWorkout(
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || "Failed to generate workout");
+    const errorMessage = await readResponseError(response);
+    throw new Error(errorMessage || "Failed to generate workout");
   }
 
-  const data = await response.json();
+  const responseSchema = z.union([
+    z.object({ workout: WorkoutDataSchema }),
+    z.object({ error: z.string() }),
+  ]);
+  const parsedResponse = responseSchema.safeParse(await response.json());
 
-  if (data.error) {
-    throw new Error(data.error);
-  }
-
-  if (!data.workout) {
+  if (!parsedResponse.success) {
     throw new Error("Invalid response format from server");
   }
 
-  return data.workout;
+  if ("error" in parsedResponse.data) {
+    throw new Error(parsedResponse.data.error);
+  }
+
+  return parsedResponse.data.workout;
 }
 
-/**
- * Format structured workout data as readable text for copying
- * @param workout - Structured workout data
- * @returns Formatted text string
- */
+async function readResponseError(response: Response): Promise<string> {
+  const contentType = response.headers.get("content-type") ?? "";
+  const body = await response.text();
+
+  if (!body) {
+    return "";
+  }
+
+  if (!contentType.includes("application/json")) {
+    return body;
+  }
+
+  try {
+    const parsed = JSON.parse(body) as {
+      error?: string;
+      message?: string;
+    };
+
+    if (typeof parsed.error === "string" && parsed.error.trim()) {
+      return parsed.error;
+    }
+
+    if (typeof parsed.message === "string" && parsed.message.trim()) {
+      return parsed.message;
+    }
+  } catch {
+    return body;
+  }
+
+  return body;
+}
+
 export function formatWorkoutAsText(workout: WorkoutData): string {
-  let text = "";
+  return buildWorkoutDocument(workout, {
+    includeFormTips: true,
+    includeSetPlaceholders: false,
+  });
+}
 
-  // Add header with duration
-  text += `Workout Plan\n`;
-  text += `Estimated Duration: ${workout.estimatedDuration}\n`;
-  text += `${"=".repeat(50)}\n\n`;
+export function formatWorkoutAsTemplate(workout: WorkoutData): string {
+  return buildWorkoutDocument(workout, {
+    includeFormTips: false,
+    includeSetPlaceholders: true,
+  });
+}
 
-  // Add each exercise
+interface WorkoutDocumentOptions {
+  includeFormTips: boolean;
+  includeSetPlaceholders: boolean;
+}
+
+function buildWorkoutDocument(
+  workout: WorkoutData,
+  options: WorkoutDocumentOptions,
+): string {
+  const lines: string[] = [];
+
+  lines.push("Workout Plan");
+  lines.push(`Estimated Duration: ${workout.estimatedDuration}`);
+  lines.push("=".repeat(50), "");
+
   workout.exercises.forEach((exercise, index) => {
-    text += `${index + 1}. ${exercise.name}\n`;
-    text += `   Sets: ${exercise.sets} | Reps: ${exercise.reps} | Rest: ${exercise.restTime}\n`;
-    text += `   Targets: ${exercise.muscleGroups.join(", ")}\n`;
+    lines.push(`${index + 1}. ${exercise.name}`);
+    lines.push(
+      `   Sets: ${exercise.sets} | Reps: ${exercise.reps} | Rest: ${exercise.restTime}`,
+    );
+    lines.push(`   Targets: ${exercise.muscleGroups.join(", ")}`);
 
-    // Add form tips
-    if (exercise.formTips && exercise.formTips.length > 0) {
-      text += `   Form Tips:\n`;
+    if (options.includeFormTips && exercise.formTips.length > 0) {
+      lines.push("   Form Tips:");
       exercise.formTips.forEach((tip) => {
-        text += `   • ${tip}\n`;
+        lines.push(`   • ${tip}`);
       });
     }
 
-    text += `\n`;
-  });
-
-  // Add general notes if present
-  if (workout.notes) {
-    text += `${"-".repeat(50)}\n`;
-    text += `Notes:\n${workout.notes}\n`;
-  }
-
-  return text;
-}
-
-/**
- * Format structured workout data as a fillable template for copying
- * @param workout - Structured workout data
- * @returns Formatted template string with blank lines for tracking
- */
-export function formatWorkoutAsTemplate(workout: WorkoutData): string {
-  let text = "";
-
-  // Add header with duration
-  text += `Workout Plan\n`;
-  text += `Estimated Duration: ${workout.estimatedDuration}\n`;
-  text += `${"=".repeat(50)}\n\n`;
-
-  // Add each exercise
-  workout.exercises.forEach((exercise, index) => {
-    text += `${index + 1}. ${exercise.name}\n`;
-    text += `   Sets: ${exercise.sets} | Reps: ${exercise.reps} | Rest: ${exercise.restTime}\n`;
-    text += `   Targets: ${exercise.muscleGroups.join(", ")}\n\n`;
-
-    // Add blank lines for each set
-    for (let i = 1; i <= exercise.sets; i++) {
-      text += `   Set ${i}: \n`;
+    if (options.includeSetPlaceholders) {
+      lines.push("");
+      for (let set = 1; set <= exercise.sets; set += 1) {
+        lines.push(`   Set ${set}: `);
+      }
     }
 
-    text += `\n`;
+    lines.push("");
   });
 
-  // Add general notes if present
   if (workout.notes) {
-    text += `${"-".repeat(50)}\n`;
-    text += `Notes:\n${workout.notes}\n`;
+    lines.push("-".repeat(50));
+    lines.push("Notes:");
+    lines.push(workout.notes);
   }
 
-  return text;
+  return lines.join("\n");
 }
