@@ -1,6 +1,9 @@
 "use client";
 
 import { Settings, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+
+import { AI_MODELS, type AIModelId } from "@/lib/ai-models";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -10,9 +13,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
-import { AI_MODELS, type AIModelId } from "@/lib/ai-models";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 
 interface SettingsMenuProps {
   value: AIModelId;
@@ -20,18 +20,9 @@ interface SettingsMenuProps {
 }
 
 export function SettingsMenu({ value, onValueChange }: SettingsMenuProps) {
-  const { theme, setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Avoid hydration mismatch
-  useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const isDark =
-    mounted &&
-    (theme === "dark" || (theme === "system" && resolvedTheme === "dark"));
+  const { setTheme, resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+  const isReady = resolvedTheme !== undefined;
 
   return (
     <Popover>
@@ -47,12 +38,11 @@ export function SettingsMenu({ value, onValueChange }: SettingsMenuProps) {
       </PopoverTrigger>
       <PopoverContent className="w-[calc(100vw-2rem)] p-0 sm:w-80" align="end">
         <div className="max-h-[70vh] space-y-6 overflow-y-auto p-4">
-          {/* Dark Mode Section */}
           <div className="space-y-3">
             <h4 className="leading-none font-medium">Appearance</h4>
             <div className="flex items-center justify-between rounded-lg border p-3">
               <div className="flex items-center space-x-3">
-                {mounted && isDark ? (
+                {isDark ? (
                   <Moon className="text-muted-foreground h-4 w-4" />
                 ) : (
                   <Sun className="text-muted-foreground h-4 w-4" />
@@ -65,7 +55,7 @@ export function SettingsMenu({ value, onValueChange }: SettingsMenuProps) {
                     Dark Mode
                   </Label>
                   <p className="text-muted-foreground text-xs">
-                    {mounted
+                    {isReady
                       ? isDark
                         ? "Dark theme enabled"
                         : "Light theme enabled"
@@ -79,12 +69,11 @@ export function SettingsMenu({ value, onValueChange }: SettingsMenuProps) {
                 onCheckedChange={(checked) =>
                   setTheme(checked ? "dark" : "light")
                 }
-                disabled={!mounted}
+                disabled={!isReady}
               />
             </div>
           </div>
 
-          {/* AI Model Section */}
           <div className="space-y-2">
             <h4 className="leading-none font-medium">AI Model</h4>
             <p className="text-muted-foreground text-sm">

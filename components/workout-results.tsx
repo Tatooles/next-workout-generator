@@ -20,12 +20,10 @@ interface ExerciseCardProps {
 function ExerciseCard({ exercise, index }: ExerciseCardProps) {
   return (
     <div className="bg-card rounded-lg border p-4 shadow-sm">
-      {/* Exercise Header */}
       <h3 className="mb-2 text-lg font-semibold">
         {index + 1}. {exercise.name}
       </h3>
 
-      {/* Exercise Stats */}
       <div className="text-muted-foreground mb-3 flex gap-4 text-sm">
         <span>
           <strong>Sets:</strong> {exercise.sets}
@@ -38,7 +36,6 @@ function ExerciseCard({ exercise, index }: ExerciseCardProps) {
         </span>
       </div>
 
-      {/* Muscle Groups */}
       <div className="mb-3 flex flex-wrap gap-1.5">
         {exercise.muscleGroups.map((muscle, idx) => (
           <Badge key={idx} variant="secondary" className="text-xs">
@@ -47,7 +44,6 @@ function ExerciseCard({ exercise, index }: ExerciseCardProps) {
         ))}
       </div>
 
-      {/* Form Tips */}
       <div className="mt-3">
         <p className="mb-1.5 text-sm font-medium">Form Tips:</p>
         <ul className="text-muted-foreground space-y-1 text-sm">
@@ -67,7 +63,6 @@ export const WorkoutResults = forwardRef<HTMLDivElement, WorkoutResultsProps>(
   ) => {
     return (
       <div ref={ref} className="mt-6 sm:mt-8">
-        {/* Header */}
         <div className="bg-card mb-4 rounded-lg border p-4 shadow-sm sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -118,7 +113,6 @@ export const WorkoutResults = forwardRef<HTMLDivElement, WorkoutResultsProps>(
             </div>
           </div>
 
-          {/* General Notes */}
           {workout.notes && (
             <div className="bg-muted/50 mt-4 rounded-md p-3">
               <p className="text-muted-foreground text-sm">{workout.notes}</p>
@@ -126,7 +120,6 @@ export const WorkoutResults = forwardRef<HTMLDivElement, WorkoutResultsProps>(
           )}
         </div>
 
-        {/* Exercise Cards */}
         <div className="space-y-4">
           {workout.exercises.map((exercise, index) => (
             <ExerciseCard key={index} exercise={exercise} index={index} />

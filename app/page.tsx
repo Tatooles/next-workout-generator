@@ -21,7 +21,6 @@ export default function Home() {
   const { copiedStates, copyToClipboard } = useCopyToClipboard();
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to results when workout data appears
   useEffect(() => {
     if (workoutData && resultsRef.current) {
       setTimeout(() => {
@@ -33,7 +32,6 @@ export default function Home() {
     }
   }, [workoutData]);
 
-  // Handle copying full workout as formatted text
   const handleCopyFullWorkout = () => {
     if (workoutData) {
       const formattedText = formatWorkoutAsText(workoutData);
@@ -41,7 +39,6 @@ export default function Home() {
     }
   };
 
-  // Handle copying workout as template
   const handleCopyTemplate = () => {
     if (workoutData) {
       const formattedTemplate = formatWorkoutAsTemplate(workoutData);
@@ -65,14 +62,12 @@ export default function Home() {
   return (
     <main className="bg-background min-h-screen">
       <div className="container mx-auto max-w-4xl px-4 py-6 sm:py-8">
-        {/* Header */}
         <WorkoutHeader
           model={workoutForm.model}
           onModelChange={workoutForm.setModel}
         />
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Workout Selectors */}
           <div className="space-y-4">
             <SplitWorkoutSelector
               workoutType={workoutForm.workoutType}
@@ -98,17 +93,14 @@ export default function Home() {
             />
           </div>
 
-          {/* Additional Details */}
           <AdditionalDetailsInput
             value={workoutForm.additionalDetails}
             onChange={workoutForm.setAdditionalDetails}
           />
 
-          {/* Submit Button */}
           <SubmitButton loading={loading} canSubmit={workoutForm.canSubmit} />
         </form>
 
-        {/* Results */}
         {workoutData && (
           <WorkoutResults
             ref={resultsRef}
@@ -120,7 +112,6 @@ export default function Home() {
           />
         )}
 
-        {/* Error Display */}
         {error && (
           <div className="bg-destructive/10 text-destructive animate-in fade-in slide-in-from-bottom-4 border-destructive/20 mt-6 rounded-lg border p-4 duration-500 sm:mt-8 sm:p-6">
             <p className="mb-1 font-semibold">Error generating workout</p>

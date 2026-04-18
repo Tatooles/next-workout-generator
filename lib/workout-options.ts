@@ -38,11 +38,11 @@ export const workoutTypes = [
 
 export type WorkoutType = (typeof workoutTypes)[number];
 
-export interface MuscleGroupConfig {
+type MuscleGroupConfig = {
   icon: LucideIcon;
   color: string;
   category: "legs" | "arms" | "upper" | "shoulders" | "core";
-}
+};
 
 export const muscleGroupConfig: Record<MuscleGroup, MuscleGroupConfig> = {
   Quads: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
@@ -73,15 +73,6 @@ export const muscleGroupConfig: Record<MuscleGroup, MuscleGroupConfig> = {
     category: "shoulders",
   },
   Abs: { icon: Flame, color: "muscle-core", category: "core" },
-};
-
-export const workoutTypeIcons: Record<WorkoutType, LucideIcon> = {
-  "Leg Workout": Dumbbell,
-  "Push Workout": Zap,
-  "Pull Workout": Activity,
-  "Upper Body Workout": Heart,
-  "Lower Body Workout": Dumbbell,
-  "Full Body Workout": Flame,
 };
 
 export const workoutDurations = [

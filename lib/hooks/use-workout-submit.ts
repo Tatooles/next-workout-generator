@@ -34,16 +34,10 @@ export function useWorkoutSubmit() {
     }
   };
 
-  const resetWorkout = () => {
-    setWorkoutData(null);
-    setError(null);
-  };
-
   return {
     workoutData,
     error,
     loading,
     submitWorkout,
-    resetWorkout,
   };
 }

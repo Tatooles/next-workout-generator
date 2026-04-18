@@ -1,5 +1,3 @@
-import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -8,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ClearButton } from "@/components/clear-button";
 import { workoutDurations, type WorkoutDuration } from "@/lib/workout-options";
 
 interface DurationSelectorProps {
@@ -26,16 +25,7 @@ export function DurationSelector({
           Desired Workout Duration (Optional)
         </Label>
         {value ? (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => onValueChange(null)}
-            className="h-7 gap-1 text-xs"
-          >
-            <X className="h-3 w-3" />
-            Clear
-          </Button>
+          <ClearButton onClick={() => onValueChange(null)} />
         ) : null}
       </div>
       <Select

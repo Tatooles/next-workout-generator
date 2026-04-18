@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ClearButton } from "@/components/clear-button";
 import { cn } from "@/lib/utils";
 import {
   equipmentOptions,
@@ -62,16 +63,7 @@ export function EquipmentSelector({
             Available Equipment / Gym Setup (Optional)
           </Label>
           {gymProfile ? (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => onGymProfileChange(null)}
-              className="h-7 gap-1 text-xs"
-            >
-              <X className="h-3 w-3" />
-              Clear
-            </Button>
+            <ClearButton onClick={() => onGymProfileChange(null)} />
           ) : null}
         </div>
         <Select

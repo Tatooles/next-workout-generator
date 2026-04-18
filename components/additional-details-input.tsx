@@ -1,9 +1,8 @@
 "use client";
 
-import { X } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { ClearButton } from "@/components/clear-button";
 
 interface AdditionalDetailsInputProps {
   value: string;
@@ -31,16 +30,7 @@ export function AdditionalDetailsInput({
           Additional Details (Optional)
         </Label>
         {value && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={handleClear}
-            className="h-7 gap-1 text-xs"
-          >
-            <X className="h-3 w-3" />
-            Clear
-          </Button>
+          <ClearButton onClick={handleClear} />
         )}
       </div>
 
