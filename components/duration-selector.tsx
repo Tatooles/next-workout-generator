@@ -1,13 +1,4 @@
-import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ChipButton } from "@/components/ui/chip-button";
 import type { GenerationMode } from "@/lib/generation-types";
 import { workoutDurations, type WorkoutDuration } from "@/lib/workout-options";
 
@@ -26,46 +17,22 @@ export function DurationSelector({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between gap-3">
-        <Label htmlFor="duration-select" className="text-sm font-medium">
-          {isProgramMode
-            ? "Target Workout Duration Per Session (Optional)"
-            : "Desired Workout Duration (Optional)"}
-        </Label>
-        {value ? (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => onValueChange(null)}
-            className="h-7 gap-1 text-xs"
+      <p className="text-muted-foreground text-[11px] font-bold tracking-[0.08em] uppercase">
+        {isProgramMode
+          ? "Workout Duration Per Session"
+          : "Desired Workout Duration"}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {workoutDurations.map((duration) => (
+          <ChipButton
+            key={duration}
+            active={value === duration}
+            onClick={() => onValueChange(value === duration ? null : duration)}
           >
-            <X className="h-3 w-3" />
-            Clear
-          </Button>
-        ) : null}
+            {duration.replace(" minutes", " min")}
+          </ChipButton>
+        ))}
       </div>
-      <Select
-        value={value ?? ""}
-        onValueChange={(next) => onValueChange(next as WorkoutDuration)}
-      >
-        <SelectTrigger id="duration-select" className="w-full">
-          <SelectValue
-            placeholder={
-              isProgramMode
-                ? "Choose a target duration per workout day..."
-                : "Choose a target duration..."
-            }
-          />
-        </SelectTrigger>
-        <SelectContent>
-          {workoutDurations.map((duration) => (
-            <SelectItem key={duration} value={duration}>
-              {duration}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
     </div>
   );
 }

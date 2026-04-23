@@ -17,18 +17,18 @@ export function WorkoutHeader({
   onModelChange,
 }: WorkoutHeaderProps) {
   return (
-    <div className="mb-6 space-y-4 sm:mb-8">
+    <div className="mb-8 space-y-6">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full sm:h-12 sm:w-12">
-            <Dumbbell className="text-primary h-5 w-5 sm:h-6 sm:w-6" />
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-[11px] bg-primary/12 text-primary">
+            <Dumbbell className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            <h1 className="text-[24px] leading-none font-bold tracking-[-0.025em]">
               Workout Generator
             </h1>
-            <p className="text-muted-foreground text-xs sm:text-sm">
-              AI-powered personalized workouts and weekly programs
+            <p className="text-muted-foreground mt-1 text-xs">
+              AI-powered personalized workouts & weekly programs
             </p>
           </div>
         </div>
