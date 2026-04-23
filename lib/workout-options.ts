@@ -13,14 +13,14 @@ export const muscleGroups = [
   "Quads",
   "Hamstrings",
   "Glutes",
-  "Triceps",
-  "Biceps",
   "Chest",
   "Lats",
   "Upper Back",
+  "Biceps",
+  "Triceps",
   "Front Delts",
-  "Rear Delts",
   "Side Delts",
+  "Rear Delts",
   "Abs",
 ] as const;
 
@@ -54,6 +54,19 @@ export const programTrainingDaysPerWeekOptions = [2, 3, 4, 5, 6] as const;
 export type ProgramTrainingDaysPerWeek =
   (typeof programTrainingDaysPerWeekOptions)[number];
 
+export const programGoals = [
+  "Strength",
+  "Hypertrophy",
+  "Power",
+  "Fat Loss",
+] as const;
+
+export type ProgramGoal = (typeof programGoals)[number];
+
+export const programLengths = ["4 weeks", "8 weeks", "12 weeks"] as const;
+
+export type ProgramLength = (typeof programLengths)[number];
+
 export interface MuscleGroupConfig {
   icon: LucideIcon;
   color: string;
@@ -61,46 +74,31 @@ export interface MuscleGroupConfig {
 }
 
 export const muscleGroupConfig: Record<MuscleGroup, MuscleGroupConfig> = {
-  Quads: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
-  Hamstrings: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
-  Glutes: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
-  Triceps: { icon: Zap, color: "muscle-arms", category: "arms" },
-  Biceps: { icon: Zap, color: "muscle-arms", category: "arms" },
-  Chest: { icon: Heart, color: "muscle-upper", category: "upper" },
-  Lats: { icon: Activity, color: "muscle-upper", category: "upper" },
-  "Upper Back": {
-    icon: Activity,
-    color: "muscle-upper",
-    category: "upper",
-  },
-  "Front Delts": {
-    icon: Target,
-    color: "muscle-shoulders",
-    category: "shoulders",
-  },
-  "Rear Delts": {
-    icon: Target,
-    color: "muscle-shoulders",
-    category: "shoulders",
-  },
-  "Side Delts": {
-    icon: Target,
-    color: "muscle-shoulders",
-    category: "shoulders",
-  },
-  Abs: { icon: Flame, color: "muscle-core", category: "core" },
+  Quads:        { icon: Dumbbell,  color: "muscle-legs",      category: "legs" },
+  Hamstrings:   { icon: Dumbbell,  color: "muscle-legs",      category: "legs" },
+  Glutes:       { icon: Dumbbell,  color: "muscle-legs",      category: "legs" },
+  Chest:        { icon: Heart,     color: "muscle-upper",     category: "upper" },
+  Lats:         { icon: Activity,  color: "muscle-upper",     category: "upper" },
+  "Upper Back": { icon: Activity,  color: "muscle-upper",     category: "upper" },
+  Biceps:       { icon: Zap,       color: "muscle-arms",      category: "arms" },
+  Triceps:      { icon: Zap,       color: "muscle-arms",      category: "arms" },
+  "Front Delts":{ icon: Target,    color: "muscle-shoulders", category: "shoulders" },
+  "Side Delts": { icon: Target,    color: "muscle-shoulders", category: "shoulders" },
+  "Rear Delts": { icon: Target,    color: "muscle-shoulders", category: "shoulders" },
+  Abs:          { icon: Flame,     color: "muscle-core",      category: "core" },
 };
 
 export const workoutTypeIcons: Record<WorkoutType, LucideIcon> = {
-  "Leg Workout": Dumbbell,
-  "Push Workout": Zap,
-  "Pull Workout": Activity,
+  "Leg Workout":        Dumbbell,
+  "Push Workout":       Zap,
+  "Pull Workout":       Activity,
   "Upper Body Workout": Heart,
   "Lower Body Workout": Dumbbell,
-  "Full Body Workout": Flame,
+  "Full Body Workout":  Flame,
 };
 
 export const workoutDurations = [
+  "15 minutes",
   "30 minutes",
   "45 minutes",
   "60 minutes",
@@ -155,6 +153,8 @@ export const WorkoutRequestSchema = z
       ])
       .nullable()
       .optional(),
+    programGoal: z.enum(programGoals).nullable().optional(),
+    programLength: z.enum(programLengths).nullable().optional(),
     additionalDetails: z.string().max(500).nullable().optional(),
     experienceLevel: z.enum(experienceLevels).nullable().optional(),
     desiredDuration: z.enum(workoutDurations).nullable().optional(),

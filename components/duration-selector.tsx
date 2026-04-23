@@ -1,71 +1,32 @@
-import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { GenerationMode } from "@/lib/generation-types";
+import { Chip, FormSection } from "@/components/chip";
 import { workoutDurations, type WorkoutDuration } from "@/lib/workout-options";
 
+const DURATION_LABELS: Record<WorkoutDuration, string> = {
+  "15 minutes":   "15 min",
+  "30 minutes":   "30 min",
+  "45 minutes":   "45 min",
+  "60 minutes":   "60 min",
+  "75+ minutes":  "75+ min",
+};
+
 interface DurationSelectorProps {
-  mode: GenerationMode;
   value: WorkoutDuration | null;
   onValueChange: (value: WorkoutDuration | null) => void;
 }
 
-export function DurationSelector({
-  mode,
-  value,
-  onValueChange,
-}: DurationSelectorProps) {
-  const isProgramMode = mode === "program";
-
+export function DurationSelector({ value, onValueChange }: DurationSelectorProps) {
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between gap-3">
-        <Label htmlFor="duration-select" className="text-sm font-medium">
-          {isProgramMode
-            ? "Target Workout Duration Per Session (Optional)"
-            : "Desired Workout Duration (Optional)"}
-        </Label>
-        {value ? (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => onValueChange(null)}
-            className="h-7 gap-1 text-xs"
-          >
-            <X className="h-3 w-3" />
-            Clear
-          </Button>
-        ) : null}
-      </div>
-      <Select
-        value={value ?? ""}
-        onValueChange={(next) => onValueChange(next as WorkoutDuration)}
-      >
-        <SelectTrigger id="duration-select" className="w-full">
-          <SelectValue
-            placeholder={
-              isProgramMode
-                ? "Choose a target duration per workout day..."
-                : "Choose a target duration..."
-            }
+    <FormSection label="Duration">
+      <div className="flex flex-wrap gap-2">
+        {workoutDurations.map((d) => (
+          <Chip
+            key={d}
+            label={DURATION_LABELS[d]}
+            active={value === d}
+            onClick={() => onValueChange(value === d ? null : d)}
           />
-        </SelectTrigger>
-        <SelectContent>
-          {workoutDurations.map((duration) => (
-            <SelectItem key={duration} value={duration}>
-              {duration}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+        ))}
+      </div>
+    </FormSection>
   );
 }
