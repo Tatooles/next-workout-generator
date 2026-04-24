@@ -1,161 +1,156 @@
 "use client";
 
-import { Settings, Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Switch } from "@/components/ui/switch";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-
-export interface AIModel {
-  id: string;
-  name: string;
-  description?: string;
+export interface TweaksState {
+  accentOklch: string;
+  fontFamily: string;
+  cardRadius: string;
 }
 
-export const AI_MODELS: AIModel[] = [
-  {
-    id: "google/gemini-3-flash-preview",
-    name: "Gemini 3 Flash Preview",
-    description: "Fast and reliable (Default)",
-  },
-  {
-    id: "moonshotai/kimi-k2.5",
-    name: "Kimi K2.5",
-    description: "Advanced reasoning with 262k context",
-  },
-  {
-    id: "openai/gpt-5-mini",
-    name: "GPT-5 Mini",
-    description: "Advanced reasoning with 400k context",
-  },
-  {
-    id: "anthropic/claude-3.5-haiku",
-    name: "Claude 3.5 Haiku",
-    description: "Enhanced Claude",
-  },
-  {
-    id: "meta-llama/llama-3.3-70b-instruct:free",
-    name: "Llama 3.3 70B",
-    description: "Free and capable",
-  },
+export const TWEAKS_DEFAULTS: TweaksState = {
+  accentOklch: "0.44 0.17 13",
+  fontFamily: "Space Grotesk",
+  cardRadius: "8",
+};
+
+const ACCENT_PRESETS = [
+  { label: "Crimson",  oklch: "0.44 0.17 13"  },
+  { label: "Scarlet",  oklch: "0.46 0.20 22"  },
+  { label: "Burgundy", oklch: "0.38 0.14 5"   },
+  { label: "Garnet",   oklch: "0.42 0.15 350" },
 ];
 
-interface SettingsMenuProps {
-  value: string;
-  onValueChange: (value: string) => void;
+const FONT_OPTIONS = ["Space Grotesk", "DM Sans", "Helvetica Neue"];
+const RADIUS_OPTIONS = [
+  { value: "4",  label: "Sharp"   },
+  { value: "8",  label: "Rounded" },
+  { value: "14", label: "Soft"    },
+];
+
+interface TweaksPanelProps {
+  tweaks: TweaksState;
+  onUpdate: (key: keyof TweaksState, value: string) => void;
+  onClose: () => void;
 }
 
-export function SettingsMenu({ value, onValueChange }: SettingsMenuProps) {
-  const { theme, setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Avoid hydration mismatch
-  useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const isDark =
-    mounted &&
-    (theme === "dark" || (theme === "system" && resolvedTheme === "dark"));
-
+export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-9 w-9"
-          title="Settings"
+    <div
+      className="fixed bottom-6 right-6 z-50 w-[240px] rounded-[var(--wg-radius-lg)] p-5 animate-fade-up"
+      style={{
+        background: "#111111",
+        border: "1px solid #2e2e2e",
+        boxShadow: "0 24px 48px rgba(0,0,0,0.5)",
+      }}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mb-[18px]">
+        <div
+          className="text-[13px] font-bold tracking-[0.02em]"
+          style={{ color: "#edeae6" }}
         >
-          <Settings className="h-5 w-5" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[calc(100vw-2rem)] p-0 sm:w-80" align="end">
-        <div className="max-h-[70vh] space-y-6 overflow-y-auto p-4">
-          {/* Dark Mode Section */}
-          <div className="space-y-3">
-            <h4 className="leading-none font-medium">Appearance</h4>
-            <div className="flex items-center justify-between rounded-lg border p-3">
-              <div className="flex items-center space-x-3">
-                {mounted && isDark ? (
-                  <Moon className="text-muted-foreground h-4 w-4" />
-                ) : (
-                  <Sun className="text-muted-foreground h-4 w-4" />
-                )}
-                <div className="space-y-0.5">
-                  <Label
-                    htmlFor="dark-mode"
-                    className="cursor-pointer text-sm font-medium"
-                  >
-                    Dark Mode
-                  </Label>
-                  <p className="text-muted-foreground text-xs">
-                    {mounted
-                      ? isDark
-                        ? "Dark theme enabled"
-                        : "Light theme enabled"
-                      : "Loading..."}
-                  </p>
-                </div>
-              </div>
-              <Switch
-                id="dark-mode"
-                checked={isDark}
-                onCheckedChange={(checked) =>
-                  setTheme(checked ? "dark" : "light")
-                }
-                disabled={!mounted}
-              />
-            </div>
-          </div>
-
-          {/* AI Model Section */}
-          <div className="space-y-2">
-            <h4 className="leading-none font-medium">AI Model</h4>
-            <p className="text-muted-foreground text-sm">
-              Choose which AI model powers your workout or program
-            </p>
-          </div>
-          <RadioGroup value={value} onValueChange={onValueChange}>
-            <div className="space-y-3">
-              {AI_MODELS.map((model) => (
-                <div
-                  key={model.id}
-                  className="hover:bg-accent flex cursor-pointer items-start space-x-2 rounded-md border p-3 transition-all hover:shadow-sm"
-                  onClick={() => onValueChange(model.id)}
-                >
-                  <RadioGroupItem
-                    value={model.id}
-                    id={model.id}
-                    className="mt-0.5 shrink-0"
-                  />
-                  <div className="min-w-0 flex-1 space-y-1">
-                    <Label
-                      htmlFor={model.id}
-                      className="block cursor-pointer text-sm leading-none font-medium"
-                    >
-                      {model.name}
-                    </Label>
-                    {model.description && (
-                      <p className="text-muted-foreground text-xs">
-                        {model.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </RadioGroup>
+          Tweaks
         </div>
-      </PopoverContent>
-    </Popover>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-[18px] leading-none cursor-pointer transition-colors duration-150 hover:text-[#edeae6]"
+          style={{ background: "none", border: "none", color: "#555", padding: 0 }}
+        >
+          ×
+        </button>
+      </div>
+
+      {/* Accent color */}
+      <div className="mb-4">
+        <div
+          className="text-[10px] font-bold uppercase tracking-[0.08em] mb-[10px]"
+          style={{ color: "#555" }}
+        >
+          Accent Color
+        </div>
+        <div className="flex gap-[10px]">
+          {ACCENT_PRESETS.map((p) => (
+            <button
+              key={p.oklch}
+              title={p.label}
+              type="button"
+              onClick={() => onUpdate("accentOklch", p.oklch)}
+              className="w-6 h-6 rounded-full cursor-pointer transition-transform duration-150 hover:scale-110 border-2"
+              style={{
+                background: `oklch(${p.oklch})`,
+                borderColor:
+                  tweaks.accentOklch === p.oklch ? "#edeae6" : "transparent",
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Font */}
+      <div className="mb-4">
+        <div
+          className="text-[10px] font-bold uppercase tracking-[0.08em] mb-[10px]"
+          style={{ color: "#555" }}
+        >
+          Font
+        </div>
+        <div className="flex flex-col gap-[6px]">
+          {FONT_OPTIONS.map((font) => (
+            <button
+              key={font}
+              type="button"
+              onClick={() => onUpdate("fontFamily", font)}
+              className="text-left px-[10px] py-[6px] rounded-[6px] text-[13px] cursor-pointer transition-all duration-150"
+              style={{
+                fontFamily: font,
+                border: `1px solid ${tweaks.fontFamily === font ? "var(--wg-accent)" : "#232323"}`,
+                background:
+                  tweaks.fontFamily === font
+                    ? "var(--wg-accent-sub)"
+                    : "transparent",
+                color:
+                  tweaks.fontFamily === font ? "var(--wg-accent)" : "#555",
+                fontWeight: tweaks.fontFamily === font ? 600 : 400,
+              }}
+            >
+              {font}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Card radius */}
+      <div>
+        <div
+          className="text-[10px] font-bold uppercase tracking-[0.08em] mb-[10px]"
+          style={{ color: "#555" }}
+        >
+          Card Radius
+        </div>
+        <div className="flex gap-2">
+          {RADIUS_OPTIONS.map((r) => (
+            <button
+              key={r.value}
+              type="button"
+              onClick={() => onUpdate("cardRadius", r.value)}
+              className="flex-1 py-[6px] text-[12px] rounded-[6px] cursor-pointer transition-all duration-150"
+              style={{
+                fontFamily: "var(--wg-font)",
+                border: `1px solid ${tweaks.cardRadius === r.value ? "var(--wg-accent)" : "#232323"}`,
+                background:
+                  tweaks.cardRadius === r.value
+                    ? "var(--wg-accent-sub)"
+                    : "transparent",
+                color:
+                  tweaks.cardRadius === r.value ? "var(--wg-accent)" : "#555",
+                fontWeight: tweaks.cardRadius === r.value ? 600 : 400,
+              }}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

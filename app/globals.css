@@ -8,8 +8,6 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -30,54 +28,108 @@
   --color-ring: var(--ring);
 }
 
+/* Always-dark theme matching the design */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.21 0.006 285.885);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
+  --radius: 0.5rem;
+
+  /* Base surfaces */
+  --background: #090909;
+  --foreground: #edeae6;
+  --card: #111111;
+  --card-foreground: #edeae6;
+  --popover: #111111;
+  --popover-foreground: #edeae6;
+
+  /* Borders */
+  --border: #232323;
+  --input: #232323;
+  --ring: #2e2e2e;
+
+  /* Text */
+  --muted: #181818;
+  --muted-foreground: #555555;
+
+  /* Primary = crimson accent */
+  --primary: oklch(0.44 0.17 13);
+  --primary-foreground: #ffffff;
+
+  /* Secondary */
+  --secondary: #202020;
+  --secondary-foreground: #edeae6;
+
+  /* Accent (Tailwind token) = surface-3 */
+  --accent: #202020;
+  --accent-foreground: #edeae6;
+
+  /* Destructive */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
+
+  /* Dynamic tweakable vars (overridden via JS at runtime) */
+  --wg-accent:       oklch(0.44 0.17 13);
+  --wg-accent-h:     oklch(0.50 0.20 13);
+  --wg-accent-sub:   oklch(0.44 0.17 13 / 0.12);
+  --wg-accent-sub-h: oklch(0.44 0.17 13 / 0.20);
+  --wg-font:         'Space Grotesk', sans-serif;
+  --wg-radius:       8px;
+  --wg-radius-sm:    6px;
+  --wg-radius-lg:    14px;
 }
 
+/* Keep .dark identical — we force this class on <html> */
 .dark {
-  --background: oklch(0.18 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.24 0.006 285.885);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.24 0.006 285.885);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.92 0.004 286.32);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.552 0.016 285.938);
+  --background: #090909;
+  --foreground: #edeae6;
+  --card: #111111;
+  --card-foreground: #edeae6;
+  --popover: #111111;
+  --popover-foreground: #edeae6;
+  --border: #232323;
+  --input: #232323;
+  --ring: #2e2e2e;
+  --muted: #181818;
+  --muted-foreground: #555555;
+  --primary: oklch(0.44 0.17 13);
+  --primary-foreground: #ffffff;
+  --secondary: #202020;
+  --secondary-foreground: #edeae6;
+  --accent: #202020;
+  --accent-foreground: #edeae6;
+  --destructive: oklch(0.577 0.245 27.325);
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  *, *::before, *::after {
+    @apply border-border;
+    box-sizing: border-box;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--wg-font);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
   }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2e2e2e; border-radius: 3px; }
+
+  textarea::placeholder { color: #555; }
+  textarea:focus { outline: none; }
 }
+
+/* ─── Keyframe animations ─────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseBarbell {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.92); }
+}
+@keyframes spinLoader {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.animate-fade-up     { animation: fadeUp 0.35s ease both; }
+.animate-fade-up-sm  { animation: fadeUp 0.2s ease both; }
+.animate-pulse-barbell { animation: pulseBarbell 1.4s ease-in-out infinite; }

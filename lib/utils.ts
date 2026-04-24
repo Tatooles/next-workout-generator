@@ -1,14 +1,16 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {
-  EquipmentOption,
-  ExperienceLevel,
-  GymProfile,
-  MuscleGroup,
-  ProgramSplit,
-  ProgramTrainingDaysPerWeek,
-  WorkoutDuration,
-  WorkoutType,
+  type EquipmentOption,
+  type ExperienceLevel,
+  type GymProfile,
+  type MuscleGroup,
+  type ProgramGoal,
+  type ProgramLength,
+  type ProgramSplit,
+  type ProgramTrainingDaysPerWeek,
+  type WorkoutDuration,
+  type WorkoutType,
 } from "./workout-options";
 import type { ProgramData, WorkoutData } from "./workout-types";
 
@@ -16,17 +18,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/**
- * Copy text to clipboard
- * @param text - The text to copy
- * @returns Promise<boolean> - true if successful, false otherwise
- */
 export async function copyToClipboard(text: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
     return true;
-  } catch (error) {
-    console.error("Failed to copy to clipboard:", error);
+  } catch {
     return false;
   }
 }
@@ -36,6 +32,8 @@ export interface GenerationParams {
   workoutType: WorkoutType | null;
   programSplit: ProgramSplit | null;
   programTrainingDaysPerWeek: ProgramTrainingDaysPerWeek | null;
+  programGoal: ProgramGoal | null;
+  programLength: ProgramLength | null;
   additionalDetails: string | null;
   experienceLevel: ExperienceLevel | null;
   desiredDuration: WorkoutDuration | null;
@@ -46,11 +44,6 @@ export interface GenerationParams {
 
 export type WorkoutParams = GenerationParams;
 
-/**
- * Fetch workout response from API
- * @param params - Workout generation parameters
- * @returns Promise with the structured workout data
- */
 async function fetchGeneration<T>(
   endpoint: string,
   params: GenerationParams,
@@ -71,23 +64,11 @@ async function fetchGeneration<T>(
   }
 
   const data = await response.json();
-
-  if (data.error) {
-    throw new Error(data.error);
-  }
-
-  if (!data[key]) {
-    throw new Error("Invalid response format from server");
-  }
-
+  if (data.error) throw new Error(data.error);
+  if (!data[key]) throw new Error("Invalid response format from server");
   return data[key];
 }
 
-/**
- * Fetch workout response from API
- * @param params - Workout generation parameters
- * @returns Promise with the structured workout data
- */
 export async function fetchWorkout(
   params: GenerationParams,
   signal?: AbortSignal,
@@ -95,11 +76,6 @@ export async function fetchWorkout(
   return fetchGeneration<WorkoutData>("/api/workout", params, "workout", signal);
 }
 
-/**
- * Fetch program response from API
- * @param params - Program generation parameters
- * @returns Promise with the structured program data
- */
 export async function fetchProgram(
   params: GenerationParams,
   signal?: AbortSignal,
@@ -107,104 +83,48 @@ export async function fetchProgram(
   return fetchGeneration<ProgramData>("/api/program", params, "program", signal);
 }
 
-/**
- * Format structured workout data as readable text for copying
- * @param workout - Structured workout data
- * @returns Formatted text string
- */
 export function formatWorkoutAsText(workout: WorkoutData): string {
-  let text = "";
+  let text = `Workout Plan\nEstimated Duration: ${workout.estimatedDuration}\n${"=".repeat(50)}\n\n`;
 
-  // Add header with duration
-  text += `Workout Plan\n`;
-  text += `Estimated Duration: ${workout.estimatedDuration}\n`;
-  text += `${"=".repeat(50)}\n\n`;
-
-  // Add each exercise
   workout.exercises.forEach((exercise, index) => {
     text += `${index + 1}. ${exercise.name}\n`;
     text += `   Sets: ${exercise.sets} | Reps: ${exercise.reps} | Rest: ${exercise.restTime}\n`;
     text += `   Targets: ${exercise.muscleGroups.join(", ")}\n`;
-
-    // Add form tips
-    if (exercise.formTips && exercise.formTips.length > 0) {
+    if (exercise.formTips?.length) {
       text += `   Form Tips:\n`;
-      exercise.formTips.forEach((tip) => {
-        text += `   • ${tip}\n`;
-      });
+      exercise.formTips.forEach((tip) => (text += `   • ${tip}\n`));
     }
-
     text += `\n`;
   });
 
-  // Add general notes if present
-  if (workout.notes) {
-    text += `${"-".repeat(50)}\n`;
-    text += `Notes:\n${workout.notes}\n`;
-  }
-
+  if (workout.notes) text += `${"-".repeat(50)}\nNotes:\n${workout.notes}\n`;
   return text;
 }
 
-/**
- * Format structured workout data as a fillable template for copying
- * @param workout - Structured workout data
- * @returns Formatted template string with blank lines for tracking
- */
 export function formatWorkoutAsTemplate(workout: WorkoutData): string {
-  let text = "";
+  let text = `Workout Plan\nEstimated Duration: ${workout.estimatedDuration}\n${"=".repeat(50)}\n\n`;
 
-  // Add header with duration
-  text += `Workout Plan\n`;
-  text += `Estimated Duration: ${workout.estimatedDuration}\n`;
-  text += `${"=".repeat(50)}\n\n`;
-
-  // Add each exercise
   workout.exercises.forEach((exercise, index) => {
     text += `${index + 1}. ${exercise.name}\n`;
     text += `   Sets: ${exercise.sets} | Reps: ${exercise.reps} | Rest: ${exercise.restTime}\n`;
     text += `   Targets: ${exercise.muscleGroups.join(", ")}\n\n`;
-
-    // Add blank lines for each set
-    for (let i = 1; i <= exercise.sets; i++) {
-      text += `   Set ${i}: \n`;
-    }
-
+    for (let i = 1; i <= exercise.sets; i++) text += `   Set ${i}: \n`;
     text += `\n`;
   });
 
-  // Add general notes if present
-  if (workout.notes) {
-    text += `${"-".repeat(50)}\n`;
-    text += `Notes:\n${workout.notes}\n`;
-  }
-
+  if (workout.notes) text += `${"-".repeat(50)}\nNotes:\n${workout.notes}\n`;
   return text;
 }
 
-/**
- * Format structured program data as readable text for copying
- * @param program - Structured weekly program data
- * @returns Formatted text string
- */
 export function formatProgramAsText(program: ProgramData): string {
-  let text = "Weekly Program\n";
-  text += `${"=".repeat(50)}\n\n`;
+  let text = `Weekly Program\n${"=".repeat(50)}\n\n`;
 
-  if (program.weeklyOverview) {
-    text += `Overview:\n${program.weeklyOverview}\n\n`;
-  }
+  if (program.weeklyOverview) text += `Overview:\n${program.weeklyOverview}\n\n`;
 
   program.days.forEach((day) => {
     text += `${day.day} - ${day.title}\n`;
-
-    if (day.focus) {
-      text += `Focus: ${day.focus}\n`;
-    }
-
-    if (day.estimatedDuration) {
-      text += `Estimated Duration: ${day.estimatedDuration}\n`;
-    }
+    if (day.focus) text += `Focus: ${day.focus}\n`;
+    if (day.estimatedDuration) text += `Estimated Duration: ${day.estimatedDuration}\n`;
 
     if (day.exercises.length > 0) {
       text += "\n";
@@ -212,79 +132,45 @@ export function formatProgramAsText(program: ProgramData): string {
         text += `${index + 1}. ${exercise.name}\n`;
         text += `   Sets: ${exercise.sets} | Reps: ${exercise.reps} | Rest: ${exercise.restTime}\n`;
         text += `   Targets: ${exercise.muscleGroups.join(", ")}\n`;
-
         if (exercise.formTips.length > 0) {
           text += "   Form Tips:\n";
-          exercise.formTips.forEach((tip) => {
-            text += `   • ${tip}\n`;
-          });
+          exercise.formTips.forEach((tip) => (text += `   • ${tip}\n`));
         }
-
         text += "\n";
       });
     }
 
-    if (day.notes) {
-      text += `Notes: ${day.notes}\n`;
-    }
-
+    if (day.notes) text += `Notes: ${day.notes}\n`;
     text += `${"-".repeat(50)}\n`;
   });
 
-  if (program.weeklyNotes) {
-    text += `Weekly Notes:\n${program.weeklyNotes}\n`;
-  }
-
+  if (program.weeklyNotes) text += `Weekly Notes:\n${program.weeklyNotes}\n`;
   return text.trimEnd();
 }
 
-/**
- * Format structured program data as a fillable template for copying
- * @param program - Structured weekly program data
- * @returns Formatted template string with blank lines for tracking
- */
 export function formatProgramAsTemplate(program: ProgramData): string {
-  let text = "Weekly Program Template\n";
-  text += `${"=".repeat(50)}\n\n`;
+  let text = `Weekly Program Template\n${"=".repeat(50)}\n\n`;
 
-  if (program.weeklyOverview) {
-    text += `Overview:\n${program.weeklyOverview}\n\n`;
-  }
+  if (program.weeklyOverview) text += `Overview:\n${program.weeklyOverview}\n\n`;
 
   program.days.forEach((day) => {
     text += `${day.day} - ${day.title}\n`;
-
-    if (day.focus) {
-      text += `Focus: ${day.focus}\n`;
-    }
-
-    if (day.estimatedDuration) {
-      text += `Estimated Duration: ${day.estimatedDuration}\n`;
-    }
+    if (day.focus) text += `Focus: ${day.focus}\n`;
+    if (day.estimatedDuration) text += `Estimated Duration: ${day.estimatedDuration}\n`;
 
     text += "\n";
     day.exercises.forEach((exercise, index) => {
       text += `${index + 1}. ${exercise.name}\n`;
       text += `   Sets: ${exercise.sets} | Reps: ${exercise.reps} | Rest: ${exercise.restTime}\n`;
       text += `   Targets: ${exercise.muscleGroups.join(", ")}\n\n`;
-
-      for (let i = 1; i <= exercise.sets; i++) {
-        text += `   Set ${i}: \n`;
-      }
-
+      for (let i = 1; i <= exercise.sets; i++) text += `   Set ${i}: \n`;
       text += "\n";
     });
 
-    if (day.notes) {
-      text += `Notes: ${day.notes}\n`;
-    }
-
+    if (day.notes) text += `Notes: ${day.notes}\n`;
     text += `${"-".repeat(50)}\n`;
   });
 
-  if (program.weeklyNotes) {
-    text += `Weekly Notes:\n${program.weeklyNotes}\n`;
-  }
-
+  if (program.weeklyNotes) text += `Weekly Notes:\n${program.weeklyNotes}\n`;
   return text.trimEnd();
 }

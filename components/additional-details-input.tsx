@@ -1,10 +1,9 @@
 "use client";
 
-import { X } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { FormSection } from "@/components/chip";
 import type { GenerationMode } from "@/lib/generation-types";
+
+const MAX_CHARACTERS = 500;
 
 interface AdditionalDetailsInputProps {
   mode: GenerationMode;
@@ -12,78 +11,53 @@ interface AdditionalDetailsInputProps {
   onChange: (value: string) => void;
 }
 
-const MAX_CHARACTERS = 500;
-
 export function AdditionalDetailsInput({
   mode,
   value,
   onChange,
 }: AdditionalDetailsInputProps) {
-  const characterCount = value.length;
-  const isNearLimit = characterCount > MAX_CHARACTERS * 0.8;
-  const isAtLimit = characterCount >= MAX_CHARACTERS;
-
-  const handleClear = () => {
-    onChange("");
-  };
-  const isProgramMode = mode === "program";
-
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <Label htmlFor="additionalDetails" className="text-base font-semibold">
-          Additional Details (Optional)
-        </Label>
-        {value && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={handleClear}
-            className="h-7 gap-1 text-xs"
-          >
-            <X className="h-3 w-3" />
-            Clear
-          </Button>
-        )}
-      </div>
-
-      <p className="text-muted-foreground text-xs">
-        {isProgramMode
-          ? "Add weekly goals, injuries, recovery preferences, or training style (e.g., 2 harder days and more recovery work)."
-          : "Add preferences, injuries, goals, or training style (e.g., high volume, focus on hypertrophy)."}
-      </p>
-
-      {/* Textarea with character count */}
-      <div className="relative">
-        <Textarea
-          id="additionalDetails"
-          value={value}
-          onChange={(e) => {
-            if (e.target.value.length <= MAX_CHARACTERS) {
-              onChange(e.target.value);
-            }
-          }}
-          placeholder={
-            isProgramMode
-              ? "Add weekly goals, recovery notes, or program preferences..."
-              : "Add details..."
+    <FormSection
+      label="Additional Notes"
+      sub={
+        mode === "program"
+          ? "Goals, injuries, recovery preferences, or training style"
+          : "Injuries, preferences, training style"
+      }
+    >
+      <textarea
+        value={value}
+        onChange={(e) => {
+          if (e.target.value.length <= MAX_CHARACTERS) {
+            onChange(e.target.value);
           }
-          className="min-h-30 resize-none pr-20"
-          maxLength={MAX_CHARACTERS}
-        />
-        <div
-          className={`absolute right-3 bottom-3 text-xs transition-colors ${
-            isAtLimit
-              ? "text-destructive font-medium"
-              : isNearLimit
-                ? "text-warning font-medium"
-                : "text-muted-foreground"
-          }`}
-        >
-          {characterCount}/{MAX_CHARACTERS}
-        </div>
+        }}
+        placeholder={
+          mode === "program"
+            ? "e.g. Focus on progressive overload, avoid overhead pressing..."
+            : "e.g. High volume, focus on hypertrophy, avoid heavy squats..."
+        }
+        rows={4}
+        maxLength={MAX_CHARACTERS}
+        className="w-full rounded-[var(--wg-radius)] text-[13px] px-[14px] py-3 resize-y leading-[1.55]"
+        style={{
+          background: "#111111",
+          border: "1px solid #232323",
+          color: "#edeae6",
+          outline: "none",
+          fontFamily: "var(--wg-font)",
+          transition: "border-color 0.14s",
+          minHeight: 96,
+        }}
+        onFocus={(e) => (e.currentTarget.style.borderColor = "var(--wg-accent)")}
+        onBlur={(e) => (e.currentTarget.style.borderColor = "#232323")}
+      />
+      <div
+        className="text-right text-[11px] mt-[5px]"
+        style={{ color: "#2e2e2e" }}
+      >
+        {value.length}/{MAX_CHARACTERS}
       </div>
-    </div>
+    </FormSection>
   );
 }
