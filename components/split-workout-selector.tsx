@@ -1,16 +1,9 @@
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ChipButton } from "@/components/ui/chip-button";
 import type { GenerationMode } from "@/lib/generation-types";
 import {
+  programSplits,
   type ProgramSplit,
+  workoutTypes,
   type WorkoutType,
 } from "@/lib/workout-options";
 
@@ -30,84 +23,57 @@ export function SplitWorkoutSelector({
   onProgramSplitChange,
 }: SplitWorkoutSelectorProps) {
   const isProgramMode = mode === "program";
+  const options = isProgramMode ? programSplits : workoutTypes;
 
   return (
     <div className="space-y-3">
       <div className="space-y-1">
-        <Label htmlFor="workout-split-select" className="text-sm font-medium">
+        <p className="text-muted-foreground text-[11px] font-bold tracking-[0.08em] uppercase">
           {isProgramMode ? "Program Split" : "Workout Split"}
-        </Label>
-        {isProgramMode ? (
-          <p className="text-muted-foreground text-xs">
-            Select the primary weekly structure the program should build around.
-          </p>
-        ) : null}
+        </p>
+        <p className="text-muted-foreground text-xs">
+          {isProgramMode
+            ? "Select the primary weekly structure the program should build around."
+            : "Choose the lifting split this workout should target."}
+        </p>
       </div>
-      <Select
-        value={isProgramMode ? (programSplit ?? "") : (workoutType ?? "")}
-        onValueChange={(value) =>
+
+      <div
+        className={
           isProgramMode
-            ? onProgramSplitChange(value as ProgramSplit)
-            : onWorkoutTypeChange(value as WorkoutType)
+            ? "grid gap-2 sm:grid-cols-2"
+            : "grid gap-2 sm:grid-cols-3"
         }
       >
-        <SelectTrigger id="workout-split-select" className="w-full">
-          <SelectValue
-            placeholder={
-              isProgramMode
-                ? "Choose a program split..."
-                : "Choose a workout split..."
-            }
-          />
-        </SelectTrigger>
-        <SelectContent>
-          {isProgramMode ? (
-            <>
-              <SelectGroup>
-                <SelectLabel>Classic Splits</SelectLabel>
-                <SelectItem value="Push/Pull/Legs">Push/Pull/Legs</SelectItem>
-                <SelectItem value="Upper/Lower">Upper/Lower</SelectItem>
-                <SelectItem value="Full Body">Full Body</SelectItem>
-                <SelectItem value="Body Part Split">
-                  Body Part Split
-                </SelectItem>
-              </SelectGroup>
-              <SelectGroup>
-                <SelectLabel>Popular Hybrids</SelectLabel>
-                <SelectItem value="Arnold Split">Arnold Split</SelectItem>
-                <SelectItem value="Powerbuilding">Powerbuilding</SelectItem>
-                <SelectItem value="Strength + Conditioning">
-                  Strength + Conditioning
-                </SelectItem>
-              </SelectGroup>
-            </>
-          ) : (
-            <>
-              <SelectGroup>
-                <SelectLabel>Push Pull Legs Split</SelectLabel>
-                <SelectItem value="Leg Workout">Leg Workout</SelectItem>
-                <SelectItem value="Push Workout">Push Workout</SelectItem>
-                <SelectItem value="Pull Workout">Pull Workout</SelectItem>
-              </SelectGroup>
-              <SelectGroup>
-                <SelectLabel>Upper/Lower Split</SelectLabel>
-                <SelectItem value="Upper Body Workout">
-                  Upper Body Workout
-                </SelectItem>
-                <SelectItem value="Lower Body Workout">
-                  Lower Body Workout
-                </SelectItem>
-              </SelectGroup>
-              <SelectGroup>
-                <SelectLabel>Other</SelectLabel>
-                <SelectItem value="Full Body Workout">
-                  Full Body Workout
-                </SelectItem>
-              </SelectGroup>
-            </>
-          )}
-        </SelectContent>
-      </Select>
+        {options.map((option) => {
+          const active = isProgramMode
+            ? programSplit === option
+            : workoutType === option;
+
+          return (
+            <ChipButton
+              key={option}
+              active={active}
+              className="justify-center"
+              onClick={() => {
+                if (isProgramMode) {
+                  onProgramSplitChange(option as ProgramSplit);
+                  return;
+                }
+
+                onWorkoutTypeChange(option as WorkoutType);
+              }}
+            >
+              {isProgramMode
+                ? option
+                : option
+                    .replace(" Workout", "")
+                    .replace("Lower Body", "Lower Body")
+                    .replace("Upper Body", "Upper Body")}
+            </ChipButton>
+          );
+        })}
+      </div>
     </div>
   );
 }

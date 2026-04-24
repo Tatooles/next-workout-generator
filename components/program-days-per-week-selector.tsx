@@ -1,11 +1,4 @@
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ChipButton } from "@/components/ui/chip-button";
 import {
   programTrainingDaysPerWeekOptions,
   type ProgramSplit,
@@ -51,42 +44,31 @@ export function ProgramDaysPerWeekSelector({
   return (
     <div className="space-y-3">
       <div className="space-y-1">
-        <Label
-          htmlFor="program-days-per-week-select"
-          className="text-sm font-medium"
-        >
+        <p className="text-muted-foreground text-[11px] font-bold tracking-[0.08em] uppercase">
           Training Days Per Week
-        </Label>
+        </p>
         <p className="text-muted-foreground text-xs">
           Choose 2-6 days, or leave on Auto to let the generator decide.
         </p>
       </div>
 
-      <Select
-        value={value ? String(value) : "auto"}
-        onValueChange={(nextValue) =>
-          onValueChange(
-            nextValue === "auto"
-              ? null
-              : (Number(nextValue) as ProgramTrainingDaysPerWeek),
-          )
-        }
-      >
-        <SelectTrigger id="program-days-per-week-select" className="w-full">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="auto">Auto choose</SelectItem>
-          {programTrainingDaysPerWeekOptions.map((daysPerWeek) => (
-            <SelectItem key={daysPerWeek} value={String(daysPerWeek)}>
-              {daysPerWeek} days
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="flex flex-wrap gap-2">
+        <ChipButton active={value === null} onClick={() => onValueChange(null)}>
+          Auto
+        </ChipButton>
+        {programTrainingDaysPerWeekOptions.map((daysPerWeek) => (
+          <ChipButton
+            key={daysPerWeek}
+            active={value === daysPerWeek}
+            onClick={() => onValueChange(daysPerWeek)}
+          >
+            {daysPerWeek} Days
+          </ChipButton>
+        ))}
+      </div>
 
       {showWarning ? (
-        <p className="text-xs text-orange-600 dark:text-orange-400">
+        <p className="text-xs text-primary">
           This split is usually run as {recommendation.typicalRangeLabel}. The
           generator will adapt it to {value} days.
         </p>

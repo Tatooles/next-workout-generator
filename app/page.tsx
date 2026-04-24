@@ -92,8 +92,8 @@ export default function Home() {
   };
 
   return (
-    <main className="bg-background min-h-screen">
-      <div className="container mx-auto max-w-4xl px-4 py-6 sm:py-8">
+    <main className="min-h-screen bg-background">
+      <div className="mx-auto max-w-[680px] px-5 py-9 pb-24">
         <WorkoutHeader
           mode={mode}
           onModeChange={handleModeChange}
@@ -101,57 +101,88 @@ export default function Home() {
           onModelChange={workoutForm.setModel}
         />
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <SplitWorkoutSelector
-              mode={mode}
-              workoutType={workoutForm.workoutType}
-              programSplit={workoutForm.programSplit}
-              onWorkoutTypeChange={workoutForm.setWorkoutType}
-              onProgramSplitChange={workoutForm.setProgramSplit}
-            />
-            {mode === "program" ? (
-              <ProgramDaysPerWeekSelector
-                value={workoutForm.programTrainingDaysPerWeek}
-                programSplit={workoutForm.programSplit}
-                onValueChange={workoutForm.setProgramTrainingDaysPerWeek}
+        {!result ? (
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="flex flex-col divide-y divide-border">
+              <div className="pb-6">
+                <SplitWorkoutSelector
+                  mode={mode}
+                  workoutType={workoutForm.workoutType}
+                  programSplit={workoutForm.programSplit}
+                  onWorkoutTypeChange={workoutForm.setWorkoutType}
+                  onProgramSplitChange={workoutForm.setProgramSplit}
+                />
+              </div>
+              {mode === "program" ? (
+                <div className="py-6">
+                  <ProgramDaysPerWeekSelector
+                    value={workoutForm.programTrainingDaysPerWeek}
+                    programSplit={workoutForm.programSplit}
+                    onValueChange={workoutForm.setProgramTrainingDaysPerWeek}
+                  />
+                </div>
+              ) : null}
+              <div className="py-6">
+                <ExperienceLevelSelector
+                  value={workoutForm.experienceLevel}
+                  onValueChange={workoutForm.setExperienceLevel}
+                />
+              </div>
+              <div className="py-6">
+                <DurationSelector
+                  mode={mode}
+                  value={workoutForm.desiredDuration}
+                  onValueChange={workoutForm.setDesiredDuration}
+                />
+              </div>
+              <div className="py-6">
+                <BodyPartsSelector
+                  selectedBodyParts={workoutForm.selectedBodyParts}
+                  onToggle={workoutForm.handleBodyPartToggle}
+                />
+              </div>
+              <div className="py-6">
+                <EquipmentSelector
+                  gymProfile={workoutForm.gymProfile}
+                  onGymProfileChange={workoutForm.setGymProfile}
+                  selectedEquipment={workoutForm.availableEquipment}
+                  onEquipmentToggle={workoutForm.handleEquipmentToggle}
+                />
+              </div>
+              <div className="pt-6">
+                <AdditionalDetailsInput
+                  mode={mode}
+                  value={workoutForm.additionalDetails}
+                  onChange={workoutForm.setAdditionalDetails}
+                />
+              </div>
+            </div>
+
+            {error && (
+              <div className="rounded-[8px] border border-primary/25 bg-primary/10 px-4 py-3 text-sm text-primary">
+                <p className="font-semibold">
+                  Error generating {mode === "program" ? "program" : "workout"}
+                </p>
+                <p className="mt-1">{error}</p>
+              </div>
+            )}
+
+            <div className="space-y-3">
+              <SubmitButton
+                mode={mode}
+                loading={loading}
+                canSubmit={workoutForm.canSubmit(mode)}
               />
-            ) : null}
-            <ExperienceLevelSelector
-              value={workoutForm.experienceLevel}
-              onValueChange={workoutForm.setExperienceLevel}
-            />
-            <DurationSelector
-              mode={mode}
-              value={workoutForm.desiredDuration}
-              onValueChange={workoutForm.setDesiredDuration}
-            />
-            <BodyPartsSelector
-              selectedBodyParts={workoutForm.selectedBodyParts}
-              onToggle={workoutForm.handleBodyPartToggle}
-            />
-            <EquipmentSelector
-              gymProfile={workoutForm.gymProfile}
-              onGymProfileChange={workoutForm.setGymProfile}
-              selectedEquipment={workoutForm.availableEquipment}
-              onEquipmentToggle={workoutForm.handleEquipmentToggle}
-            />
-          </div>
+              {mode === "workout" && !workoutForm.workoutType ? (
+                <p className="text-center text-xs text-muted-foreground">
+                  Select a workout split to continue
+                </p>
+              ) : null}
+            </div>
+          </form>
+        ) : null}
 
-          <AdditionalDetailsInput
-            mode={mode}
-            value={workoutForm.additionalDetails}
-            onChange={workoutForm.setAdditionalDetails}
-          />
-
-          <SubmitButton
-            mode={mode}
-            loading={loading}
-            canSubmit={workoutForm.canSubmit(mode)}
-          />
-        </form>
-
-        {workoutData && (
+        {workoutData ? (
           <WorkoutResults
             ref={resultsRef}
             workout={workoutData}
@@ -159,10 +190,11 @@ export default function Home() {
             onCopyTemplate={handleCopyTemplate}
             copiedFull={copiedStates["full"] || false}
             copiedTemplate={copiedStates["template"] || false}
+            onReset={resetGeneration}
           />
-        )}
+        ) : null}
 
-        {programData && (
+        {programData ? (
           <ProgramResults
             ref={resultsRef}
             program={programData}
@@ -170,17 +202,9 @@ export default function Home() {
             onCopyTemplate={handleCopyTemplate}
             copiedFull={copiedStates["full"] || false}
             copiedTemplate={copiedStates["template"] || false}
+            onReset={resetGeneration}
           />
-        )}
-
-        {error && (
-          <div className="bg-destructive/10 text-destructive animate-in fade-in slide-in-from-bottom-4 border-destructive/20 mt-6 rounded-lg border p-4 duration-500 sm:mt-8 sm:p-6">
-            <p className="mb-1 font-semibold">
-              Error generating {mode === "program" ? "program" : "workout"}
-            </p>
-            <p className="text-sm">{error}</p>
-          </div>
-        )}
+        ) : null}
       </div>
     </main>
   );

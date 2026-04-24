@@ -19,7 +19,7 @@ export function SubmitButton({
     <Button
       type="submit"
       size="lg"
-      className="w-full transition-all hover:scale-[1.02] active:scale-[0.98]"
+      className="h-12 w-full rounded-[8px] bg-primary text-xs font-bold tracking-[0.08em] uppercase text-primary-foreground transition-colors hover:bg-primary/90 active:scale-[0.99]"
       disabled={!canSubmit || loading}
     >
       {loading ? (

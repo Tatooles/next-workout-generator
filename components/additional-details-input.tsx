@@ -1,7 +1,6 @@
 "use client";
 
 import { X } from "lucide-react";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import type { GenerationMode } from "@/lib/generation-types";
@@ -31,16 +30,16 @@ export function AdditionalDetailsInput({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <Label htmlFor="additionalDetails" className="text-base font-semibold">
-          Additional Details (Optional)
-        </Label>
+        <p className="text-muted-foreground text-[11px] font-bold tracking-[0.08em] uppercase">
+          Additional Notes
+        </p>
         {value && (
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={handleClear}
-            className="h-7 gap-1 text-xs"
+            className="h-7 gap-1 rounded-md px-2 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
           >
             <X className="h-3 w-3" />
             Clear
@@ -50,11 +49,10 @@ export function AdditionalDetailsInput({
 
       <p className="text-muted-foreground text-xs">
         {isProgramMode
-          ? "Add weekly goals, injuries, recovery preferences, or training style (e.g., 2 harder days and more recovery work)."
-          : "Add preferences, injuries, goals, or training style (e.g., high volume, focus on hypertrophy)."}
+          ? "Injuries, recovery preferences, weekly constraints, or programming style."
+          : "Injuries, preferences, goals, or training style."}
       </p>
 
-      {/* Textarea with character count */}
       <div className="relative">
         <Textarea
           id="additionalDetails"
@@ -66,10 +64,10 @@ export function AdditionalDetailsInput({
           }}
           placeholder={
             isProgramMode
-              ? "Add weekly goals, recovery notes, or program preferences..."
-              : "Add details..."
+              ? "e.g. 2 harder days, more recovery work, avoid overhead pressing..."
+              : "e.g. High volume, focus on hypertrophy, avoid heavy squats..."
           }
-          className="min-h-30 resize-none pr-20"
+          className="min-h-24 resize-none rounded-lg border-border bg-card px-4 py-3 pr-20 text-[13px] leading-6 shadow-none focus-visible:border-primary"
           maxLength={MAX_CHARACTERS}
         />
         <div
@@ -77,7 +75,7 @@ export function AdditionalDetailsInput({
             isAtLimit
               ? "text-destructive font-medium"
               : isNearLimit
-                ? "text-warning font-medium"
+                ? "text-primary font-medium"
                 : "text-muted-foreground"
           }`}
         >

@@ -1,7 +1,8 @@
-import { forwardRef } from "react";
-import { Check, Copy } from "lucide-react";
+"use client";
+
+import { forwardRef, useState } from "react";
+import { Check, ChevronDown, Copy, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ExerciseCard } from "@/components/exercise-card";
 import type { ProgramData, ProgramDay } from "@/lib/workout-types";
 
 interface ProgramResultsProps {
@@ -10,53 +11,94 @@ interface ProgramResultsProps {
   onCopyTemplate: () => void;
   copiedFull: boolean;
   copiedTemplate: boolean;
+  onReset: () => void;
 }
 
 function ProgramDayCard({ day }: { day: ProgramDay }) {
+  const [open, setOpen] = useState(true);
+
   return (
-    <section className="bg-card rounded-lg border p-4 shadow-sm sm:p-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <section className="panel-surface overflow-hidden">
+      <button
+        type="button"
+        className="flex w-full items-start gap-4 px-5 py-4 text-left"
+        onClick={() => setOpen((current) => !current)}
+      >
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[7px] bg-primary/12 text-[11px] font-bold tracking-[0.02em] text-primary">
+          {day.day.slice(0, 3).toUpperCase()}
+        </div>
         <div>
-          <p className="text-muted-foreground text-sm font-medium">{day.day}</p>
-          <h3 className="text-xl font-semibold">{day.title}</h3>
+          <p className="text-[14px] font-semibold">{day.title}</p>
           {day.focus ? (
             <p className="text-muted-foreground mt-1 text-sm">{day.focus}</p>
           ) : null}
         </div>
-        <div className="text-right">
-          <p className="text-sm font-medium">{day.estimatedDuration}</p>
+        <div className="ml-auto flex items-center gap-4">
+          <p className="text-sm font-medium text-muted-foreground">
+            {day.estimatedDuration}
+          </p>
+          <ChevronDown
+            className={`h-4 w-4 shrink-0 text-[#444] transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+          />
         </div>
-      </div>
+      </button>
 
       {day.notes ? (
-        <div className="bg-muted/50 mt-4 rounded-md p-3">
+        <div className="border-t border-border px-5 py-3">
           <p className="text-muted-foreground text-sm">{day.notes}</p>
         </div>
       ) : null}
 
-      <div className="mt-4 space-y-4">
-        {day.exercises.map((exercise, index) => (
-          <ExerciseCard key={index} exercise={exercise} index={index} />
-        ))}
-      </div>
+      {open ? (
+        <div className="border-t border-border px-5 py-3">
+          {day.exercises.map((exercise, index) => (
+            <div
+              key={index}
+              className={`flex items-center gap-3 py-3 ${
+                index < day.exercises.length - 1 ? "border-b border-border" : ""
+              }`}
+            >
+              <span className="w-4 shrink-0 text-[11px] text-[#444]">
+                {index + 1}
+              </span>
+              <span className="flex-1 text-sm font-medium">{exercise.name}</span>
+              <span className="shrink-0 text-xs font-medium text-muted-foreground">
+                {exercise.sets}×{exercise.reps}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : null}
     </section>
   );
 }
 
 export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
   (
-    { program, onCopyFull, onCopyTemplate, copiedFull, copiedTemplate },
+    {
+      program,
+      onCopyFull,
+      onCopyTemplate,
+      copiedFull,
+      copiedTemplate,
+      onReset,
+    },
     ref,
   ) => {
     return (
-      <div ref={ref} className="mt-6 space-y-4 sm:mt-8">
-        <div className="bg-card rounded-lg border p-4 shadow-sm sm:p-6">
+      <div ref={ref} className="space-y-3">
+        <div className="panel-surface rounded-[14px] p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="mb-1 text-xl font-bold sm:text-2xl">
+              <p className="mb-1 text-[10px] font-bold tracking-[0.08em] text-primary uppercase">
+                Generated Program
+              </p>
+              <h2 className="text-2xl font-bold tracking-[-0.02em]">
                 Your Program
               </h2>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground mt-1 text-sm">
                 {program.days.length}-day training program
               </p>
             </div>
@@ -65,7 +107,7 @@ export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
                 variant="outline"
                 size="sm"
                 onClick={onCopyFull}
-                className="gap-2"
+                className="h-9 rounded-md border-border bg-transparent px-3 text-muted-foreground shadow-none hover:bg-accent hover:text-foreground"
               >
                 {copiedFull ? (
                   <>
@@ -83,7 +125,7 @@ export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
                 variant="outline"
                 size="sm"
                 onClick={onCopyTemplate}
-                className="gap-2"
+                className="h-9 rounded-md border-border bg-transparent px-3 text-muted-foreground shadow-none hover:bg-accent hover:text-foreground"
               >
                 {copiedTemplate ? (
                   <>
@@ -97,25 +139,38 @@ export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
                   </>
                 )}
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onReset}
+                className="h-9 rounded-md border-border bg-transparent px-3 text-muted-foreground shadow-none hover:bg-accent hover:text-foreground"
+              >
+                <RotateCcw className="h-4 w-4" />
+                New Program
+              </Button>
             </div>
           </div>
 
           {program.weeklyOverview ? (
-            <div className="bg-muted/50 mt-4 rounded-md p-3">
-              <p className="text-muted-foreground text-sm">
+            <div className="mt-4 rounded-md bg-secondary px-4 py-3">
+              <p className="text-muted-foreground text-sm leading-6">
                 {program.weeklyOverview}
               </p>
             </div>
           ) : null}
 
           {program.weeklyNotes ? (
-            <div className="bg-muted/30 mt-3 rounded-md border p-3">
-              <p className="text-muted-foreground text-sm">
+            <div className="mt-3 rounded-md border border-border bg-secondary/40 px-4 py-3">
+              <p className="text-muted-foreground text-sm leading-6">
                 {program.weeklyNotes}
               </p>
             </div>
           ) : null}
         </div>
+
+        <p className="text-muted-foreground text-[10px] font-bold tracking-[0.08em] uppercase">
+          Week 1 — Sample Schedule
+        </p>
 
         {program.days.map((day) => (
           <ProgramDayCard key={day.day} day={day} />
