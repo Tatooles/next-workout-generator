@@ -10,6 +10,7 @@ import type {
   MuscleGroup,
   ProgramGoal,
   ProgramLength,
+  ProgramSplit,
   ProgramTrainingDaysPerWeek,
   WorkoutDuration,
   WorkoutType,
@@ -21,17 +22,24 @@ export function useWorkoutForm() {
 
   // ── Program mode ────────────────────────────────────────────────
   const [programGoal, setProgramGoal] = useState<ProgramGoal | null>(null);
-  const [programLength, setProgramLength] = useState<ProgramLength | null>(null);
+  const [programLength, setProgramLength] = useState<ProgramLength | null>(
+    null,
+  );
+  const [programSplit, setProgramSplit] = useState<ProgramSplit | null>(null);
   const [programTrainingDaysPerWeek, setProgramTrainingDaysPerWeek] =
     useState<ProgramTrainingDaysPerWeek | null>(null);
 
   // ── Shared ───────────────────────────────────────────────────────
   const [selectedBodyParts, setSelectedBodyParts] = useState<MuscleGroup[]>([]);
   const [additionalDetails, setAdditionalDetails] = useState("");
-  const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel | null>(null);
-  const [desiredDuration, setDesiredDuration] = useState<WorkoutDuration | null>(null);
+  const [experienceLevel, setExperienceLevel] =
+    useState<ExperienceLevel | null>(null);
+  const [desiredDuration, setDesiredDuration] =
+    useState<WorkoutDuration | null>(null);
   const [gymProfile, setGymProfileState] = useState<GymProfile | null>(null);
-  const [availableEquipment, setAvailableEquipment] = useState<EquipmentOption[]>([]);
+  const [availableEquipment, setAvailableEquipment] = useState<
+    EquipmentOption[]
+  >([]);
   const [model, setModel] = useState("google/gemini-3-flash-preview");
 
   const handleBodyPartToggle = (bodyPart: MuscleGroup) => {
@@ -57,14 +65,14 @@ export function useWorkoutForm() {
   };
 
   const canSubmit = (mode: GenerationMode): boolean => {
-    if (mode === "program") return true; // always submittable
-    return !!workoutType;               // workout requires split
+    if (mode === "program") return !!programSplit;
+    return !!workoutType; // workout requires split
   };
 
   const getGenerationParams = (mode: GenerationMode): GenerationParams => ({
     bodyParts: mode === "workout" ? selectedBodyParts : [],
     workoutType: mode === "workout" ? workoutType : null,
-    programSplit: null,
+    programSplit: mode === "program" ? programSplit : null,
     programTrainingDaysPerWeek:
       mode === "program" ? programTrainingDaysPerWeek : null,
     programGoal: mode === "program" ? programGoal : null,
@@ -84,6 +92,8 @@ export function useWorkoutForm() {
     setProgramGoal,
     programLength,
     setProgramLength,
+    programSplit,
+    setProgramSplit,
     programTrainingDaysPerWeek,
     setProgramTrainingDaysPerWeek,
     selectedBodyParts,
