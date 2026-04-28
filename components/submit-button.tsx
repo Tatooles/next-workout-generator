@@ -50,6 +50,15 @@ export function SubmitButton({ mode, loading, canSubmit }: SubmitButtonProps) {
           Select a workout split to continue
         </p>
       )}
+
+      {mode === "program" && !canSubmit && !loading && (
+        <p
+          className="text-[12px] text-center mt-[10px]"
+          style={{ color: "#555" }}
+        >
+          Select a program split to continue
+        </p>
+      )}
     </div>
   );
 }

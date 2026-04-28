@@ -266,6 +266,14 @@ export default function Home() {
                   value={workoutForm.experienceLevel}
                   onValueChange={workoutForm.setExperienceLevel}
                 />
+                <DurationSelector
+                  value={workoutForm.desiredDuration}
+                  onValueChange={workoutForm.setDesiredDuration}
+                />
+                <BodyPartsSelector
+                  selectedBodyParts={workoutForm.selectedBodyParts}
+                  onToggle={workoutForm.handleBodyPartToggle}
+                />
                 <EquipmentSelector
                   gymProfile={workoutForm.gymProfile}
                   onGymProfileChange={workoutForm.setGymProfile}

@@ -70,7 +70,7 @@ export function useWorkoutForm() {
   };
 
   const getGenerationParams = (mode: GenerationMode): GenerationParams => ({
-    bodyParts: mode === "workout" ? selectedBodyParts : [],
+    bodyParts: selectedBodyParts,
     workoutType: mode === "workout" ? workoutType : null,
     programSplit: mode === "program" ? programSplit : null,
     programTrainingDaysPerWeek:
@@ -79,7 +79,7 @@ export function useWorkoutForm() {
     programLength: mode === "program" ? programLength : null,
     additionalDetails: additionalDetails.trim() || null,
     experienceLevel,
-    desiredDuration: mode === "workout" ? desiredDuration : null,
+    desiredDuration,
     gymProfile,
     availableEquipment,
     model,
