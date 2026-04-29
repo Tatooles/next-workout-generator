@@ -39,6 +39,24 @@ const isValidAccent = (value: unknown): value is string => {
   );
 };
 
+const isValidRadius = (value: unknown): value is string => {
+  if (typeof value !== "string") return false;
+
+  const trimmedValue = value.trim();
+  if (!/^\d+$/.test(trimmedValue)) return false;
+
+  const radius = Number.parseInt(trimmedValue, 10);
+  return radius >= 0 && radius <= 32;
+};
+
+const getStoredTweaks = (): string | null => {
+  try {
+    return localStorage.getItem("wg_tweaks");
+  } catch {
+    return null;
+  }
+};
+
 const parseStoredTweaks = (value: string | null): TweaksState => {
   if (!value) return TWEAKS_DEFAULTS;
 
@@ -54,11 +72,9 @@ const parseStoredTweaks = (value: string | null): TweaksState => {
         typeof parsed.fontFamily === "string"
           ? parsed.fontFamily
           : TWEAKS_DEFAULTS.fontFamily,
-      cardRadius:
-        typeof parsed.cardRadius === "string" &&
-        Number.isFinite(Number(parsed.cardRadius))
-          ? parsed.cardRadius
-          : TWEAKS_DEFAULTS.cardRadius,
+      cardRadius: isValidRadius(parsed.cardRadius)
+        ? parsed.cardRadius.trim()
+        : TWEAKS_DEFAULTS.cardRadius,
     };
   } catch {
     return TWEAKS_DEFAULTS;
@@ -73,11 +89,9 @@ const normalizeTweaks = (value: TweaksState): TweaksState => ({
     typeof value.fontFamily === "string"
       ? value.fontFamily
       : TWEAKS_DEFAULTS.fontFamily,
-  cardRadius:
-    typeof value.cardRadius === "string" &&
-    Number.isFinite(Number(value.cardRadius))
-      ? value.cardRadius
-      : TWEAKS_DEFAULTS.cardRadius,
+  cardRadius: isValidRadius(value.cardRadius)
+    ? value.cardRadius.trim()
+    : TWEAKS_DEFAULTS.cardRadius,
 });
 
 // ── Barbell SVG icon ─────────────────────────────────────────────────────────
@@ -127,7 +141,7 @@ export default function Home() {
   const [showTweaks, setShowTweaks] = useState(false);
   const [tweaks, setTweaks] = useState<TweaksState>(() => {
     if (typeof window === "undefined") return TWEAKS_DEFAULTS;
-    return parseStoredTweaks(localStorage.getItem("wg_tweaks"));
+    return parseStoredTweaks(getStoredTweaks());
   });
 
   const workoutForm = useWorkoutForm();
