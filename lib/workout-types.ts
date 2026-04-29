@@ -85,6 +85,15 @@ export function createProgramDataSchema(
         path: ["days"],
         message: `Program must contain exactly ${expectedDaysPerWeek} training days.`,
       });
+    } else if (
+      (expectedDaysPerWeek === null || expectedDaysPerWeek === undefined) &&
+      (value.days.length < 3 || value.days.length > 5)
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["days"],
+        message: "Program must contain 3, 4, or 5 training days.",
+      });
     }
   });
 }

@@ -34,7 +34,7 @@ export function buildProgramPrompt(userInformation: WorkoutRequest) {
     parts.push(`Return exactly ${selectedDaysPerWeek} workout days for the week.`);
   } else {
     parts.push(
-      "Choose a sensible training frequency and return between 3 and 5 workout days for the week.",
+      "Choose a sensible training frequency and return exactly 3, 4, or 5 workout days for the week.",
     );
   }
 
@@ -123,7 +123,7 @@ Requirements:
 - Return ${
     selectedDaysPerWeek
       ? `exactly ${selectedDaysPerWeek} workout entries in "days"`
-      : 'between 3 and 5 workout entries in "days"'
+      : 'exactly 3, 4, or 5 workout entries in "days"'
   }
 - Every entry in "days" must be a workout day
 - Every "day" value must be a real weekday name

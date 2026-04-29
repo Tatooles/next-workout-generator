@@ -65,6 +65,21 @@ const parseStoredTweaks = (value: string | null): TweaksState => {
   }
 };
 
+const normalizeTweaks = (value: TweaksState): TweaksState => ({
+  accentOklch: isValidAccent(value.accentOklch)
+    ? value.accentOklch
+    : TWEAKS_DEFAULTS.accentOklch,
+  fontFamily:
+    typeof value.fontFamily === "string"
+      ? value.fontFamily
+      : TWEAKS_DEFAULTS.fontFamily,
+  cardRadius:
+    typeof value.cardRadius === "string" &&
+    Number.isFinite(Number(value.cardRadius))
+      ? value.cardRadius
+      : TWEAKS_DEFAULTS.cardRadius,
+});
+
 // ── Barbell SVG icon ─────────────────────────────────────────────────────────
 const BarbellIcon = ({ size = 44 }: { size?: number }) => (
   <svg
@@ -132,18 +147,22 @@ export default function Home() {
 
   // Apply tweaks → CSS variables
   useEffect(() => {
+    const safeTweaks = normalizeTweaks(tweaks);
     const root = document.documentElement.style;
-    const parts = tweaks.accentOklch.split(" ");
+    const parts = safeTweaks.accentOklch.split(" ");
     const l = parseFloat(parts[0]);
     const rest = parts.slice(1).join(" ");
     const hoverL = Math.min(l + 0.07, 0.99).toFixed(2);
 
-    root.setProperty("--wg-accent", `oklch(${tweaks.accentOklch})`);
+    root.setProperty("--wg-accent", `oklch(${safeTweaks.accentOklch})`);
     root.setProperty("--wg-accent-h", `oklch(${hoverL} ${rest})`);
-    root.setProperty("--wg-accent-sub", `oklch(${tweaks.accentOklch} / 0.12)`);
+    root.setProperty(
+      "--wg-accent-sub",
+      `oklch(${safeTweaks.accentOklch} / 0.12)`,
+    );
     root.setProperty(
       "--wg-accent-sub-h",
-      `oklch(${tweaks.accentOklch} / 0.20)`,
+      `oklch(${safeTweaks.accentOklch} / 0.20)`,
     );
 
     const fontMap: Record<string, string> = {
@@ -153,16 +172,17 @@ export default function Home() {
     };
     root.setProperty(
       "--wg-font",
-      fontMap[tweaks.fontFamily] ?? `'${tweaks.fontFamily}', sans-serif`,
+      fontMap[safeTweaks.fontFamily] ??
+        `'${safeTweaks.fontFamily}', sans-serif`,
     );
 
-    const r = parseInt(tweaks.cardRadius, 10);
+    const r = parseInt(safeTweaks.cardRadius, 10);
     root.setProperty("--wg-radius", `${r}px`);
     root.setProperty("--wg-radius-sm", `${Math.max(4, r - 2)}px`);
     root.setProperty("--wg-radius-lg", `${Math.max(10, r + 6)}px`);
 
     try {
-      localStorage.setItem("wg_tweaks", JSON.stringify(tweaks));
+      localStorage.setItem("wg_tweaks", JSON.stringify(safeTweaks));
     } catch {
       /* ignore */
     }
@@ -293,6 +313,7 @@ export default function Home() {
                 />
                 <ProgramDaysPerWeekSelector
                   value={workoutForm.programTrainingDaysPerWeek}
+                  programSplit={workoutForm.programSplit}
                   onValueChange={workoutForm.setProgramTrainingDaysPerWeek}
                 />
                 <ProgramLengthSelector
