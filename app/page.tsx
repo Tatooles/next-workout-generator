@@ -26,6 +26,45 @@ import { useWorkoutForm } from "@/lib/hooks/use-workout-form";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
 import { formatWorkoutAsText, formatProgramAsText } from "@/lib/utils";
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const isValidAccent = (value: unknown): value is string => {
+  if (typeof value !== "string") return false;
+  const [lightness, chroma, hue] = value.split(" ");
+  return (
+    Number.isFinite(Number(lightness)) &&
+    Number.isFinite(Number(chroma)) &&
+    Number.isFinite(Number(hue))
+  );
+};
+
+const parseStoredTweaks = (value: string | null): TweaksState => {
+  if (!value) return TWEAKS_DEFAULTS;
+
+  try {
+    const parsed: unknown = JSON.parse(value);
+    if (!isRecord(parsed)) return TWEAKS_DEFAULTS;
+
+    return {
+      accentOklch: isValidAccent(parsed.accentOklch)
+        ? parsed.accentOklch
+        : TWEAKS_DEFAULTS.accentOklch,
+      fontFamily:
+        typeof parsed.fontFamily === "string"
+          ? parsed.fontFamily
+          : TWEAKS_DEFAULTS.fontFamily,
+      cardRadius:
+        typeof parsed.cardRadius === "string" &&
+        Number.isFinite(Number(parsed.cardRadius))
+          ? parsed.cardRadius
+          : TWEAKS_DEFAULTS.cardRadius,
+    };
+  } catch {
+    return TWEAKS_DEFAULTS;
+  }
+};
+
 // ── Barbell SVG icon ─────────────────────────────────────────────────────────
 const BarbellIcon = ({ size = 44 }: { size?: number }) => (
   <svg
@@ -73,14 +112,7 @@ export default function Home() {
   const [showTweaks, setShowTweaks] = useState(false);
   const [tweaks, setTweaks] = useState<TweaksState>(() => {
     if (typeof window === "undefined") return TWEAKS_DEFAULTS;
-    try {
-      return (
-        JSON.parse(localStorage.getItem("wg_tweaks") || "null") ||
-        TWEAKS_DEFAULTS
-      );
-    } catch {
-      return TWEAKS_DEFAULTS;
-    }
+    return parseStoredTweaks(localStorage.getItem("wg_tweaks"));
   });
 
   const workoutForm = useWorkoutForm();
@@ -206,7 +238,12 @@ export default function Home() {
           </div>
         ) : programData ? (
           <div ref={resultsRef}>
-            <ProgramResults program={programData} onReset={handleReset} />
+            <ProgramResults
+              program={programData}
+              onCopyFull={handleCopy}
+              copiedFull={copiedStates["full"] || false}
+              onReset={handleReset}
+            />
           </div>
         ) : (
           <form onSubmit={handleSubmit}>

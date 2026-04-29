@@ -3,6 +3,37 @@
 import { forwardRef, useState } from "react";
 import type { ProgramData, ProgramDay } from "@/lib/workout-types";
 
+const CopyIcon = () => (
+  <svg
+    width="13"
+    height="13"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="9" y="9" width="13" height="13" rx="2" />
+    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg
+    width="13"
+    height="13"
+    viewBox="0 0 14 14"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="2,7 5.5,10.5 12,3" />
+  </svg>
+);
+
 const ChevronIcon = ({ open }: { open: boolean }) => (
   <svg
     width="14"
@@ -115,11 +146,13 @@ function ProgramDayCard({
 
 interface ProgramResultsProps {
   program: ProgramData;
+  onCopyFull: () => void;
+  copiedFull: boolean;
   onReset: () => void;
 }
 
 export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
-  ({ program, onReset }, ref) => {
+  ({ program, onCopyFull, copiedFull, onReset }, ref) => {
     const [openDay, setOpenDay] = useState(0);
 
     return (
@@ -151,14 +184,30 @@ export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
                   `${program.days.length}-day training program`}
               </div>
             </div>
-            <button
-              type="button"
-              onClick={onReset}
-              className="inline-flex items-center px-[14px] py-2 text-[13px] font-medium rounded-[var(--wg-radius-sm)] border border-[#232323] transition-all duration-150 cursor-pointer leading-none hover:border-[#2e2e2e] hover:text-[#edeae6]"
-              style={{ background: "transparent", color: "#555" }}
-            >
-              New Program
-            </button>
+            <div className="flex gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={onCopyFull}
+                className="inline-flex items-center gap-[6px] px-[14px] py-2 text-[13px] font-medium rounded-[var(--wg-radius-sm)] border transition-all duration-150 cursor-pointer leading-none"
+                style={{
+                  background: "transparent",
+                  borderColor: copiedFull ? "var(--wg-accent)" : "#232323",
+                  color: copiedFull ? "var(--wg-accent)" : "#555",
+                }}
+              >
+                {copiedFull ? <CheckIcon /> : <CopyIcon />}
+                {copiedFull ? "Copied" : "Copy"}
+              </button>
+
+              <button
+                type="button"
+                onClick={onReset}
+                className="inline-flex items-center px-[14px] py-2 text-[13px] font-medium rounded-[var(--wg-radius-sm)] border border-[#232323] transition-all duration-150 cursor-pointer leading-none hover:border-[#2e2e2e] hover:text-[#edeae6]"
+                style={{ background: "transparent", color: "#555" }}
+              >
+                New Program
+              </button>
+            </div>
           </div>
         </div>
 
