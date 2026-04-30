@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { GenerationMode } from "@/lib/generation-types";
+import { DEFAULT_MODEL, type GenerationModel } from "@/lib/model-options";
 import type { GenerationParams } from "@/lib/utils";
 import type {
   EquipmentOption,
@@ -40,7 +41,7 @@ export function useWorkoutForm() {
   const [availableEquipment, setAvailableEquipment] = useState<
     EquipmentOption[]
   >([]);
-  const [model, setModel] = useState("google/gemini-3-flash-preview");
+  const [model, setModel] = useState<GenerationModel>(DEFAULT_MODEL);
 
   const handleBodyPartToggle = (bodyPart: MuscleGroup) => {
     setSelectedBodyParts((prev) =>

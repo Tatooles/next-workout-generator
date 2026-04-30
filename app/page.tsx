@@ -15,6 +15,7 @@ import { ProgramGoalSelector } from "@/components/program-goal-selector";
 import { ProgramSplitSelector } from "@/components/program-split-selector";
 import { ProgramDaysPerWeekSelector } from "@/components/program-days-per-week-selector";
 import { ProgramLengthSelector } from "@/components/program-length-selector";
+import { ModelSelector } from "@/components/model-selector";
 import {
   TweaksPanel,
   TWEAKS_DEFAULTS,
@@ -359,6 +360,11 @@ export default function Home() {
                 />
               </>
             )}
+
+            <ModelSelector
+              value={workoutForm.model}
+              onValueChange={workoutForm.setModel}
+            />
 
             {/* Error message */}
             {error && (
