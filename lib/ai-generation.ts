@@ -1,14 +1,5 @@
 import { z } from "zod";
-
-export const ALLOWED_MODELS = [
-  "google/gemini-3-flash-preview",
-  "moonshotai/kimi-k2.5",
-  "openai/gpt-5-mini",
-  "anthropic/claude-3.5-haiku",
-  "meta-llama/llama-3.3-70b-instruct:free",
-] as const;
-
-export const DEFAULT_MODEL = "google/gemini-3-flash-preview";
+import { ALLOWED_MODELS, DEFAULT_MODEL } from "@/lib/model-options";
 
 export class GenerationError extends Error {
   status: number;

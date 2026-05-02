@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import type { GenerationMode } from "@/lib/generation-types";
+import { DEFAULT_MODEL, type GenerationModel } from "@/lib/model-options";
 import type { GenerationParams } from "@/lib/utils";
-import {
+import type {
   EquipmentOption,
   ExperienceLevel,
   GymProfile,
   MuscleGroup,
+  ProgramGoal,
   ProgramSplit,
   ProgramTrainingDaysPerWeek,
   WorkoutDuration,
@@ -15,10 +17,16 @@ import {
 } from "@/lib/workout-options";
 
 export function useWorkoutForm() {
+  // ── Workout mode ────────────────────────────────────────────────
   const [workoutType, setWorkoutType] = useState<WorkoutType | null>(null);
+
+  // ── Program mode ────────────────────────────────────────────────
+  const [programGoal, setProgramGoal] = useState<ProgramGoal | null>(null);
   const [programSplit, setProgramSplit] = useState<ProgramSplit | null>(null);
   const [programTrainingDaysPerWeek, setProgramTrainingDaysPerWeek] =
     useState<ProgramTrainingDaysPerWeek | null>(null);
+
+  // ── Shared ───────────────────────────────────────────────────────
   const [selectedBodyParts, setSelectedBodyParts] = useState<MuscleGroup[]>([]);
   const [additionalDetails, setAdditionalDetails] = useState("");
   const [experienceLevel, setExperienceLevel] =
@@ -29,78 +37,55 @@ export function useWorkoutForm() {
   const [availableEquipment, setAvailableEquipment] = useState<
     EquipmentOption[]
   >([]);
-  const [model, setModel] = useState("google/gemini-3-flash-preview");
+  const [model, setModel] = useState<GenerationModel>(DEFAULT_MODEL);
 
-  const handleBodyPartToggle = (bodyPart: MuscleGroup, checked: boolean) => {
-    if (checked) {
-      setSelectedBodyParts([...selectedBodyParts, bodyPart]);
-    } else {
-      setSelectedBodyParts(selectedBodyParts.filter((bp) => bp !== bodyPart));
-    }
+  const handleBodyPartToggle = (bodyPart: MuscleGroup) => {
+    setSelectedBodyParts((prev) =>
+      prev.includes(bodyPart)
+        ? prev.filter((bp) => bp !== bodyPart)
+        : [...prev, bodyPart],
+    );
   };
 
   const setGymProfile = (value: GymProfile | null) => {
     setGymProfileState(value);
-
-    if (value === "Full Commercial Gym") {
-      setAvailableEquipment([]);
-    }
+    if (value === "Full Commercial Gym") setAvailableEquipment([]);
   };
 
-  const handleEquipmentToggle = (
-    equipment: EquipmentOption,
-    checked: boolean,
-  ) => {
-    if (gymProfile === "Full Commercial Gym") {
-      return;
-    }
-
-    if (checked) {
-      setAvailableEquipment((current) => [...current, equipment]);
-    } else {
-      setAvailableEquipment((current) =>
-        current.filter((item) => item !== equipment),
-      );
-    }
+  const handleEquipmentToggle = (equipment: EquipmentOption) => {
+    if (gymProfile === "Full Commercial Gym") return;
+    setAvailableEquipment((prev) =>
+      prev.includes(equipment)
+        ? prev.filter((e) => e !== equipment)
+        : [...prev, equipment],
+    );
   };
 
-  const hasSharedInputs =
-    selectedBodyParts.length > 0 ||
-    additionalDetails.trim().length > 0 ||
-    !!experienceLevel ||
-    !!desiredDuration ||
-    !!gymProfile ||
-    availableEquipment.length > 0;
-
-  const canSubmit = (mode: GenerationMode) => {
-    if (mode === "program") {
-      return !!programSplit;
-    }
-
-    return hasSharedInputs || !!workoutType;
+  const canSubmit = (mode: GenerationMode): boolean => {
+    if (mode === "program") return !!programSplit;
+    return !!workoutType; // workout requires split
   };
 
-  const getGenerationParams = (mode: GenerationMode): GenerationParams => {
-    const trimmedAdditionalDetails = additionalDetails.trim();
-
-    return {
-      bodyParts: selectedBodyParts,
-      workoutType: mode === "workout" ? workoutType : null,
-      programSplit: mode === "program" ? programSplit : null,
-      programTrainingDaysPerWeek:
-        mode === "program" ? programTrainingDaysPerWeek : null,
-      additionalDetails: trimmedAdditionalDetails || null,
-      experienceLevel,
-      desiredDuration,
-      gymProfile,
-      availableEquipment,
-      model,
-    };
-  };
+  const getGenerationParams = (mode: GenerationMode): GenerationParams => ({
+    bodyParts: selectedBodyParts,
+    workoutType: mode === "workout" ? workoutType : null,
+    programSplit: mode === "program" ? programSplit : null,
+    programTrainingDaysPerWeek:
+      mode === "program" ? programTrainingDaysPerWeek : null,
+    programGoal: mode === "program" ? programGoal : null,
+    additionalDetails: additionalDetails.trim() || null,
+    experienceLevel,
+    desiredDuration,
+    gymProfile,
+    availableEquipment,
+    model,
+  });
 
   return {
     workoutType,
     setWorkoutType,
+    programGoal,
+    setProgramGoal,
     programSplit,
     setProgramSplit,
     programTrainingDaysPerWeek,
