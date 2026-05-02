@@ -63,10 +63,6 @@ export const programGoals = [
 
 export type ProgramGoal = (typeof programGoals)[number];
 
-export const programLengths = ["4 weeks", "8 weeks", "12 weeks"] as const;
-
-export type ProgramLength = (typeof programLengths)[number];
-
 export interface MuscleGroupConfig {
   icon: LucideIcon;
   color: string;
@@ -154,7 +150,6 @@ export const WorkoutRequestSchema = z
       .nullable()
       .optional(),
     programGoal: z.enum(programGoals).nullable().optional(),
-    programLength: z.enum(programLengths).nullable().optional(),
     additionalDetails: z.string().max(500).nullable().optional(),
     experienceLevel: z.enum(experienceLevels).nullable().optional(),
     desiredDuration: z.enum(workoutDurations).nullable().optional(),

@@ -14,7 +14,6 @@ import { ProgramResults } from "@/components/program-results";
 import { ProgramGoalSelector } from "@/components/program-goal-selector";
 import { ProgramSplitSelector } from "@/components/program-split-selector";
 import { ProgramDaysPerWeekSelector } from "@/components/program-days-per-week-selector";
-import { ProgramLengthSelector } from "@/components/program-length-selector";
 import { ModelSelector } from "@/components/model-selector";
 import {
   TweaksPanel,
@@ -330,10 +329,6 @@ export default function Home() {
                   value={workoutForm.programTrainingDaysPerWeek}
                   programSplit={workoutForm.programSplit}
                   onValueChange={workoutForm.setProgramTrainingDaysPerWeek}
-                />
-                <ProgramLengthSelector
-                  value={workoutForm.programLength}
-                  onValueChange={workoutForm.setProgramLength}
                 />
                 <ExperienceLevelSelector
                   value={workoutForm.experienceLevel}

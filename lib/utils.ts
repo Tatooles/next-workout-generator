@@ -6,7 +6,6 @@ import {
   type GymProfile,
   type MuscleGroup,
   type ProgramGoal,
-  type ProgramLength,
   type ProgramSplit,
   type ProgramTrainingDaysPerWeek,
   type WorkoutDuration,
@@ -48,7 +47,6 @@ export interface GenerationParams {
   programSplit: ProgramSplit | null;
   programTrainingDaysPerWeek: ProgramTrainingDaysPerWeek | null;
   programGoal: ProgramGoal | null;
-  programLength: ProgramLength | null;
   additionalDetails: string | null;
   experienceLevel: ExperienceLevel | null;
   desiredDuration: WorkoutDuration | null;

@@ -10,7 +10,6 @@ import type {
   GymProfile,
   MuscleGroup,
   ProgramGoal,
-  ProgramLength,
   ProgramSplit,
   ProgramTrainingDaysPerWeek,
   WorkoutDuration,
@@ -23,9 +22,6 @@ export function useWorkoutForm() {
 
   // ── Program mode ────────────────────────────────────────────────
   const [programGoal, setProgramGoal] = useState<ProgramGoal | null>(null);
-  const [programLength, setProgramLength] = useState<ProgramLength | null>(
-    null,
-  );
   const [programSplit, setProgramSplit] = useState<ProgramSplit | null>(null);
   const [programTrainingDaysPerWeek, setProgramTrainingDaysPerWeek] =
     useState<ProgramTrainingDaysPerWeek | null>(null);
@@ -77,7 +73,6 @@ export function useWorkoutForm() {
     programTrainingDaysPerWeek:
       mode === "program" ? programTrainingDaysPerWeek : null,
     programGoal: mode === "program" ? programGoal : null,
-    programLength: mode === "program" ? programLength : null,
     additionalDetails: additionalDetails.trim() || null,
     experienceLevel,
     desiredDuration,
@@ -91,8 +86,6 @@ export function useWorkoutForm() {
     setWorkoutType,
     programGoal,
     setProgramGoal,
-    programLength,
-    setProgramLength,
     programSplit,
     setProgramSplit,
     programTrainingDaysPerWeek,

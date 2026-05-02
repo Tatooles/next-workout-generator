@@ -11,13 +11,6 @@ export function buildProgramPrompt(userInformation: WorkoutRequest) {
     );
   }
 
-  // Program length
-  if (userInformation.programLength) {
-    parts.push(
-      `The program is intended to be ${userInformation.programLength} long. Design the week's structure with this duration in mind.`,
-    );
-  }
-
   // Program split
   if (userInformation.programSplit) {
     parts.push(
