@@ -1,6 +1,7 @@
 "use client";
 
 import { forwardRef, useState } from "react";
+import { ExerciseDetails } from "@/components/exercise-details";
 import type { ProgramData, ProgramDay } from "@/lib/workout-types";
 
 const CopyIcon = () => (
@@ -68,8 +69,10 @@ function ProgramDayCard({
         animationDelay: `${index * 60}ms`,
       }}
     >
-      <div
-        className="flex items-center gap-[14px] px-5 py-4 cursor-pointer select-none"
+      <button
+        type="button"
+        aria-expanded={isOpen}
+        className="flex w-full items-center gap-[14px] bg-transparent px-5 py-4 text-left cursor-pointer select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--wg-accent)]"
         onClick={onToggle}
       >
         <div
@@ -79,62 +82,74 @@ function ProgramDayCard({
           D{index + 1}
         </div>
         <div className="flex-1 min-w-0">
-          <div
-            className="font-semibold text-[14px]"
-            style={{ color: "#edeae6" }}
-          >
+          <div className="font-semibold text-[14px] text-[#edeae6]">
             {day.day} — {day.title}
           </div>
-          {day.focus && (
-            <div className="text-[12px] mt-[2px]" style={{ color: "#555" }}>
-              {day.focus}
-            </div>
-          )}
+          <div className="mt-[2px] flex flex-col gap-x-2 gap-y-[2px] text-[12px] text-[#8a857d] sm:flex-row sm:flex-wrap sm:items-center">
+            {day.focus && <span>{day.focus}</span>}
+            {day.focus && (
+              <span className="hidden sm:inline" aria-hidden="true">
+                |
+              </span>
+            )}
+            <span>Est. {day.estimatedDuration}</span>
+          </div>
         </div>
         <div style={{ color: "#2e2e2e", flexShrink: 0 }}>
           <ChevronIcon open={isOpen} />
         </div>
-      </div>
+      </button>
 
       {isOpen && (
         <div
           className="border-t px-5 py-[14px] animate-fade-up-sm"
           style={{ borderColor: "#232323" }}
         >
-          {day.exercises.map((ex, j) => (
-            <div
-              key={j}
-              className="flex items-center gap-3 py-[9px]"
-              style={{
-                borderBottom:
-                  j < day.exercises.length - 1 ? "1px solid #232323" : "none",
-              }}
-            >
-              <span
-                className="text-[11px] w-4 flex-shrink-0"
-                style={{ color: "#2e2e2e" }}
+          {day.exercises.map((ex, j) => {
+            const musclePreview = ex.muscleGroups.slice(0, 3).join(", ");
+
+            return (
+              <div
+                key={j}
+                className="py-4"
+                style={{
+                  borderBottom:
+                    j < day.exercises.length - 1
+                      ? "1px solid #232323"
+                      : "none",
+                }}
               >
-                {j + 1}
-              </span>
-              <span
-                className="flex-1 text-[14px] font-medium"
-                style={{ color: "#edeae6" }}
-              >
-                {ex.name}
-              </span>
-              <span
-                className="text-[12px] font-medium flex-shrink-0"
-                style={{ color: "#555" }}
-              >
-                {ex.sets}×{ex.reps}
-              </span>
-            </div>
-          ))}
+                <div className="flex items-start gap-3">
+                  <span className="w-4 flex-shrink-0 pt-[3px] text-[11px] text-[#8a857d]">
+                    {j + 1}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                      <div className="min-w-0">
+                        <div className="text-[14px] font-medium leading-[1.35] text-[#edeae6]">
+                          {ex.name}
+                        </div>
+                        {musclePreview && (
+                          <div className="mt-[3px] text-[12px] leading-[1.45] text-[#8a857d]">
+                            {musclePreview}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-x-3 gap-y-1 text-[12px] font-medium text-[#8a857d] sm:flex-shrink-0 sm:justify-end sm:text-right">
+                        <span>{ex.sets} x {ex.reps}</span>
+                        <span>rest {ex.restTime}</span>
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <ExerciseDetails exercise={ex} compact />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
           {day.notes && (
-            <div
-              className="mt-3 px-3 py-2 rounded-[var(--wg-radius-sm)] text-[12px] leading-[1.5]"
-              style={{ background: "#181818", color: "#555" }}
-            >
+            <div className="mt-3 rounded-[var(--wg-radius-sm)] bg-[#181818] px-3 py-2 text-[12px] leading-[1.5] text-[#8a857d]">
               {day.notes}
             </div>
           )}
@@ -170,16 +185,10 @@ export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
               >
                 Generated Program
               </div>
-              <div
-                className="text-[22px] font-bold tracking-[-0.02em]"
-                style={{ color: "#edeae6" }}
-              >
+              <div className="text-[22px] font-bold tracking-[-0.02em] text-[#edeae6]">
                 Your Program
               </div>
-              <div
-                className="text-[13px] mt-1 leading-[1.6] max-w-[420px]"
-                style={{ color: "#555" }}
-              >
+              <div className="mt-1 max-w-[420px] text-[13px] leading-[1.6] text-[#8a857d]">
                 {program.weeklyOverview ||
                   `${program.days.length}-day training program`}
               </div>
@@ -188,12 +197,11 @@ export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
               <button
                 type="button"
                 onClick={onCopyFull}
-                className="inline-flex items-center gap-[6px] px-[14px] py-2 text-[13px] font-medium rounded-[var(--wg-radius-sm)] border transition-all duration-150 cursor-pointer leading-none"
-                style={{
-                  background: "transparent",
-                  borderColor: copiedFull ? "var(--wg-accent)" : "#232323",
-                  color: copiedFull ? "var(--wg-accent)" : "#555",
-                }}
+                className={`inline-flex cursor-pointer items-center gap-[6px] rounded-[var(--wg-radius-sm)] border px-[14px] py-2 text-[13px] font-medium leading-none transition-all duration-150 ${
+                  copiedFull
+                    ? "border-[var(--wg-accent)] text-[var(--wg-accent)]"
+                    : "border-[#232323] text-[#8a857d]"
+                }`}
               >
                 {copiedFull ? <CheckIcon /> : <CopyIcon />}
                 {copiedFull ? "Copied" : "Copy"}
@@ -202,8 +210,7 @@ export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
               <button
                 type="button"
                 onClick={onReset}
-                className="inline-flex items-center px-[14px] py-2 text-[13px] font-medium rounded-[var(--wg-radius-sm)] border border-[#232323] transition-all duration-150 cursor-pointer leading-none hover:border-[#2e2e2e] hover:text-[#edeae6]"
-                style={{ background: "transparent", color: "#555" }}
+                className="inline-flex cursor-pointer items-center rounded-[var(--wg-radius-sm)] border border-[#232323] bg-transparent px-[14px] py-2 text-[13px] font-medium leading-none text-[#8a857d] transition-all duration-150 hover:border-[#2e2e2e] hover:text-[#edeae6]"
               >
                 New Program
               </button>
@@ -211,10 +218,7 @@ export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
           </div>
         </div>
 
-        <div
-          className="text-[10px] font-bold uppercase tracking-[0.08em] mb-[10px]"
-          style={{ color: "#555" }}
-        >
+        <div className="mb-[10px] text-[10px] font-bold uppercase tracking-[0.08em] text-[#8a857d]">
           Week 1 — Sample Schedule
         </div>
 
@@ -232,14 +236,7 @@ export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
         </div>
 
         {program.weeklyNotes && (
-          <div
-            className="mt-4 px-[14px] py-3 rounded-[var(--wg-radius)] text-[13px] leading-[1.6]"
-            style={{
-              background: "#111111",
-              border: "1px solid #232323",
-              color: "#555",
-            }}
-          >
+          <div className="mt-4 rounded-[var(--wg-radius)] border border-[#232323] bg-[#111111] px-[14px] py-3 text-[13px] leading-[1.6] text-[#8a857d]">
             {program.weeklyNotes}
           </div>
         )}
