@@ -157,7 +157,9 @@ export function formatProgramAsText(program: ProgramData): string {
     text += `${"-".repeat(50)}\n`;
   });
 
-  if (program.weeklyNotes) text += `Weekly Notes:\n${program.weeklyNotes}\n`;
+  if (program.progressionNotes) {
+    text += `Progression Plan:\n${program.progressionNotes}\n`;
+  }
   return text.trimEnd();
 }
 
@@ -184,6 +186,8 @@ export function formatProgramAsTemplate(program: ProgramData): string {
     text += `${"-".repeat(50)}\n`;
   });
 
-  if (program.weeklyNotes) text += `Weekly Notes:\n${program.weeklyNotes}\n`;
+  if (program.progressionNotes) {
+    text += `Progression Plan:\n${program.progressionNotes}\n`;
+  }
   return text.trimEnd();
 }

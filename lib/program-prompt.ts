@@ -87,7 +87,7 @@ IMPORTANT: You MUST respond with ONLY valid JSON in the exact format specified b
 Required JSON structure:
 {
   "weeklyOverview": "Optional one-paragraph overview of the week's structure",
-  "weeklyNotes": "Optional weekly guidance, recovery advice, or progression notes",
+  "progressionNotes": "Optional progression plan explaining how to advance exercises week to week, including when to add load, reps, sets, or difficulty, and when to hold steady",
   "days": [
     {
       "day": "Monday",
@@ -99,7 +99,7 @@ Required JSON structure:
           "name": "Exercise name",
           "sets": 3,
           "reps": "8-10",
-          "restTime": "60s",
+          "restTime": "1 min",
           "muscleGroups": ["Chest", "Triceps"],
           "formTips": [
             "Keep your core engaged throughout the movement",
@@ -123,7 +123,9 @@ Requirements:
 - Order the "days" entries chronologically within the week
 - Do not include rest days or recovery-only days
 - Every workout day must include "title", "estimatedDuration", and at least 4 "exercises"
-- "focus", "notes", "weeklyOverview", and "weeklyNotes" are optional
+- Every exercise "restTime" must be a string in minutes only, e.g., "1 min", "1.5 min", "2 min", "3 min". Use half-minute increments when useful. Do not return rest times in seconds.
+- "focus", "notes", "weeklyOverview", and "progressionNotes" are optional
+- If "progressionNotes" is included, make it progression-specific. Do not repeat the weekly overview; explain how the user should progress the exercises over time.
 
 Remember: Return ONLY the JSON object, no markdown formatting, no code blocks, no additional text.`);
 

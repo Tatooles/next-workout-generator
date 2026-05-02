@@ -69,7 +69,7 @@ Required JSON structure:
       "name": "Exercise name",
       "sets": 3,
       "reps": "8-10",
-      "restTime": "60s",
+      "restTime": "1 min",
       "muscleGroups": ["Chest", "Triceps"],
       "formTips": [
         "Keep your core engaged throughout the movement",
@@ -86,7 +86,7 @@ Requirements:
 - "name": Full name of the exercise (required)
 - "sets": Number of sets as an integer (required)
 - "reps": Rep range as a string, can be "8-10", "12-15", "AMRAP", "30 seconds", etc. (required)
-- "restTime": Rest period as a string, e.g., "60s", "90s", "2 minutes" (required)
+- "restTime": Rest period as a string in minutes only, e.g., "1 min", "1.5 min", "2 min", "3 min" (required). Use half-minute increments when useful. Do not return rest times in seconds.
 - "muscleGroups": Array of primary muscle groups targeted (required, at least 1)
 - "formTips": Array of 2-3 specific form cues or tips (required)
 - "estimatedDuration": Total estimated workout duration including warm-up (required)

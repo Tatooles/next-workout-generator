@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ExerciseDetails } from "@/components/exercise-details";
 import type { Exercise } from "@/lib/workout-types";
 
 const ChevronIcon = ({ open }: { open: boolean }) => (
@@ -92,80 +93,7 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
           className="border-t px-5 py-4 animate-fade-up-sm"
           style={{ borderColor: "#232323" }}
         >
-          {/* Stat pills */}
-          <div className="flex gap-2 flex-wrap mb-[14px]">
-            {[
-              { value: String(exercise.sets), label: "Sets" },
-              { value: exercise.reps,         label: "Reps" },
-              { value: exercise.restTime,     label: "Rest" },
-            ].map(({ value, label }) => (
-              <div
-                key={label}
-                className="inline-flex flex-col items-center px-[18px] py-[9px] min-w-[72px] rounded-[var(--wg-radius-sm)]"
-                style={{ background: "#181818" }}
-              >
-                <span
-                  className="text-[18px] font-bold"
-                  style={{ color: "#edeae6" }}
-                >
-                  {value}
-                </span>
-                <span
-                  className="text-[10px] uppercase tracking-[0.06em] mt-[2px]"
-                  style={{ color: "#555" }}
-                >
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Muscle tags */}
-          {exercise.muscleGroups.length > 0 && (
-            <div className="flex flex-wrap gap-[6px] mb-[14px]">
-              {exercise.muscleGroups.map((muscle, i) => (
-                <span
-                  key={i}
-                  className="px-[9px] py-[3px] rounded-[4px] text-[11px] font-semibold tracking-[0.03em]"
-                  style={{
-                    background: "var(--wg-accent-sub)",
-                    color: "var(--wg-accent)",
-                  }}
-                >
-                  {muscle}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Form tips */}
-          {exercise.formTips && exercise.formTips.length > 0 && (
-            <div>
-              <div
-                className="text-[10px] font-bold uppercase tracking-[0.08em] mb-[9px]"
-                style={{ color: "#555" }}
-              >
-                Form Tips
-              </div>
-              <ul className="flex flex-col gap-[7px]">
-                {exercise.formTips.map((tip, i) => (
-                  <li
-                    key={i}
-                    className="flex gap-[10px] text-[13px] leading-[1.5]"
-                    style={{ color: "#555" }}
-                  >
-                    <span
-                      className="flex-shrink-0"
-                      style={{ color: "var(--wg-accent)" }}
-                    >
-                      —
-                    </span>
-                    <span>{tip}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <ExerciseDetails exercise={exercise} />
         </div>
       )}
     </div>

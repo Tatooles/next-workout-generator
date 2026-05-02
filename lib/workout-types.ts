@@ -15,7 +15,7 @@ export const ExerciseSchema = z.object({
   name: z.string().min(1),
   sets: z.number().int().positive(),
   reps: z.string().min(1), // "8-10", "AMRAP", etc.
-  restTime: z.string().min(1), // "60s", "90s", etc.
+  restTime: z.string().min(1), // "1 min", "1.5 min", etc.
   muscleGroups: z.array(z.string()).min(1),
   formTips: z.array(z.string()), // No minimum required
 });
@@ -40,7 +40,7 @@ export const ProgramDaySchema = WorkoutProgramDaySchema;
 const BaseProgramDataSchema = z
   .object({
     weeklyOverview: z.string().optional(),
-    weeklyNotes: z.string().optional(),
+    progressionNotes: z.string().optional(),
     days: z.array(ProgramDaySchema).min(2).max(6),
   })
   .superRefine((value, ctx) => {
