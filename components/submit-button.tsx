@@ -47,7 +47,7 @@ export function SubmitButton({ mode, loading, canSubmit }: SubmitButtonProps) {
           className="text-[12px] text-center mt-[10px]"
           style={{ color: "#555" }}
         >
-          Select a workout split to continue
+          Select a workout split or body part to continue
         </p>
       )}
 
