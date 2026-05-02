@@ -63,7 +63,7 @@ export function useWorkoutForm() {
 
   const canSubmit = (mode: GenerationMode): boolean => {
     if (mode === "program") return !!programSplit;
-    return !!workoutType; // workout requires split
+    return !!workoutType || selectedBodyParts.length > 0;
   };
 
   const getGenerationParams = (mode: GenerationMode): GenerationParams => ({
