@@ -235,9 +235,12 @@ export const ProgramResults = forwardRef<HTMLDivElement, ProgramResultsProps>(
           ))}
         </div>
 
-        {program.weeklyNotes && (
+        {program.progressionNotes && (
           <div className="mt-4 rounded-[var(--wg-radius)] border border-[#232323] bg-[#111111] px-[14px] py-3 text-[13px] leading-[1.6] text-[#8a857d]">
-            {program.weeklyNotes}
+            <div className="mb-[7px] text-[10px] font-bold uppercase tracking-[0.08em] text-[#8a857d]">
+              Progression Plan
+            </div>
+            <div>{program.progressionNotes}</div>
           </div>
         )}
       </div>

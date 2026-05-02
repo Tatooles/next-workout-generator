@@ -40,7 +40,7 @@ export const ProgramDaySchema = WorkoutProgramDaySchema;
 const BaseProgramDataSchema = z
   .object({
     weeklyOverview: z.string().optional(),
-    weeklyNotes: z.string().optional(),
+    progressionNotes: z.string().optional(),
     days: z.array(ProgramDaySchema).min(2).max(6),
   })
   .superRefine((value, ctx) => {
