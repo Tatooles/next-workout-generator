@@ -86,14 +86,24 @@ export async function fetchWorkout(
   params: GenerationParams,
   signal?: AbortSignal,
 ): Promise<WorkoutData> {
-  return fetchGeneration<WorkoutData>("/api/workout", params, "workout", signal);
+  return fetchGeneration<WorkoutData>(
+    "/api/workout",
+    params,
+    "workout",
+    signal,
+  );
 }
 
 export async function fetchProgram(
   params: GenerationParams,
   signal?: AbortSignal,
 ): Promise<ProgramData> {
-  return fetchGeneration<ProgramData>("/api/program", params, "program", signal);
+  return fetchGeneration<ProgramData>(
+    "/api/program",
+    params,
+    "program",
+    signal,
+  );
 }
 
 export function formatWorkoutAsText(workout: WorkoutData): string {
@@ -132,12 +142,14 @@ export function formatWorkoutAsTemplate(workout: WorkoutData): string {
 export function formatProgramAsText(program: ProgramData): string {
   let text = `Weekly Program\n${"=".repeat(50)}\n\n`;
 
-  if (program.weeklyOverview) text += `Overview:\n${program.weeklyOverview}\n\n`;
+  if (program.weeklyOverview)
+    text += `Overview:\n${program.weeklyOverview}\n\n`;
 
   program.days.forEach((day) => {
     text += `${day.day} - ${day.title}\n`;
     if (day.focus) text += `Focus: ${day.focus}\n`;
-    if (day.estimatedDuration) text += `Estimated Duration: ${day.estimatedDuration}\n`;
+    if (day.estimatedDuration)
+      text += `Estimated Duration: ${day.estimatedDuration}\n`;
 
     if (day.exercises.length > 0) {
       text += "\n";
@@ -166,12 +178,14 @@ export function formatProgramAsText(program: ProgramData): string {
 export function formatProgramAsTemplate(program: ProgramData): string {
   let text = `Weekly Program Template\n${"=".repeat(50)}\n\n`;
 
-  if (program.weeklyOverview) text += `Overview:\n${program.weeklyOverview}\n\n`;
+  if (program.weeklyOverview)
+    text += `Overview:\n${program.weeklyOverview}\n\n`;
 
   program.days.forEach((day) => {
     text += `${day.day} - ${day.title}\n`;
     if (day.focus) text += `Focus: ${day.focus}\n`;
-    if (day.estimatedDuration) text += `Estimated Duration: ${day.estimatedDuration}\n`;
+    if (day.estimatedDuration)
+      text += `Estimated Duration: ${day.estimatedDuration}\n`;
 
     text += "\n";
     day.exercises.forEach((exercise, index) => {

@@ -47,40 +47,30 @@ export const WorkoutResults = forwardRef<HTMLDivElement, WorkoutResultsProps>(
     return (
       <div ref={ref}>
         {/* Header card */}
-        <div
-          className="border rounded-[var(--wg-radius-lg)] px-[22px] py-5 mb-3 animate-fade-up"
-          style={{ background: "#111111", borderColor: "#232323" }}
-        >
-          <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="animate-fade-up rounded-wg-lg border-border bg-card mb-3 border px-[22px] py-5">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <div
-                className="text-[10px] font-bold uppercase tracking-[0.08em] mb-[6px]"
-                style={{ color: "var(--wg-accent)" }}
-              >
+              <div className="text-wg-accent mb-[6px] text-[10px] font-bold tracking-[0.08em] uppercase">
                 Generated Workout
               </div>
-              <div
-                className="text-[22px] font-bold tracking-[-0.02em]"
-                style={{ color: "#edeae6" }}
-              >
+              <div className="text-foreground text-[22px] font-bold">
                 Your Workout
               </div>
-              <div className="text-[13px] mt-1" style={{ color: "#555" }}>
+              <div className="text-muted-foreground mt-1 text-[13px]">
                 Est. {workout.estimatedDuration}
               </div>
             </div>
 
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex flex-wrap gap-2">
               {/* Copy button */}
               <button
                 type="button"
                 onClick={onCopyFull}
-                className="inline-flex items-center gap-[6px] px-[14px] py-2 text-[13px] font-medium rounded-[var(--wg-radius-sm)] border transition-all duration-150 cursor-pointer leading-none"
-                style={{
-                  background: "transparent",
-                  borderColor: copiedFull ? "var(--wg-accent)" : "#232323",
-                  color: copiedFull ? "var(--wg-accent)" : "#555",
-                }}
+                className={`rounded-wg-sm inline-flex cursor-pointer items-center gap-[6px] border bg-transparent px-[14px] py-2 text-[13px] leading-none font-medium transition-all duration-150 ${
+                  copiedFull
+                    ? "border-wg-accent text-wg-accent"
+                    : "border-border text-muted-foreground"
+                }`}
               >
                 {copiedFull ? <CheckIcon /> : <CopyIcon />}
                 {copiedFull ? "Copied" : "Copy"}
@@ -90,8 +80,7 @@ export const WorkoutResults = forwardRef<HTMLDivElement, WorkoutResultsProps>(
               <button
                 type="button"
                 onClick={onReset}
-                className="inline-flex items-center gap-[6px] px-[14px] py-2 text-[13px] font-medium rounded-[var(--wg-radius-sm)] border border-[#232323] transition-all duration-150 cursor-pointer leading-none hover:border-[#2e2e2e] hover:text-[#edeae6]"
-                style={{ background: "transparent", color: "#555" }}
+                className="rounded-wg-sm border-border text-muted-foreground hover:border-ring hover:text-foreground inline-flex cursor-pointer items-center gap-[6px] border bg-transparent px-[14px] py-2 text-[13px] leading-none font-medium transition-all duration-150"
               >
                 New Workout
               </button>
@@ -99,10 +88,7 @@ export const WorkoutResults = forwardRef<HTMLDivElement, WorkoutResultsProps>(
           </div>
 
           {workout.notes && (
-            <div
-              className="mt-4 px-[14px] py-[11px] rounded-[var(--wg-radius-sm)] text-[13px] leading-[1.6]"
-              style={{ background: "#181818", color: "#555" }}
-            >
+            <div className="rounded-wg-sm bg-muted text-muted-foreground mt-4 px-[14px] py-[11px] text-[13px] leading-[1.6]">
               {workout.notes}
             </div>
           )}

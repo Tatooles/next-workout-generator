@@ -114,20 +114,14 @@ const BarbellIcon = ({ size = 44 }: { size?: number }) => (
 function LoadingState({ mode }: { mode: GenerationMode }) {
   return (
     <div className="animate-fade-up flex flex-col items-center gap-[18px] px-5 py-[72px]">
-      <div
-        className="animate-pulse-barbell"
-        style={{ color: "var(--wg-accent)" }}
-      >
+      <div className="animate-pulse-barbell text-wg-accent">
         <BarbellIcon size={44} />
       </div>
       <div className="text-center">
-        <div
-          className="mb-[6px] text-[16px] font-semibold"
-          style={{ color: "#edeae6" }}
-        >
+        <div className="text-foreground mb-[6px] text-[16px] font-semibold">
           Building your {mode}…
         </div>
-        <div className="text-[13px]" style={{ color: "#555" }}>
+        <div className="text-muted-foreground text-[13px]">
           Analyzing your inputs
         </div>
       </div>
@@ -243,14 +237,8 @@ export default function Home() {
   };
 
   return (
-    <main style={{ background: "#090909", minHeight: "100vh" }}>
-      <div
-        style={{
-          maxWidth: 680,
-          margin: "0 auto",
-          padding: "36px 20px 100px",
-        }}
-      >
+    <main className="bg-background min-h-screen">
+      <div className="mx-auto max-w-[680px] px-5 pt-9 pb-[100px]">
         {/* Header + mode toggle */}
         <WorkoutHeader
           mode={mode}
@@ -363,14 +351,7 @@ export default function Home() {
 
             {/* Error message */}
             {error && (
-              <div
-                className="mt-1 mb-2 rounded-[var(--wg-radius)] px-4 py-3 text-[13px]"
-                style={{
-                  background: "oklch(0.44 0.17 13 / 0.08)",
-                  border: "1px solid oklch(0.44 0.17 13 / 0.25)",
-                  color: "var(--wg-accent)",
-                }}
-              >
+              <div className="rounded-wg border-error-sub bg-error-sub text-wg-accent mt-1 mb-2 border px-4 py-3 text-[13px]">
                 {error}
               </div>
             )}

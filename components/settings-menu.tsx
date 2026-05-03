@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+
 export interface TweaksState {
   accentOklch: string;
   fontFamily: string;
@@ -13,17 +15,38 @@ export const TWEAKS_DEFAULTS: TweaksState = {
 };
 
 const ACCENT_PRESETS = [
-  { label: "Crimson",  oklch: "0.44 0.17 13"  },
-  { label: "Scarlet",  oklch: "0.46 0.20 22"  },
-  { label: "Burgundy", oklch: "0.38 0.14 5"   },
-  { label: "Garnet",   oklch: "0.42 0.15 350" },
+  {
+    label: "Crimson",
+    oklch: "0.44 0.17 13",
+    className: "bg-[oklch(0.44_0.17_13)]",
+  },
+  {
+    label: "Scarlet",
+    oklch: "0.46 0.20 22",
+    className: "bg-[oklch(0.46_0.20_22)]",
+  },
+  {
+    label: "Burgundy",
+    oklch: "0.38 0.14 5",
+    className: "bg-[oklch(0.38_0.14_5)]",
+  },
+  {
+    label: "Garnet",
+    oklch: "0.42 0.15 350",
+    className: "bg-[oklch(0.42_0.15_350)]",
+  },
 ];
 
 const FONT_OPTIONS = ["Space Grotesk", "DM Sans", "Helvetica Neue"];
+const FONT_CLASS_NAMES: Record<string, string> = {
+  "Space Grotesk": "font-space-grotesk",
+  "DM Sans": "font-dm-sans",
+  "Helvetica Neue": "font-helvetica-neue",
+};
 const RADIUS_OPTIONS = [
-  { value: "4",  label: "Sharp"   },
-  { value: "8",  label: "Rounded" },
-  { value: "14", label: "Soft"    },
+  { value: "4", label: "Sharp" },
+  { value: "8", label: "Rounded" },
+  { value: "14", label: "Soft" },
 ];
 
 interface TweaksPanelProps {
@@ -34,27 +57,16 @@ interface TweaksPanelProps {
 
 export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
   return (
-    <div
-      className="fixed bottom-6 right-6 z-50 w-[240px] rounded-[var(--wg-radius-lg)] p-5 animate-fade-up"
-      style={{
-        background: "#111111",
-        border: "1px solid #2e2e2e",
-        boxShadow: "0 24px 48px rgba(0,0,0,0.5)",
-      }}
-    >
+    <div className="animate-fade-up shadow-tweaks rounded-wg-lg border-ring bg-card fixed right-6 bottom-6 z-50 w-[240px] border p-5">
       {/* Header */}
-      <div className="flex items-center justify-between mb-[18px]">
-        <div
-          className="text-[13px] font-bold tracking-[0.02em]"
-          style={{ color: "#edeae6" }}
-        >
+      <div className="mb-[18px] flex items-center justify-between">
+        <div className="text-foreground text-[13px] font-bold tracking-[0.02em]">
           Tweaks
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="text-[18px] leading-none cursor-pointer transition-colors duration-150 hover:text-[#edeae6]"
-          style={{ background: "none", border: "none", color: "#555", padding: 0 }}
+          className="text-muted-foreground hover:text-foreground cursor-pointer border-none bg-transparent p-0 text-[18px] leading-none transition-colors duration-150"
         >
           ×
         </button>
@@ -62,10 +74,7 @@ export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
 
       {/* Accent color */}
       <div className="mb-4">
-        <div
-          className="text-[10px] font-bold uppercase tracking-[0.08em] mb-[10px]"
-          style={{ color: "#555" }}
-        >
+        <div className="text-muted-foreground mb-[10px] text-[10px] font-bold tracking-[0.08em] uppercase">
           Accent Color
         </div>
         <div className="flex gap-[10px]">
@@ -75,12 +84,13 @@ export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
               title={p.label}
               type="button"
               onClick={() => onUpdate("accentOklch", p.oklch)}
-              className="w-6 h-6 rounded-full cursor-pointer transition-transform duration-150 hover:scale-110 border-2"
-              style={{
-                background: `oklch(${p.oklch})`,
-                borderColor:
-                  tweaks.accentOklch === p.oklch ? "#edeae6" : "transparent",
-              }}
+              className={cn(
+                "h-6 w-6 cursor-pointer rounded-full border-2 transition-colors duration-150",
+                p.className,
+                tweaks.accentOklch === p.oklch
+                  ? "border-foreground"
+                  : "border-transparent",
+              )}
             />
           ))}
         </div>
@@ -88,10 +98,7 @@ export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
 
       {/* Font */}
       <div className="mb-4">
-        <div
-          className="text-[10px] font-bold uppercase tracking-[0.08em] mb-[10px]"
-          style={{ color: "#555" }}
-        >
+        <div className="text-muted-foreground mb-[10px] text-[10px] font-bold tracking-[0.08em] uppercase">
           Font
         </div>
         <div className="flex flex-col gap-[6px]">
@@ -100,18 +107,13 @@ export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
               key={font}
               type="button"
               onClick={() => onUpdate("fontFamily", font)}
-              className="text-left px-[10px] py-[6px] rounded-[6px] text-[13px] cursor-pointer transition-all duration-150"
-              style={{
-                fontFamily: font,
-                border: `1px solid ${tweaks.fontFamily === font ? "var(--wg-accent)" : "#232323"}`,
-                background:
-                  tweaks.fontFamily === font
-                    ? "var(--wg-accent-sub)"
-                    : "transparent",
-                color:
-                  tweaks.fontFamily === font ? "var(--wg-accent)" : "#555",
-                fontWeight: tweaks.fontFamily === font ? 600 : 400,
-              }}
+              className={cn(
+                "cursor-pointer rounded-[6px] border px-[10px] py-[6px] text-left text-[13px] font-semibold transition-all duration-150",
+                FONT_CLASS_NAMES[font],
+                tweaks.fontFamily === font
+                  ? "border-wg-accent bg-wg-accent-sub text-wg-accent"
+                  : "border-border text-muted-foreground bg-transparent",
+              )}
             >
               {font}
             </button>
@@ -121,10 +123,7 @@ export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
 
       {/* Card radius */}
       <div>
-        <div
-          className="text-[10px] font-bold uppercase tracking-[0.08em] mb-[10px]"
-          style={{ color: "#555" }}
-        >
+        <div className="text-muted-foreground mb-[10px] text-[10px] font-bold tracking-[0.08em] uppercase">
           Card Radius
         </div>
         <div className="flex gap-2">
@@ -133,18 +132,12 @@ export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
               key={r.value}
               type="button"
               onClick={() => onUpdate("cardRadius", r.value)}
-              className="flex-1 py-[6px] text-[12px] rounded-[6px] cursor-pointer transition-all duration-150"
-              style={{
-                fontFamily: "var(--wg-font)",
-                border: `1px solid ${tweaks.cardRadius === r.value ? "var(--wg-accent)" : "#232323"}`,
-                background:
-                  tweaks.cardRadius === r.value
-                    ? "var(--wg-accent-sub)"
-                    : "transparent",
-                color:
-                  tweaks.cardRadius === r.value ? "var(--wg-accent)" : "#555",
-                fontWeight: tweaks.cardRadius === r.value ? 600 : 400,
-              }}
+              className={cn(
+                "font-wg flex-1 cursor-pointer rounded-[6px] border py-[6px] text-[12px] font-semibold transition-all duration-150",
+                tweaks.cardRadius === r.value
+                  ? "border-wg-accent bg-wg-accent-sub text-wg-accent"
+                  : "border-border text-muted-foreground bg-transparent",
+              )}
             >
               {r.label}
             </button>

@@ -42,18 +42,21 @@ export async function fetchOpenRouterCompletion(
     stream: false,
   };
 
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENROUTER_API_KEY ?? ""}`,
-      "HTTP-Referer": process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000",
-      "X-Title": title,
+  const response = await fetch(
+    "https://openrouter.ai/api/v1/chat/completions",
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY ?? ""}`,
+        "HTTP-Referer": process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000",
+        "X-Title": title,
+      },
+      method: "POST",
+      body: JSON.stringify(payload),
     },
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+  );
 
   if (!response.ok) {
     console.error("OpenRouter API Error:", response.status);

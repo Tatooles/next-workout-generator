@@ -15,26 +15,11 @@ export function SubmitButton({ mode, loading, canSubmit }: SubmitButtonProps) {
       <button
         type="submit"
         disabled={isDisabled}
-        className="w-full py-[15px] text-[13px] font-bold uppercase tracking-[0.08em] rounded-[var(--wg-radius)] border-none transition-colors duration-200"
-        style={{
-          background: isDisabled ? "#181818" : "var(--wg-accent)",
-          color: isDisabled ? "#2e2e2e" : "#ffffff",
-          cursor: isDisabled ? "not-allowed" : "pointer",
-          fontFamily: "var(--wg-font)",
-        }}
-        onMouseEnter={(e) => {
-          if (!isDisabled) e.currentTarget.style.background = "var(--wg-accent-h)";
-        }}
-        onMouseLeave={(e) => {
-          if (!isDisabled) e.currentTarget.style.background = "var(--wg-accent)";
-        }}
+        className="font-wg rounded-wg bg-wg-accent hover:bg-wg-accent-hover disabled:bg-muted disabled:text-ring disabled:hover:bg-muted w-full cursor-pointer border-none py-[15px] text-[13px] font-bold tracking-[0.08em] text-white uppercase transition-colors duration-200 disabled:cursor-not-allowed"
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">
-            <span
-              className="inline-block w-4 h-4 rounded-full border-2 border-current border-t-transparent"
-              style={{ animation: "spinLoader 0.7s linear infinite" }}
-            />
+            <span className="animate-spin-loader inline-block h-4 w-4 rounded-full border-2 border-current border-t-transparent" />
             Generating {label}…
           </span>
         ) : (
@@ -43,19 +28,13 @@ export function SubmitButton({ mode, loading, canSubmit }: SubmitButtonProps) {
       </button>
 
       {mode === "workout" && !canSubmit && !loading && (
-        <p
-          className="text-[12px] text-center mt-[10px]"
-          style={{ color: "#555" }}
-        >
+        <p className="text-muted-foreground mt-[10px] text-center text-[12px]">
           Select a workout split or body part to continue
         </p>
       )}
 
       {mode === "program" && !canSubmit && !loading && (
-        <p
-          className="text-[12px] text-center mt-[10px]"
-          style={{ color: "#555" }}
-        >
+        <p className="text-muted-foreground mt-[10px] text-center text-[12px]">
           Select a program split to continue
         </p>
       )}

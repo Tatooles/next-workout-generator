@@ -20,11 +20,11 @@ export function Chip({
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center justify-center whitespace-nowrap rounded-[var(--wg-radius-sm)] border transition-all duration-150 cursor-pointer leading-none tracking-[0.01em]",
+        "rounded-wg-sm inline-flex cursor-pointer items-center justify-center border leading-none font-semibold whitespace-nowrap transition-all duration-150",
         small ? "px-3 py-[5px] text-xs" : "px-[15px] py-2 text-[13px]",
         active
-          ? "border-[var(--wg-accent)] bg-[var(--wg-accent-sub)] text-[var(--wg-accent)] font-semibold"
-          : "border-[#232323] bg-transparent text-[#555] hover:border-[#2e2e2e] hover:text-[#edeae6]",
+          ? "border-wg-accent bg-wg-accent-sub text-wg-accent"
+          : "border-border text-muted-foreground hover:border-ring hover:text-foreground bg-transparent",
         className,
       )}
     >
@@ -41,11 +41,13 @@ interface SectionLabelProps {
 export function SectionLabel({ text, sub }: SectionLabelProps) {
   return (
     <div className="mb-3">
-      <div className="text-[11px] font-bold tracking-[0.08em] uppercase text-[#555]">
+      <div className="text-muted-foreground text-[11px] font-bold tracking-[0.08em] uppercase">
         {text}
       </div>
       {sub && (
-        <div className="text-[12px] text-[#555] mt-1 opacity-80">{sub}</div>
+        <div className="text-muted-foreground mt-1 text-[12px] opacity-80">
+          {sub}
+        </div>
       )}
     </div>
   );
@@ -65,7 +67,7 @@ export function FormSection({
   first = false,
 }: FormSectionProps) {
   return (
-    <div className={cn("pb-6", !first && "border-t border-[#232323] pt-6")}>
+    <div className={cn("pb-6", !first && "border-border border-t pt-6")}>
       <SectionLabel text={label} sub={sub} />
       {children}
     </div>

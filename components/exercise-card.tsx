@@ -27,72 +27,48 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
   const [open, setOpen] = useState(true);
 
   return (
-    <div
-      className="border rounded-[var(--wg-radius)] overflow-hidden transition-colors duration-150 animate-fade-up"
-      style={{
-        background: "#111111",
-        borderColor: "#232323",
-        animationDelay: `${index * 60}ms`,
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#2e2e2e")}
-      onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#232323")}
-    >
+    <div className="animate-fade-up rounded-wg border-border bg-card hover:border-ring overflow-hidden border transition-colors duration-150">
       {/* Card header — always visible */}
       <div
-        className="flex items-center gap-[14px] px-5 py-4 cursor-pointer select-none"
+        className="flex cursor-pointer items-center gap-[14px] px-5 py-4 select-none"
         onClick={() => setOpen((o) => !o)}
       >
         {/* Number badge */}
-        <div
-          className="w-[34px] h-[34px] rounded-[7px] flex items-center justify-center text-[13px] font-bold flex-shrink-0"
-          style={{ background: "var(--wg-accent-sub)", color: "var(--wg-accent)" }}
-        >
+        <div className="bg-wg-accent-sub text-wg-accent flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-[7px] text-[13px] font-bold">
           {index + 1}
         </div>
 
         {/* Name + muscle preview */}
-        <div className="flex-1 min-w-0">
-          <div
-            className="font-semibold text-[15px] leading-[1.2] truncate"
-            style={{ color: "#edeae6" }}
-          >
+        <div className="min-w-0 flex-1">
+          <div className="text-foreground truncate text-[15px] leading-[1.2] font-semibold">
             {exercise.name}
           </div>
-          <div className="text-[11px] mt-[3px]" style={{ color: "#555" }}>
+          <div className="text-muted-foreground mt-[3px] text-[11px]">
             {exercise.muscleGroups.slice(0, 3).join(" · ")}
           </div>
         </div>
 
         {/* Sets × Reps */}
-        <div className="flex-shrink-0 text-right mr-1">
-          <div
-            className="text-[15px] font-bold tracking-[-0.01em]"
-            style={{ color: "#edeae6" }}
-          >
+        <div className="mr-1 flex-shrink-0 text-right">
+          <div className="text-foreground text-[15px] font-bold">
             {exercise.sets}
-            <span style={{ color: "#555", fontWeight: 400 }}>×</span>
+            <span className="text-muted-foreground font-normal">×</span>
             {exercise.reps}
           </div>
-          <div
-            className="text-[10px] uppercase tracking-[0.05em] mt-[1px]"
-            style={{ color: "#555" }}
-          >
+          <div className="text-muted-foreground mt-[1px] text-[10px] tracking-[0.05em] uppercase">
             rest {exercise.restTime}
           </div>
         </div>
 
         {/* Chevron */}
-        <div style={{ color: "#2e2e2e", flexShrink: 0 }}>
+        <div className="text-ring flex-shrink-0">
           <ChevronIcon open={open} />
         </div>
       </div>
 
       {/* Expanded body */}
       {open && (
-        <div
-          className="border-t px-5 py-4 animate-fade-up-sm"
-          style={{ borderColor: "#232323" }}
-        >
+        <div className="animate-fade-up-sm border-border border-t px-5 py-4">
           <ExerciseDetails exercise={exercise} />
         </div>
       )}
