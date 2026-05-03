@@ -1,6 +1,6 @@
-import type { WorkoutRequest } from "@/lib/workout-options";
+import type { GenerationRequest } from "@/lib/workout-options";
 
-export function buildWorkoutPrompt(userInformation: WorkoutRequest) {
+export function buildWorkoutPrompt(userInformation: GenerationRequest) {
   const promptParts: string[] = [];
 
   if (userInformation.workoutType) {

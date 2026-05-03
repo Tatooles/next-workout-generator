@@ -10,6 +10,10 @@ export type GenerationModel = (typeof ALLOWED_MODELS)[number];
 
 export const DEFAULT_MODEL: GenerationModel = "google/gemini-3-flash-preview";
 
+export function isGenerationModel(model: string): model is GenerationModel {
+  return ALLOWED_MODELS.some((allowedModel) => allowedModel === model);
+}
+
 export const MODEL_LABELS: Record<GenerationModel, string> = {
   "google/gemini-3-flash-preview": "Gemini 3 Flash",
   "moonshotai/kimi-k2.5": "Kimi K2.5",

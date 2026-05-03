@@ -8,6 +8,7 @@ import {
   LucideIcon,
 } from "lucide-react";
 import { z } from "zod";
+import { ALLOWED_MODELS } from "@/lib/model-options";
 
 export const muscleGroups = [
   "Quads",
@@ -146,7 +147,7 @@ export const equipmentOptions = [
 
 export type EquipmentOption = (typeof equipmentOptions)[number];
 
-export const WorkoutRequestSchema = z
+export const GenerationRequestSchema = z
   .object({
     bodyParts: z.array(z.enum(muscleGroups)).default([]),
     workoutType: z.enum(workoutTypes).nullable().optional(),
@@ -167,7 +168,7 @@ export const WorkoutRequestSchema = z
     desiredDuration: z.enum(workoutDurations).nullable().optional(),
     gymProfile: z.enum(gymProfiles).nullable().optional(),
     availableEquipment: z.array(z.enum(equipmentOptions)).default([]),
-    model: z.string().nullable().optional(),
+    model: z.enum(ALLOWED_MODELS).nullable().optional(),
   })
   .superRefine((value, ctx) => {
     if (
@@ -183,4 +184,4 @@ export const WorkoutRequestSchema = z
     }
   });
 
-export type WorkoutRequest = z.infer<typeof WorkoutRequestSchema>;
+export type GenerationRequest = z.infer<typeof GenerationRequestSchema>;

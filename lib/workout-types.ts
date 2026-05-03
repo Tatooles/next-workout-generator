@@ -17,16 +17,16 @@ export const ExerciseSchema = z.object({
   reps: z.string().min(1), // "8-10", "AMRAP", etc.
   restTime: z.string().min(1), // "1 min", "1.5 min", etc.
   muscleGroups: z.array(z.string()).min(1),
-  formTips: z.array(z.string()), // No minimum required
+  formTips: z.array(z.string()),
 });
 
 export const WorkoutDataSchema = z.object({
-  exercises: z.array(ExerciseSchema).min(4), // At least 4 exercises
+  exercises: z.array(ExerciseSchema).min(4),
   estimatedDuration: z.string().min(1),
   notes: z.string().optional(),
 });
 
-const WorkoutProgramDaySchema = z.object({
+const ProgramDayDataSchema = z.object({
   day: z.enum(weekDays),
   title: z.string().min(1),
   focus: z.string().min(1).optional(),
@@ -35,13 +35,11 @@ const WorkoutProgramDaySchema = z.object({
   notes: z.string().optional(),
 });
 
-export const ProgramDaySchema = WorkoutProgramDaySchema;
-
 const BaseProgramDataSchema = z
   .object({
     weeklyOverview: z.string().optional(),
     progressionNotes: z.string().optional(),
-    days: z.array(ProgramDaySchema).min(2).max(6),
+    days: z.array(ProgramDayDataSchema).min(2).max(6),
   })
   .superRefine((value, ctx) => {
     const seenDays = new Set<string>();
@@ -98,8 +96,7 @@ export function createProgramDataSchema(
   });
 }
 
-// Infer TypeScript types from schemas
 export type Exercise = z.infer<typeof ExerciseSchema>;
 export type WorkoutData = z.infer<typeof WorkoutDataSchema>;
-export type ProgramDay = z.infer<typeof ProgramDaySchema>;
+export type ProgramDay = z.infer<typeof ProgramDayDataSchema>;
 export type ProgramData = z.infer<typeof BaseProgramDataSchema>;

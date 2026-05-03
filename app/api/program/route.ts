@@ -7,7 +7,7 @@ import {
   resolveRequestedModel,
 } from "@/lib/ai-generation";
 import { buildProgramPrompt } from "@/lib/program-prompt";
-import { WorkoutRequestSchema } from "@/lib/workout-options";
+import { GenerationRequestSchema } from "@/lib/workout-options";
 import { createProgramDataSchema } from "@/lib/workout-types";
 
 export async function POST(request: Request) {
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const parsedRequest = WorkoutRequestSchema.safeParse(requestBody);
+  const parsedRequest = GenerationRequestSchema.safeParse(requestBody);
 
   if (!parsedRequest.success) {
     return new Response(
@@ -93,7 +93,7 @@ export async function POST(request: Request) {
       });
     }
 
-    console.log("An error ocurred!", error);
+    console.error("An error occurred!", error);
     return new Response(
       JSON.stringify({ error: "Failed to generate program" }),
       { status: 500 },

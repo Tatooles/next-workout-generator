@@ -28,11 +28,9 @@
   --color-ring: var(--ring);
 }
 
-/* Always-dark theme matching the design */
 :root {
   --radius: 0.5rem;
 
-  /* Base surfaces */
   --background: #090909;
   --foreground: #edeae6;
   --card: #111111;
@@ -40,31 +38,24 @@
   --popover: #111111;
   --popover-foreground: #edeae6;
 
-  /* Borders */
   --border: #232323;
   --input: #232323;
   --ring: #2e2e2e;
 
-  /* Text */
   --muted: #181818;
   --muted-foreground: #555555;
 
-  /* Primary = crimson accent */
   --primary: oklch(0.44 0.17 13);
   --primary-foreground: #ffffff;
 
-  /* Secondary */
   --secondary: #202020;
   --secondary-foreground: #edeae6;
 
-  /* Accent (Tailwind token) = surface-3 */
   --accent: #202020;
   --accent-foreground: #edeae6;
 
-  /* Destructive */
   --destructive: oklch(0.577 0.245 27.325);
 
-  /* Dynamic tweakable vars (overridden via JS at runtime) */
   --wg-accent: oklch(0.44 0.17 13);
   --wg-accent-h: oklch(0.5 0.2 13);
   --wg-accent-sub: oklch(0.44 0.17 13 / 0.12);
@@ -75,7 +66,6 @@
   --wg-radius-lg: 14px;
 }
 
-/* Keep .dark identical — we force this class on <html> */
 .dark {
   --background: #090909;
   --foreground: #edeae6;
@@ -129,7 +119,6 @@
   }
 }
 
-/* ─── Keyframe animations ─────────────────────────────────────── */
 @keyframes fadeUp {
   from {
     opacity: 0;

@@ -30,7 +30,6 @@ export function EquipmentSelector({
 
   return (
     <FormSection label="Equipment" sub="Gym setup">
-      {/* Gym profile chips: 2-column grid */}
       <div className="mb-4 grid grid-cols-2 gap-2">
         {gymProfiles.map((profile) => (
           <Chip
@@ -44,7 +43,6 @@ export function EquipmentSelector({
         ))}
       </div>
 
-      {/* Extra equipment chips */}
       {!isFullGym && (
         <>
           <div className="text-muted-foreground mb-[10px] text-[11px] font-semibold tracking-[0.06em] uppercase opacity-70">

@@ -1,4 +1,4 @@
-import { Chip, FormSection } from "@/components/chip";
+import { ChipGroup, FormSection } from "@/components/chip";
 import { programSplits, type ProgramSplit } from "@/lib/workout-options";
 
 interface ProgramSplitSelectorProps {
@@ -12,16 +12,11 @@ export function ProgramSplitSelector({
 }: ProgramSplitSelectorProps) {
   return (
     <FormSection label="Program Split" first>
-      <div className="flex flex-wrap gap-2">
-        {programSplits.map((split) => (
-          <Chip
-            key={split}
-            label={split}
-            active={value === split}
-            onClick={() => onValueChange(value === split ? null : split)}
-          />
-        ))}
-      </div>
+      <ChipGroup
+        options={programSplits}
+        value={value}
+        onValueChange={onValueChange}
+      />
     </FormSection>
   );
 }

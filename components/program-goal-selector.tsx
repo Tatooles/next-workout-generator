@@ -1,4 +1,4 @@
-import { Chip, FormSection } from "@/components/chip";
+import { ChipGroup, FormSection } from "@/components/chip";
 import { programGoals, type ProgramGoal } from "@/lib/workout-options";
 
 interface ProgramGoalSelectorProps {
@@ -12,16 +12,11 @@ export function ProgramGoalSelector({
 }: ProgramGoalSelectorProps) {
   return (
     <FormSection label="Training Goal" first>
-      <div className="flex flex-wrap gap-2">
-        {programGoals.map((goal) => (
-          <Chip
-            key={goal}
-            label={goal}
-            active={value === goal}
-            onClick={() => onValueChange(value === goal ? null : goal)}
-          />
-        ))}
-      </div>
+      <ChipGroup
+        options={programGoals}
+        value={value}
+        onValueChange={onValueChange}
+      />
     </FormSection>
   );
 }

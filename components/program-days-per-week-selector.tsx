@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Chip, FormSection } from "@/components/chip";
+import { ChipGroup, FormSection } from "@/components/chip";
 import type {
   ProgramSplit,
   ProgramTrainingDaysPerWeek,
@@ -35,16 +35,12 @@ export function ProgramDaysPerWeekSelector({
 
   return (
     <FormSection label="Days Per Week">
-      <div className="flex flex-wrap gap-2">
-        {daysOptions.map((days) => (
-          <Chip
-            key={days}
-            label={`${days} Days`}
-            active={value === days}
-            onClick={() => onValueChange(value === days ? null : days)}
-          />
-        ))}
-      </div>
+      <ChipGroup
+        options={daysOptions}
+        value={value}
+        onValueChange={onValueChange}
+        getLabel={(days) => `${days} Days`}
+      />
     </FormSection>
   );
 }

@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { GenerationMode } from "@/lib/generation-types";
+import type { GenerationMode, GenerationParams } from "@/lib/generation-types";
 import { DEFAULT_MODEL, type GenerationModel } from "@/lib/model-options";
-import type { GenerationParams } from "@/lib/utils";
 import type {
   EquipmentOption,
   ExperienceLevel,
@@ -17,16 +16,13 @@ import type {
 } from "@/lib/workout-options";
 
 export function useWorkoutForm() {
-  // ── Workout mode ────────────────────────────────────────────────
   const [workoutType, setWorkoutType] = useState<WorkoutType | null>(null);
 
-  // ── Program mode ────────────────────────────────────────────────
   const [programGoal, setProgramGoal] = useState<ProgramGoal | null>(null);
   const [programSplit, setProgramSplit] = useState<ProgramSplit | null>(null);
   const [programTrainingDaysPerWeek, setProgramTrainingDaysPerWeek] =
     useState<ProgramTrainingDaysPerWeek | null>(null);
 
-  // ── Shared ───────────────────────────────────────────────────────
   const [selectedBodyParts, setSelectedBodyParts] = useState<MuscleGroup[]>([]);
   const [additionalDetails, setAdditionalDetails] = useState("");
   const [experienceLevel, setExperienceLevel] =
