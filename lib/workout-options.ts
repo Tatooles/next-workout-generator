@@ -70,27 +70,39 @@ export interface MuscleGroupConfig {
 }
 
 export const muscleGroupConfig: Record<MuscleGroup, MuscleGroupConfig> = {
-  Quads:        { icon: Dumbbell,  color: "muscle-legs",      category: "legs" },
-  Hamstrings:   { icon: Dumbbell,  color: "muscle-legs",      category: "legs" },
-  Glutes:       { icon: Dumbbell,  color: "muscle-legs",      category: "legs" },
-  Chest:        { icon: Heart,     color: "muscle-upper",     category: "upper" },
-  Lats:         { icon: Activity,  color: "muscle-upper",     category: "upper" },
-  "Upper Back": { icon: Activity,  color: "muscle-upper",     category: "upper" },
-  Biceps:       { icon: Zap,       color: "muscle-arms",      category: "arms" },
-  Triceps:      { icon: Zap,       color: "muscle-arms",      category: "arms" },
-  "Front Delts":{ icon: Target,    color: "muscle-shoulders", category: "shoulders" },
-  "Side Delts": { icon: Target,    color: "muscle-shoulders", category: "shoulders" },
-  "Rear Delts": { icon: Target,    color: "muscle-shoulders", category: "shoulders" },
-  Abs:          { icon: Flame,     color: "muscle-core",      category: "core" },
+  Quads: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
+  Hamstrings: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
+  Glutes: { icon: Dumbbell, color: "muscle-legs", category: "legs" },
+  Chest: { icon: Heart, color: "muscle-upper", category: "upper" },
+  Lats: { icon: Activity, color: "muscle-upper", category: "upper" },
+  "Upper Back": { icon: Activity, color: "muscle-upper", category: "upper" },
+  Biceps: { icon: Zap, color: "muscle-arms", category: "arms" },
+  Triceps: { icon: Zap, color: "muscle-arms", category: "arms" },
+  "Front Delts": {
+    icon: Target,
+    color: "muscle-shoulders",
+    category: "shoulders",
+  },
+  "Side Delts": {
+    icon: Target,
+    color: "muscle-shoulders",
+    category: "shoulders",
+  },
+  "Rear Delts": {
+    icon: Target,
+    color: "muscle-shoulders",
+    category: "shoulders",
+  },
+  Abs: { icon: Flame, color: "muscle-core", category: "core" },
 };
 
 export const workoutTypeIcons: Record<WorkoutType, LucideIcon> = {
-  "Leg Workout":        Dumbbell,
-  "Push Workout":       Zap,
-  "Pull Workout":       Activity,
+  "Leg Workout": Dumbbell,
+  "Push Workout": Zap,
+  "Pull Workout": Activity,
   "Upper Body Workout": Heart,
   "Lower Body Workout": Dumbbell,
-  "Full Body Workout":  Flame,
+  "Full Body Workout": Flame,
 };
 
 export const workoutDurations = [

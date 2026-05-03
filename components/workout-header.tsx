@@ -1,6 +1,7 @@
 "use client";
 
 import type { GenerationMode } from "@/lib/generation-types";
+import { cn } from "@/lib/utils";
 
 const BarbellIcon = ({ size = 26 }: { size?: number }) => (
   <svg
@@ -9,11 +10,11 @@ const BarbellIcon = ({ size = 26 }: { size?: number }) => (
     viewBox="0 0 48 24"
     fill="currentColor"
   >
-    <rect x="0"  y="6"  width="5"  height="12" rx="2" />
-    <rect x="5"  y="3"  width="3"  height="18" rx="1.5" />
-    <rect x="8"  y="10" width="32" height="4"  rx="2" />
-    <rect x="40" y="3"  width="3"  height="18" rx="1.5" />
-    <rect x="43" y="6"  width="5"  height="12" rx="2" />
+    <rect x="0" y="6" width="5" height="12" rx="2" />
+    <rect x="5" y="3" width="3" height="18" rx="1.5" />
+    <rect x="8" y="10" width="32" height="4" rx="2" />
+    <rect x="40" y="3" width="3" height="18" rx="1.5" />
+    <rect x="43" y="6" width="5" height="12" rx="2" />
   </svg>
 );
 
@@ -47,22 +48,16 @@ export function WorkoutHeader({
   return (
     <div className="mb-8">
       {/* Top bar: logo + settings */}
-      <div className="flex items-start justify-between mb-8">
+      <div className="mb-8 flex items-start justify-between">
         <div className="flex items-center gap-[14px]">
-          <div
-            className="w-[46px] h-[46px] rounded-[11px] flex items-center justify-center flex-shrink-0"
-            style={{ background: "var(--wg-accent-sub)", color: "var(--wg-accent)" }}
-          >
+          <div className="bg-wg-accent-sub text-wg-accent flex h-[46px] w-[46px] flex-shrink-0 items-center justify-center rounded-[11px]">
             <BarbellIcon size={26} />
           </div>
           <div>
-            <h1
-              className="text-2xl font-bold tracking-[-0.025em] leading-[1.1]"
-              style={{ color: "#edeae6" }}
-            >
+            <h1 className="text-foreground text-2xl leading-[1.1] font-bold">
               Workout Generator
             </h1>
-            <p className="text-xs mt-1" style={{ color: "#555" }}>
+            <p className="text-muted-foreground mt-1 text-xs">
               AI-powered personalized workouts &amp; weekly programs
             </p>
           </div>
@@ -72,29 +67,25 @@ export function WorkoutHeader({
           type="button"
           onClick={onToggleTweaks}
           title="Tweaks"
-          className="border rounded-[8px] p-2 flex items-center justify-center transition-all duration-150 hover:border-[#2e2e2e] hover:text-[#edeae6] cursor-pointer"
-          style={{ background: "transparent", borderColor: "#232323", color: "#555" }}
+          className="border-border text-muted-foreground hover:border-ring hover:text-foreground flex cursor-pointer items-center justify-center rounded-[8px] border bg-transparent p-2 transition-all duration-150"
         >
           <SettingsIcon />
         </button>
       </div>
 
       {/* Mode toggle pill */}
-      <div
-        className="inline-flex border rounded-[11px] p-1 gap-[2px]"
-        style={{ background: "#111111", borderColor: "#232323" }}
-      >
+      <div className="border-border bg-card inline-flex gap-[2px] rounded-[11px] border p-1">
         {(["workout", "program"] as GenerationMode[]).map((m) => (
           <button
             key={m}
             type="button"
             onClick={() => onModeChange(m)}
-            className="px-[22px] py-[7px] text-[13px] rounded-[7px] border-none transition-all duration-150 cursor-pointer tracking-[0.01em]"
-            style={{
-              background: mode === m ? "#202020" : "transparent",
-              color: mode === m ? "#edeae6" : "#555",
-              fontWeight: mode === m ? 600 : 500,
-            }}
+            className={cn(
+              "cursor-pointer rounded-[7px] border-none px-[22px] py-[7px] text-[13px] transition-all duration-150",
+              mode === m
+                ? "bg-secondary text-foreground font-semibold"
+                : "text-muted-foreground bg-transparent font-medium",
+            )}
           >
             {m === "workout" ? "Workout" : "Program"}
           </button>

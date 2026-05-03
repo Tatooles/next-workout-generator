@@ -24,7 +24,9 @@ export function buildProgramPrompt(userInformation: WorkoutRequest) {
 
   // Days per week
   if (selectedDaysPerWeek) {
-    parts.push(`Return exactly ${selectedDaysPerWeek} workout days for the week.`);
+    parts.push(
+      `Return exactly ${selectedDaysPerWeek} workout days for the week.`,
+    );
   } else {
     parts.push(
       "Choose a sensible training frequency and return exactly 3, 4, or 5 workout days for the week.",
@@ -60,7 +62,9 @@ export function buildProgramPrompt(userInformation: WorkoutRequest) {
 
   // Gym setup
   if (userInformation.gymProfile) {
-    parts.push(`Available gym setup: ${userInformation.gymProfile.toLowerCase()}.`);
+    parts.push(
+      `Available gym setup: ${userInformation.gymProfile.toLowerCase()}.`,
+    );
   }
 
   if (userInformation.availableEquipment.length > 0) {
@@ -69,7 +73,10 @@ export function buildProgramPrompt(userInformation: WorkoutRequest) {
     );
   }
 
-  if (userInformation.gymProfile || userInformation.availableEquipment.length > 0) {
+  if (
+    userInformation.gymProfile ||
+    userInformation.availableEquipment.length > 0
+  ) {
     parts.push(
       "Only include exercises that can be performed with the available setup, listed equipment, or bodyweight.",
     );

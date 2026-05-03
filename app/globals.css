@@ -65,14 +65,14 @@
   --destructive: oklch(0.577 0.245 27.325);
 
   /* Dynamic tweakable vars (overridden via JS at runtime) */
-  --wg-accent:       oklch(0.44 0.17 13);
-  --wg-accent-h:     oklch(0.50 0.20 13);
-  --wg-accent-sub:   oklch(0.44 0.17 13 / 0.12);
-  --wg-accent-sub-h: oklch(0.44 0.17 13 / 0.20);
-  --wg-font:         'Space Grotesk', sans-serif;
-  --wg-radius:       8px;
-  --wg-radius-sm:    6px;
-  --wg-radius-lg:    14px;
+  --wg-accent: oklch(0.44 0.17 13);
+  --wg-accent-h: oklch(0.5 0.2 13);
+  --wg-accent-sub: oklch(0.44 0.17 13 / 0.12);
+  --wg-accent-sub-h: oklch(0.44 0.17 13 / 0.2);
+  --wg-font: "Space Grotesk", sans-serif;
+  --wg-radius: 8px;
+  --wg-radius-sm: 6px;
+  --wg-radius-lg: 14px;
 }
 
 /* Keep .dark identical — we force this class on <html> */
@@ -98,7 +98,9 @@
 }
 
 @layer base {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     @apply border-border;
     box-sizing: border-box;
   }
@@ -108,28 +110,125 @@
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
   }
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #2e2e2e; border-radius: 3px; }
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2e2e2e;
+    border-radius: 3px;
+  }
 
-  textarea::placeholder { color: #555; }
-  textarea:focus { outline: none; }
+  textarea::placeholder {
+    color: #555;
+  }
+  textarea:focus {
+    outline: none;
+  }
 }
 
 /* ─── Keyframe animations ─────────────────────────────────────── */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 @keyframes pulseBarbell {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.5; transform: scale(0.92); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.92);
+  }
 }
 @keyframes spinLoader {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.animate-fade-up     { animation: fadeUp 0.35s ease both; }
-.animate-fade-up-sm  { animation: fadeUp 0.2s ease both; }
-.animate-pulse-barbell { animation: pulseBarbell 1.4s ease-in-out infinite; }
+.animate-fade-up {
+  animation: fadeUp 0.35s ease both;
+}
+.animate-fade-up-sm {
+  animation: fadeUp 0.2s ease both;
+}
+.animate-pulse-barbell {
+  animation: pulseBarbell 1.4s ease-in-out infinite;
+}
+.animate-spin-loader {
+  animation: spinLoader 0.7s linear infinite;
+}
+
+@layer utilities {
+  .bg-wg-accent {
+    background-color: var(--wg-accent);
+  }
+  .bg-wg-accent-hover {
+    background-color: var(--wg-accent-h);
+  }
+  .hover\:bg-wg-accent-hover:hover {
+    background-color: var(--wg-accent-h);
+  }
+  .bg-wg-accent-sub {
+    background-color: var(--wg-accent-sub);
+  }
+  .text-wg-accent {
+    color: var(--wg-accent);
+  }
+  .border-wg-accent {
+    border-color: var(--wg-accent);
+  }
+  .focus\:border-wg-accent:focus {
+    border-color: var(--wg-accent);
+  }
+  .outline-wg-accent {
+    outline-color: var(--wg-accent);
+  }
+  .focus-visible\:outline-wg-accent:focus-visible {
+    outline-color: var(--wg-accent);
+  }
+  .bg-error-sub {
+    background-color: oklch(0.44 0.17 13 / 0.08);
+  }
+  .border-error-sub {
+    border-color: oklch(0.44 0.17 13 / 0.25);
+  }
+  .rounded-wg {
+    border-radius: var(--wg-radius);
+  }
+  .rounded-wg-sm {
+    border-radius: var(--wg-radius-sm);
+  }
+  .rounded-wg-lg {
+    border-radius: var(--wg-radius-lg);
+  }
+  .font-wg {
+    font-family: var(--wg-font);
+  }
+  .font-space-grotesk {
+    font-family: var(--font-space-grotesk), sans-serif;
+  }
+  .font-dm-sans {
+    font-family: var(--font-dm-sans), sans-serif;
+  }
+  .font-helvetica-neue {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  .shadow-tweaks {
+    box-shadow: 0 24px 48px rgb(0 0 0 / 0.5);
+  }
+}

@@ -39,23 +39,9 @@ export function AdditionalDetailsInput({
         }
         rows={4}
         maxLength={MAX_CHARACTERS}
-        className="w-full rounded-[var(--wg-radius)] text-[13px] px-[14px] py-3 resize-y leading-[1.55]"
-        style={{
-          background: "#111111",
-          border: "1px solid #232323",
-          color: "#edeae6",
-          outline: "none",
-          fontFamily: "var(--wg-font)",
-          transition: "border-color 0.14s",
-          minHeight: 96,
-        }}
-        onFocus={(e) => (e.currentTarget.style.borderColor = "var(--wg-accent)")}
-        onBlur={(e) => (e.currentTarget.style.borderColor = "#232323")}
+        className="font-wg rounded-wg border-border bg-card text-foreground focus:border-wg-accent min-h-24 w-full resize-y border px-[14px] py-3 text-[13px] leading-[1.55] transition-colors duration-150 outline-none"
       />
-      <div
-        className="text-right text-[11px] mt-[5px]"
-        style={{ color: "#2e2e2e" }}
-      >
+      <div className="text-ring mt-[5px] text-right text-[11px]">
         {value.length}/{MAX_CHARACTERS}
       </div>
     </FormSection>
