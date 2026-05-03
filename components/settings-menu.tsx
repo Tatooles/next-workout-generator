@@ -85,7 +85,7 @@ export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
               type="button"
               onClick={() => onUpdate("accentOklch", p.oklch)}
               className={cn(
-                "h-6 w-6 cursor-pointer rounded-full border-2 transition-transform duration-150 hover:scale-110",
+                "h-6 w-6 cursor-pointer rounded-full border-2 transition-colors duration-150",
                 p.className,
                 tweaks.accentOklch === p.oklch
                   ? "border-foreground"
@@ -108,11 +108,11 @@ export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
               type="button"
               onClick={() => onUpdate("fontFamily", font)}
               className={cn(
-                "cursor-pointer rounded-[6px] border px-[10px] py-[6px] text-left text-[13px] transition-all duration-150",
+                "cursor-pointer rounded-[6px] border px-[10px] py-[6px] text-left text-[13px] font-semibold transition-all duration-150",
                 FONT_CLASS_NAMES[font],
                 tweaks.fontFamily === font
-                  ? "border-wg-accent bg-wg-accent-sub text-wg-accent font-semibold"
-                  : "border-border text-muted-foreground bg-transparent font-normal",
+                  ? "border-wg-accent bg-wg-accent-sub text-wg-accent"
+                  : "border-border text-muted-foreground bg-transparent",
               )}
             >
               {font}
@@ -133,10 +133,10 @@ export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
               type="button"
               onClick={() => onUpdate("cardRadius", r.value)}
               className={cn(
-                "font-wg flex-1 cursor-pointer rounded-[6px] border py-[6px] text-[12px] transition-all duration-150",
+                "font-wg flex-1 cursor-pointer rounded-[6px] border py-[6px] text-[12px] font-semibold transition-all duration-150",
                 tweaks.cardRadius === r.value
-                  ? "border-wg-accent bg-wg-accent-sub text-wg-accent font-semibold"
-                  : "border-border text-muted-foreground bg-transparent font-normal",
+                  ? "border-wg-accent bg-wg-accent-sub text-wg-accent"
+                  : "border-border text-muted-foreground bg-transparent",
               )}
             >
               {r.label}

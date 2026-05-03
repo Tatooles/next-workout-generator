@@ -20,10 +20,10 @@ export function Chip({
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-wg-sm inline-flex cursor-pointer items-center justify-center border leading-none whitespace-nowrap transition-all duration-150",
+        "rounded-wg-sm inline-flex cursor-pointer items-center justify-center border leading-none font-semibold whitespace-nowrap transition-all duration-150",
         small ? "px-3 py-[5px] text-xs" : "px-[15px] py-2 text-[13px]",
         active
-          ? "border-wg-accent bg-wg-accent-sub text-wg-accent font-semibold"
+          ? "border-wg-accent bg-wg-accent-sub text-wg-accent"
           : "border-border text-muted-foreground hover:border-ring hover:text-foreground bg-transparent",
         className,
       )}

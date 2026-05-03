@@ -81,10 +81,10 @@ export function WorkoutHeader({
             type="button"
             onClick={() => onModeChange(m)}
             className={cn(
-              "cursor-pointer rounded-[7px] border-none px-[22px] py-[7px] text-[13px] transition-all duration-150",
+              "cursor-pointer rounded-[7px] border-none px-[22px] py-[7px] text-[13px] font-semibold transition-all duration-150",
               mode === m
-                ? "bg-secondary text-foreground font-semibold"
-                : "text-muted-foreground bg-transparent font-medium",
+                ? "bg-secondary text-foreground"
+                : "text-muted-foreground bg-transparent",
             )}
           >
             {m === "workout" ? "Workout" : "Program"}
