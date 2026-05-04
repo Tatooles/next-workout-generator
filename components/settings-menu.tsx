@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 export interface TweaksState {
   accentOklch: string;
-  fontFamily: string;
+  fontFamily: FontFamily;
   cardRadius: string;
 }
 
@@ -37,8 +37,19 @@ const ACCENT_PRESETS = [
   },
 ];
 
-const FONT_OPTIONS = ["Space Grotesk", "DM Sans", "Helvetica Neue"];
-const FONT_CLASS_NAMES: Record<string, string> = {
+export const FONT_OPTIONS = [
+  "Space Grotesk",
+  "DM Sans",
+  "Helvetica Neue",
+] as const;
+
+export type FontFamily = (typeof FONT_OPTIONS)[number];
+
+export function isFontFamily(value: string): value is FontFamily {
+  return FONT_OPTIONS.some((font) => font === value);
+}
+
+const FONT_CLASS_NAMES: Record<FontFamily, string> = {
   "Space Grotesk": "font-space-grotesk",
   "DM Sans": "font-dm-sans",
   "Helvetica Neue": "font-helvetica-neue",
@@ -51,14 +62,16 @@ const RADIUS_OPTIONS = [
 
 interface TweaksPanelProps {
   tweaks: TweaksState;
-  onUpdate: (key: keyof TweaksState, value: string) => void;
+  onUpdate: <K extends keyof TweaksState>(
+    key: K,
+    value: TweaksState[K],
+  ) => void;
   onClose: () => void;
 }
 
 export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
   return (
     <div className="animate-fade-up shadow-tweaks rounded-wg-lg border-ring bg-card fixed right-6 bottom-6 z-50 w-[240px] border p-5">
-      {/* Header */}
       <div className="mb-[18px] flex items-center justify-between">
         <div className="text-foreground text-[13px] font-bold tracking-[0.02em]">
           Tweaks
@@ -72,7 +85,6 @@ export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
         </button>
       </div>
 
-      {/* Accent color */}
       <div className="mb-4">
         <div className="text-muted-foreground mb-[10px] text-[10px] font-bold tracking-[0.08em] uppercase">
           Accent Color
@@ -96,7 +108,6 @@ export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
         </div>
       </div>
 
-      {/* Font */}
       <div className="mb-4">
         <div className="text-muted-foreground mb-[10px] text-[10px] font-bold tracking-[0.08em] uppercase">
           Font
@@ -121,7 +132,6 @@ export function TweaksPanel({ tweaks, onUpdate, onClose }: TweaksPanelProps) {
         </div>
       </div>
 
-      {/* Card radius */}
       <div>
         <div className="text-muted-foreground mb-[10px] text-[10px] font-bold tracking-[0.08em] uppercase">
           Card Radius

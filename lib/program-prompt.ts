@@ -1,17 +1,15 @@
-import type { WorkoutRequest } from "@/lib/workout-options";
+import type { GenerationRequest } from "@/lib/workout-options";
 
-export function buildProgramPrompt(userInformation: WorkoutRequest) {
+export function buildProgramPrompt(userInformation: GenerationRequest) {
   const selectedDaysPerWeek = userInformation.programTrainingDaysPerWeek;
   const parts: string[] = ["Generate a workout program for me."];
 
-  // Training goal
   if (userInformation.programGoal) {
     parts.push(
       `The primary training goal is ${userInformation.programGoal.toLowerCase()}. Structure the program around that goal — rep ranges, intensity, volume, and exercise selection should all reflect this.`,
     );
   }
 
-  // Program split
   if (userInformation.programSplit) {
     parts.push(
       `Use a ${userInformation.programSplit.toLowerCase()} structure as the primary weekly split template.`,
@@ -22,7 +20,6 @@ export function buildProgramPrompt(userInformation: WorkoutRequest) {
     );
   }
 
-  // Days per week
   if (selectedDaysPerWeek) {
     parts.push(
       `Return exactly ${selectedDaysPerWeek} workout days for the week.`,
@@ -39,28 +36,24 @@ export function buildProgramPrompt(userInformation: WorkoutRequest) {
     "If the selected split and training frequency are an awkward match, adapt the split intelligently while keeping the overall intent.",
   );
 
-  // Target muscles
   if (userInformation.bodyParts.length > 0) {
     parts.push(
       `Distribute extra weekly emphasis across these body parts: ${userInformation.bodyParts.join(", ")}.`,
     );
   }
 
-  // Experience level
   if (userInformation.experienceLevel) {
     parts.push(
       `The user is at a ${userInformation.experienceLevel.toLowerCase()} experience level. Match weekly volume, movement complexity, and recovery demand appropriately.`,
     );
   }
 
-  // Duration
   if (userInformation.desiredDuration) {
     parts.push(
       `Target each workout day to last about ${userInformation.desiredDuration}. Keep each workout close to that target while still being realistic.`,
     );
   }
 
-  // Gym setup
   if (userInformation.gymProfile) {
     parts.push(
       `Available gym setup: ${userInformation.gymProfile.toLowerCase()}.`,
@@ -82,7 +75,6 @@ export function buildProgramPrompt(userInformation: WorkoutRequest) {
     );
   }
 
-  // Additional details
   if (userInformation.additionalDetails) {
     parts.push(`Additional details: ${userInformation.additionalDetails}.`);
   }

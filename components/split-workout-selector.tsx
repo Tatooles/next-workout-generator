@@ -1,4 +1,4 @@
-import { Chip, FormSection } from "@/components/chip";
+import { ChipGroup, FormSection } from "@/components/chip";
 import { workoutTypes, type WorkoutType } from "@/lib/workout-options";
 
 const SPLIT_LABELS: Record<WorkoutType, string> = {
@@ -21,18 +21,13 @@ export function SplitWorkoutSelector({
 }: SplitWorkoutSelectorProps) {
   return (
     <FormSection label="Workout Split" first>
-      <div className="grid grid-cols-3 gap-2">
-        {workoutTypes.map((type) => (
-          <Chip
-            key={type}
-            label={SPLIT_LABELS[type]}
-            active={workoutType === type}
-            onClick={() =>
-              onWorkoutTypeChange(workoutType === type ? null : type)
-            }
-          />
-        ))}
-      </div>
+      <ChipGroup
+        options={workoutTypes}
+        value={workoutType}
+        onValueChange={onWorkoutTypeChange}
+        getLabel={(type) => SPLIT_LABELS[type]}
+        className="grid grid-cols-3 gap-2"
+      />
     </FormSection>
   );
 }

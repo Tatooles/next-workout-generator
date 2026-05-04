@@ -1,4 +1,4 @@
-import { Chip, FormSection } from "@/components/chip";
+import { ChipGroup, FormSection } from "@/components/chip";
 import { workoutDurations, type WorkoutDuration } from "@/lib/workout-options";
 
 const DURATION_LABELS: Record<WorkoutDuration, string> = {
@@ -20,16 +20,12 @@ export function DurationSelector({
 }: DurationSelectorProps) {
   return (
     <FormSection label="Duration">
-      <div className="flex flex-wrap gap-2">
-        {workoutDurations.map((d) => (
-          <Chip
-            key={d}
-            label={DURATION_LABELS[d]}
-            active={value === d}
-            onClick={() => onValueChange(value === d ? null : d)}
-          />
-        ))}
-      </div>
+      <ChipGroup
+        options={workoutDurations}
+        value={value}
+        onValueChange={onValueChange}
+        getLabel={(duration) => DURATION_LABELS[duration]}
+      />
     </FormSection>
   );
 }

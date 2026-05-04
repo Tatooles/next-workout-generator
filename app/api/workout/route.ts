@@ -7,7 +7,7 @@ import {
   resolveRequestedModel,
 } from "@/lib/ai-generation";
 import { buildWorkoutPrompt } from "@/lib/workout-prompt";
-import { WorkoutRequestSchema } from "@/lib/workout-options";
+import { GenerationRequestSchema } from "@/lib/workout-options";
 import { WorkoutDataSchema } from "@/lib/workout-types";
 
 export async function POST(request: Request) {
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const parsedRequest = WorkoutRequestSchema.safeParse(requestBody);
+  const parsedRequest = GenerationRequestSchema.safeParse(requestBody);
 
   if (!parsedRequest.success) {
     return new Response(
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
       });
     }
 
-    console.log("An error ocurred!", error);
+    console.error("An error occurred!", error);
     return new Response(
       JSON.stringify({ error: "Failed to generate workout" }),
       { status: 500 },

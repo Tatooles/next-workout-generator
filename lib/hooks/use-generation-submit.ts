@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { GenerationMode } from "@/lib/generation-types";
-import { fetchProgram, fetchWorkout, type GenerationParams } from "@/lib/utils";
-import type { ProgramData, WorkoutData } from "@/lib/workout-types";
-
-export type GenerationResult =
-  | { mode: "workout"; workout: WorkoutData }
-  | { mode: "program"; program: ProgramData };
+import type {
+  GenerationMode,
+  GenerationParams,
+  GenerationResult,
+} from "@/lib/generation-types";
+import { fetchProgram, fetchWorkout } from "@/lib/utils";
 
 export function useGenerationSubmit() {
   const [result, setResult] = useState<GenerationResult | null>(null);

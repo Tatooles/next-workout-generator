@@ -1,5 +1,21 @@
 import { z } from "zod";
-import { ALLOWED_MODELS, DEFAULT_MODEL } from "@/lib/model-options";
+import {
+  DEFAULT_MODEL,
+  isGenerationModel,
+  type GenerationModel,
+} from "@/lib/model-options";
+
+const OpenRouterCompletionSchema = z.object({
+  choices: z
+    .array(
+      z.object({
+        message: z.object({
+          content: z.string().min(1),
+        }),
+      }),
+    )
+    .min(1),
+});
 
 export class GenerationError extends Error {
   status: number;
@@ -10,12 +26,12 @@ export class GenerationError extends Error {
   }
 }
 
-export function resolveRequestedModel(model: string | null | undefined) {
+export function resolveRequestedModel(
+  model: string | null | undefined,
+): GenerationModel {
   const requestedModel = model || DEFAULT_MODEL;
 
-  if (
-    !ALLOWED_MODELS.includes(requestedModel as (typeof ALLOWED_MODELS)[number])
-  ) {
+  if (!isGenerationModel(requestedModel)) {
     throw new GenerationError(
       "Invalid model specified. Please select a valid model.",
       400,
@@ -27,7 +43,7 @@ export function resolveRequestedModel(model: string | null | undefined) {
 
 export async function fetchOpenRouterCompletion(
   prompt: string,
-  model: string,
+  model: GenerationModel,
   title: string,
 ) {
   const payload = {
@@ -63,8 +79,15 @@ export async function fetchOpenRouterCompletion(
     throw new GenerationError("OpenRouter API error", response.status || 500);
   }
 
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content || "";
+  const data: unknown = await response.json();
+  const parsedResponse = OpenRouterCompletionSchema.safeParse(data);
+
+  if (!parsedResponse.success) {
+    console.error("Invalid OpenRouter response:", parsedResponse.error);
+    throw new GenerationError("Invalid OpenRouter response", 502);
+  }
+
+  return parsedResponse.data.choices[0].message.content;
 }
 
 export function parseStructuredJson<T>(
@@ -79,7 +102,7 @@ export function parseStructuredJson<T>(
       jsonStr = codeBlockMatch[1].trim();
     }
 
-    const parsed = JSON.parse(jsonStr);
+    const parsed: unknown = JSON.parse(jsonStr);
     const result = schema.safeParse(parsed);
 
     if (!result.success) {

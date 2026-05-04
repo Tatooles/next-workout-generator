@@ -1,6 +1,6 @@
 "use client";
 
-import type { GenerationMode } from "@/lib/generation-types";
+import { generationModes, type GenerationMode } from "@/lib/generation-types";
 import { cn } from "@/lib/utils";
 
 const BarbellIcon = ({ size = 26 }: { size?: number }) => (
@@ -47,7 +47,6 @@ export function WorkoutHeader({
 }: WorkoutHeaderProps) {
   return (
     <div className="mb-8">
-      {/* Top bar: logo + settings */}
       <div className="mb-8 flex items-start justify-between">
         <div className="flex items-center gap-[14px]">
           <div className="bg-wg-accent-sub text-wg-accent flex h-[46px] w-[46px] flex-shrink-0 items-center justify-center rounded-[11px]">
@@ -73,9 +72,8 @@ export function WorkoutHeader({
         </button>
       </div>
 
-      {/* Mode toggle pill */}
       <div className="border-border bg-card inline-flex gap-[2px] rounded-[11px] border p-1">
-        {(["workout", "program"] as GenerationMode[]).map((m) => (
+        {generationModes.map((m) => (
           <button
             key={m}
             type="button"

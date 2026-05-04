@@ -16,8 +16,10 @@ import { ProgramSplitSelector } from "@/components/program-split-selector";
 import { ProgramDaysPerWeekSelector } from "@/components/program-days-per-week-selector";
 import { ModelSelector } from "@/components/model-selector";
 import {
+  FONT_OPTIONS,
   TweaksPanel,
   TWEAKS_DEFAULTS,
+  isFontFamily,
   type TweaksState,
 } from "@/components/settings-menu";
 import type { GenerationMode } from "@/lib/generation-types";
@@ -26,10 +28,20 @@ import { useWorkoutForm } from "@/lib/hooks/use-workout-form";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
 import { formatWorkoutAsText, formatProgramAsText } from "@/lib/utils";
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
+type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+
+type JsonObject = { [key: string]: JsonValue };
+
+const isJsonObject = (value: JsonValue): value is JsonObject =>
   typeof value === "object" && value !== null;
 
-const isValidAccent = (value: unknown): value is string => {
+const isValidAccent = (value: JsonValue | undefined): value is string => {
   if (typeof value !== "string") return false;
   const [lightness, chroma, hue] = value.split(" ");
   return (
@@ -39,7 +51,7 @@ const isValidAccent = (value: unknown): value is string => {
   );
 };
 
-const isValidRadius = (value: unknown): value is string => {
+const isValidRadius = (value: JsonValue | undefined): value is string => {
   if (typeof value !== "string") return false;
 
   const trimmedValue = value.trim();
@@ -61,15 +73,15 @@ const parseStoredTweaks = (value: string | null): TweaksState => {
   if (!value) return TWEAKS_DEFAULTS;
 
   try {
-    const parsed: unknown = JSON.parse(value);
-    if (!isRecord(parsed)) return TWEAKS_DEFAULTS;
+    const parsed: JsonValue = JSON.parse(value);
+    if (!isJsonObject(parsed)) return TWEAKS_DEFAULTS;
 
     return {
       accentOklch: isValidAccent(parsed.accentOklch)
         ? parsed.accentOklch
         : TWEAKS_DEFAULTS.accentOklch,
       fontFamily:
-        typeof parsed.fontFamily === "string"
+        typeof parsed.fontFamily === "string" && isFontFamily(parsed.fontFamily)
           ? parsed.fontFamily
           : TWEAKS_DEFAULTS.fontFamily,
       cardRadius: isValidRadius(parsed.cardRadius)
@@ -85,16 +97,14 @@ const normalizeTweaks = (value: TweaksState): TweaksState => ({
   accentOklch: isValidAccent(value.accentOklch)
     ? value.accentOklch
     : TWEAKS_DEFAULTS.accentOklch,
-  fontFamily:
-    typeof value.fontFamily === "string"
-      ? value.fontFamily
-      : TWEAKS_DEFAULTS.fontFamily,
+  fontFamily: isFontFamily(value.fontFamily)
+    ? value.fontFamily
+    : TWEAKS_DEFAULTS.fontFamily,
   cardRadius: isValidRadius(value.cardRadius)
     ? value.cardRadius.trim()
     : TWEAKS_DEFAULTS.cardRadius,
 });
 
-// ── Barbell SVG icon ─────────────────────────────────────────────────────────
 const BarbellIcon = ({ size = 44 }: { size?: number }) => (
   <svg
     width={size}
@@ -110,7 +120,6 @@ const BarbellIcon = ({ size = 44 }: { size?: number }) => (
   </svg>
 );
 
-// ── Loading state ─────────────────────────────────────────────────────────────
 function LoadingState({ mode }: { mode: GenerationMode }) {
   return (
     <div className="animate-fade-up flex flex-col items-center gap-[18px] px-5 py-[72px]">
@@ -129,7 +138,42 @@ function LoadingState({ mode }: { mode: GenerationMode }) {
   );
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+function SharedWorkoutFields({
+  mode,
+  workoutForm,
+}: {
+  mode: GenerationMode;
+  workoutForm: ReturnType<typeof useWorkoutForm>;
+}) {
+  return (
+    <>
+      <ExperienceLevelSelector
+        value={workoutForm.experienceLevel}
+        onValueChange={workoutForm.setExperienceLevel}
+      />
+      <DurationSelector
+        value={workoutForm.desiredDuration}
+        onValueChange={workoutForm.setDesiredDuration}
+      />
+      <BodyPartsSelector
+        selectedBodyParts={workoutForm.selectedBodyParts}
+        onToggle={workoutForm.handleBodyPartToggle}
+      />
+      <EquipmentSelector
+        gymProfile={workoutForm.gymProfile}
+        onGymProfileChange={workoutForm.setGymProfile}
+        selectedEquipment={workoutForm.availableEquipment}
+        onEquipmentToggle={workoutForm.handleEquipmentToggle}
+      />
+      <AdditionalDetailsInput
+        mode={mode}
+        value={workoutForm.additionalDetails}
+        onChange={workoutForm.setAdditionalDetails}
+      />
+    </>
+  );
+}
+
 export default function Home() {
   const [mode, setMode] = useState<GenerationMode>("workout");
   const [showTweaks, setShowTweaks] = useState(false);
@@ -153,7 +197,6 @@ export default function Home() {
   const workoutData = result?.mode === "workout" ? result.workout : null;
   const programData = result?.mode === "program" ? result.program : null;
 
-  // Apply tweaks → CSS variables
   useEffect(() => {
     const safeTweaks = normalizeTweaks(tweaks);
     const root = document.documentElement.style;
@@ -173,16 +216,12 @@ export default function Home() {
       `oklch(${safeTweaks.accentOklch} / 0.20)`,
     );
 
-    const fontMap: Record<string, string> = {
+    const fontMap: Record<(typeof FONT_OPTIONS)[number], string> = {
       "Space Grotesk": "var(--font-space-grotesk), sans-serif",
       "DM Sans": "var(--font-dm-sans), sans-serif",
       "Helvetica Neue": "'Helvetica Neue', Helvetica, Arial, sans-serif",
     };
-    root.setProperty(
-      "--wg-font",
-      fontMap[safeTweaks.fontFamily] ??
-        `'${safeTweaks.fontFamily}', sans-serif`,
-    );
+    root.setProperty("--wg-font", fontMap[safeTweaks.fontFamily]);
 
     const r = parseInt(safeTweaks.cardRadius, 10);
     root.setProperty("--wg-radius", `${r}px`);
@@ -191,12 +230,9 @@ export default function Home() {
 
     try {
       localStorage.setItem("wg_tweaks", JSON.stringify(safeTweaks));
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   }, [tweaks]);
 
-  // Scroll to results on new generation
   useEffect(() => {
     if (result && resultsRef.current) {
       setTimeout(() => {
@@ -208,7 +244,10 @@ export default function Home() {
     }
   }, [result]);
 
-  const handleTweakUpdate = (key: keyof TweaksState, value: string) => {
+  const handleTweakUpdate = <K extends keyof TweaksState>(
+    key: K,
+    value: TweaksState[K],
+  ) => {
     setTweaks((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -239,14 +278,12 @@ export default function Home() {
   return (
     <main className="bg-background min-h-screen">
       <div className="mx-auto max-w-[680px] px-5 pt-9 pb-[100px]">
-        {/* Header + mode toggle */}
         <WorkoutHeader
           mode={mode}
           onModeChange={handleModeChange}
           onToggleTweaks={() => setShowTweaks((s) => !s)}
         />
 
-        {/* Main content */}
         {loading ? (
           <LoadingState mode={mode} />
         ) : workoutData ? (
@@ -269,40 +306,16 @@ export default function Home() {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            {/* ── Workout form ─────────────────────── */}
             {mode === "workout" && (
               <>
                 <SplitWorkoutSelector
                   workoutType={workoutForm.workoutType}
                   onWorkoutTypeChange={workoutForm.setWorkoutType}
                 />
-                <ExperienceLevelSelector
-                  value={workoutForm.experienceLevel}
-                  onValueChange={workoutForm.setExperienceLevel}
-                />
-                <DurationSelector
-                  value={workoutForm.desiredDuration}
-                  onValueChange={workoutForm.setDesiredDuration}
-                />
-                <BodyPartsSelector
-                  selectedBodyParts={workoutForm.selectedBodyParts}
-                  onToggle={workoutForm.handleBodyPartToggle}
-                />
-                <EquipmentSelector
-                  gymProfile={workoutForm.gymProfile}
-                  onGymProfileChange={workoutForm.setGymProfile}
-                  selectedEquipment={workoutForm.availableEquipment}
-                  onEquipmentToggle={workoutForm.handleEquipmentToggle}
-                />
-                <AdditionalDetailsInput
-                  mode={mode}
-                  value={workoutForm.additionalDetails}
-                  onChange={workoutForm.setAdditionalDetails}
-                />
+                <SharedWorkoutFields mode={mode} workoutForm={workoutForm} />
               </>
             )}
 
-            {/* ── Program form ──────────────────────── */}
             {mode === "program" && (
               <>
                 <ProgramSplitSelector
@@ -318,29 +331,7 @@ export default function Home() {
                   programSplit={workoutForm.programSplit}
                   onValueChange={workoutForm.setProgramTrainingDaysPerWeek}
                 />
-                <ExperienceLevelSelector
-                  value={workoutForm.experienceLevel}
-                  onValueChange={workoutForm.setExperienceLevel}
-                />
-                <DurationSelector
-                  value={workoutForm.desiredDuration}
-                  onValueChange={workoutForm.setDesiredDuration}
-                />
-                <BodyPartsSelector
-                  selectedBodyParts={workoutForm.selectedBodyParts}
-                  onToggle={workoutForm.handleBodyPartToggle}
-                />
-                <EquipmentSelector
-                  gymProfile={workoutForm.gymProfile}
-                  onGymProfileChange={workoutForm.setGymProfile}
-                  selectedEquipment={workoutForm.availableEquipment}
-                  onEquipmentToggle={workoutForm.handleEquipmentToggle}
-                />
-                <AdditionalDetailsInput
-                  mode={mode}
-                  value={workoutForm.additionalDetails}
-                  onChange={workoutForm.setAdditionalDetails}
-                />
+                <SharedWorkoutFields mode={mode} workoutForm={workoutForm} />
               </>
             )}
 
@@ -349,14 +340,12 @@ export default function Home() {
               onValueChange={workoutForm.setModel}
             />
 
-            {/* Error message */}
             {error && (
               <div className="rounded-wg border-error-sub bg-error-sub text-wg-accent mt-1 mb-2 border px-4 py-3 text-[13px]">
                 {error}
               </div>
             )}
 
-            {/* Generate button */}
             <div className="mt-8">
               <SubmitButton
                 mode={mode}
@@ -367,7 +356,6 @@ export default function Home() {
           </form>
         )}
 
-        {/* Tweaks panel */}
         {showTweaks && (
           <TweaksPanel
             tweaks={tweaks}

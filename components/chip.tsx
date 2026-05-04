@@ -33,6 +33,38 @@ export function Chip({
   );
 }
 
+interface ChipGroupProps<T extends string | number> {
+  options: readonly T[];
+  value: T | null;
+  onValueChange: (value: T | null) => void;
+  getLabel?: (option: T) => string;
+  className?: string;
+  small?: boolean;
+}
+
+export function ChipGroup<T extends string | number>({
+  options,
+  value,
+  onValueChange,
+  getLabel = (option) => String(option),
+  className = "flex flex-wrap gap-2",
+  small = false,
+}: ChipGroupProps<T>) {
+  return (
+    <div className={className}>
+      {options.map((option) => (
+        <Chip
+          key={option}
+          label={getLabel(option)}
+          small={small}
+          active={value === option}
+          onClick={() => onValueChange(value === option ? null : option)}
+        />
+      ))}
+    </div>
+  );
+}
+
 interface SectionLabelProps {
   text: string;
   sub?: string;

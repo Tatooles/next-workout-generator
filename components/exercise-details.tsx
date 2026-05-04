@@ -28,7 +28,6 @@ export function ExerciseDetails({
 
   return (
     <>
-      {/* Stat pills */}
       <div className="mb-[14px] flex flex-wrap gap-2">
         {[
           { value: String(exercise.sets), label: "Sets" },
@@ -46,7 +45,6 @@ export function ExerciseDetails({
         ))}
       </div>
 
-      {/* Muscle tags */}
       {exercise.muscleGroups.length > 0 && (
         <div className="mb-[14px] flex flex-wrap gap-[6px]">
           {exercise.muscleGroups.map((muscle, i) => (
@@ -60,7 +58,6 @@ export function ExerciseDetails({
         </div>
       )}
 
-      {/* Form tips */}
       {exercise.formTips.length > 0 && (
         <div>
           <div className="mb-[9px] text-[10px] font-bold tracking-[0.08em] text-zinc-400 uppercase">
