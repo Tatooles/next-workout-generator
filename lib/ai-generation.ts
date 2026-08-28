@@ -55,6 +55,10 @@ export async function fetchOpenRouterCompletion(
       },
     ],
     temperature: 0.8,
+    reasoning:
+      model === "z-ai/glm-5.3"
+        ? { effort: "low", exclude: true }
+        : undefined,
     stream: false,
   };
 
