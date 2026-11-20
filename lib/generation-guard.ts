@@ -29,6 +29,7 @@ type RateLimiterOptions = {
 
 export type GenerationRateLimiter = {
   consume(client: string): void;
+  trackedClientCount(): number;
 };
 
 type GuardOptions = {
@@ -66,8 +67,15 @@ export function createGenerationRateLimiter(
       const globalBlocked = globalStamps.length >= options.globalLimit;
 
       if (ipBlocked || globalBlocked) {
-        hits.set(client, ipStamps);
+        // A new address rejected by the process cap must not grow the map.
+        if (hits.has(client)) {
+          hits.delete(client);
+          if (ipStamps.length > 0) {
+            hits.set(client, ipStamps);
+          }
+        }
         hits.set(GLOBAL_BUCKET, globalStamps);
+        pruneClients(hits, currentTime, options.windowMs);
         const retryAfterSeconds = Math.max(
           ipBlocked
             ? retryAfterSecondsFor(ipStamps, currentTime, options.windowMs)
@@ -89,6 +97,9 @@ export function createGenerationRateLimiter(
       hits.set(client, ipStamps);
       hits.set(GLOBAL_BUCKET, globalStamps);
       pruneClients(hits, currentTime, options.windowMs);
+    },
+    trackedClientCount() {
+      return [...hits.keys()].filter((key) => key !== GLOBAL_BUCKET).length;
     },
   };
 }
@@ -283,10 +294,7 @@ async function readBodyWithLimit(
   return body;
 }
 
-function allowedHosts(
-  request: Request,
-  env: RuntimeEnv,
-): Set<string> {
+function allowedHosts(request: Request, env: RuntimeEnv): Set<string> {
   const hosts = new Set<string>();
   const add = (value: string | null | undefined) => {
     const parsed = value ? parseHost(value.split(",")[0] ?? "") : null;

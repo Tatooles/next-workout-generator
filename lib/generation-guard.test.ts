@@ -299,6 +299,22 @@ describe("generation request guard", () => {
     );
   });
 
+  it("does not retain clients rejected by the process cap", () => {
+    const limiter = testLimiter(5, 1);
+
+    limiter.consume("203.0.113.1");
+    assert.equal(limiter.trackedClientCount(), 1);
+
+    for (let index = 0; index < 100; index += 1) {
+      assert.throws(
+        () => limiter.consume(`198.51.100.${index}`),
+        (error: unknown) => error instanceof RequestGuardError,
+      );
+    }
+
+    assert.equal(limiter.trackedClientCount(), 1);
+  });
+
   it("tracks platform client addresses separately and enforces the process cap", async () => {
     const limiter = testLimiter(5, 2);
     const options = { limiter, env: { VERCEL: "1" } };
