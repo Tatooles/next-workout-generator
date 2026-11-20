@@ -7,6 +7,11 @@ import {
   parseStructuredJson,
   resolveRequestedModel,
 } from "@/lib/ai-generation";
+import {
+  generationGuardResponse,
+  readGuardedGenerationBody,
+  RequestGuardError,
+} from "@/lib/generation-guard";
 import { buildProgramPrompt } from "@/lib/program-prompt";
 import { GenerationRequestSchema } from "@/lib/workout-options";
 import { createProgramDataSchema } from "@/lib/workout-types";
@@ -15,12 +20,20 @@ export async function POST(request: Request) {
   let requestBody: unknown;
 
   try {
-    requestBody = await request.json();
-  } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON body." }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+    requestBody = await readGuardedGenerationBody(request);
+  } catch (error) {
+    if (error instanceof RequestGuardError) {
+      return generationGuardResponse(error);
+    }
+
+    console.error("An error occurred!", error);
+    return new Response(
+      JSON.stringify({ error: "Failed to generate program" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 
   const parsedRequest = GenerationRequestSchema.safeParse(requestBody);

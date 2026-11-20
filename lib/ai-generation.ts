@@ -1,5 +1,9 @@
 import { z } from "zod";
 import {
+  MissingOpenRouterApiKeyError,
+  openRouterAuthorizationHeader,
+} from "@/lib/openrouter-api-key";
+import {
   DEFAULT_MODEL,
   isGenerationModel,
   type GenerationModel,
@@ -46,6 +50,20 @@ export async function fetchOpenRouterCompletion(
   model: GenerationModel,
   title: string,
 ) {
+  let authorization: string;
+
+  try {
+    authorization = openRouterAuthorizationHeader(
+      process.env.OPENROUTER_API_KEY,
+    );
+  } catch (error) {
+    if (error instanceof MissingOpenRouterApiKeyError) {
+      throw new GenerationError(error.message, 500);
+    }
+
+    throw error;
+  }
+
   const payload = {
     model,
     messages: [
@@ -56,9 +74,7 @@ export async function fetchOpenRouterCompletion(
     ],
     temperature: 0.8,
     reasoning:
-      model === "z-ai/glm-5.3"
-        ? { effort: "low", exclude: true }
-        : undefined,
+      model === "z-ai/glm-5.3" ? { effort: "low", exclude: true } : undefined,
     stream: false,
   };
 
@@ -67,7 +83,7 @@ export async function fetchOpenRouterCompletion(
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY ?? ""}`,
+        Authorization: authorization,
         "HTTP-Referer": process.env.VERCEL_URL
           ? `https://${process.env.VERCEL_URL}`
           : "http://localhost:3000",
