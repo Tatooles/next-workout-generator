@@ -18,7 +18,8 @@ export class RequestGuardError extends Error {
   }
 }
 
-type RuntimeEnv = NodeJS.ProcessEnv;
+// Only VERCEL is read, so tests can pass a partial environment.
+type RuntimeEnv = Readonly<Record<string, string | undefined>>;
 
 type RateLimiterOptions = {
   perIpLimit: number;

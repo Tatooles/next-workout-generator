@@ -31,8 +31,9 @@ function generationRequest(
       ...headers,
     },
     body,
+    // Node requires duplex for stream bodies; the DOM RequestInit type omits it.
     duplex: body instanceof ReadableStream ? "half" : undefined,
-  });
+  } as RequestInit & { duplex?: "half" });
 }
 
 function testLimiter(
